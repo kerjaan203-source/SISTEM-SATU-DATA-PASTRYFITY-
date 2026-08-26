@@ -1,0 +1,49 @@
+{
+  "Admin Toko": [
+    {"name": "log_chat", "label": "Total Chat Masuk & Dibalas", "type": "number", "placeholder": "Contoh: 150"},
+    {"name": "omset_cash", "label": "Omset Cash (Rp)", "type": "number", "placeholder": "Rp"},
+    {"name": "omset_noncash", "label": "Omset Non-Cash (Rp)", "type": "number", "placeholder": "Rp"},
+    {"name": "selisih_kas", "label": "Selisih Kas / Variance (Rp)", "type": "number", "placeholder": "Rp (jika ada)"},
+    {"name": "cek_kebersihan", "label": "Checklist Kebersihan Showcase", "type": "checkbox"}
+  ],
+  "Bakery": [
+    {"name": "target_batch", "label": "Target Batch Cake", "type": "number"},
+    {"name": "varian_cake", "label": "Varian Cake Diproduksi", "type": "text"},
+    {"name": "batch_telat", "label": "Batch Terlambat", "type": "number"},
+    {"name": "berat_waste", "label": "Berat Waste/Defect (Gram)", "type": "number"},
+    {"name": "cek_oven", "label": "Checklist Kebersihan Oven & Suhu", "type": "checkbox"}
+  ],
+  "Head Chef": [
+    {"name": "custom_cake", "label": "Custom/Signature Diproduksi", "type": "number"},
+    {"name": "qc_score", "label": "Skor QC Visual & Rasa (1-100)", "type": "number"},
+    {"name": "food_cost", "label": "Food Cost Ratio (%)", "type": "number"},
+    {"name": "total_waste", "label": "Total Waste Dapur (Kg)", "type": "number"},
+    {"name": "cek_fifo", "label": "Checklist Audit APD & FIFO", "type": "checkbox"}
+  ],
+  "R&D": [
+    {"name": "sample_baru", "label": "Sample Cake Baru", "type": "number"},
+    {"name": "panel_test", "label": "Skor Panel Test Rasa (1-100)", "type": "number"},
+    {"name": "progress_recipe", "label": "Progress Progress Master (%)", "type": "number"},
+    {"name": "cek_timbangan", "label": "Checklist Kalibrasi Timbangan", "type": "checkbox"}
+  ],
+  "Konten Kreator": [
+    {"name": "upload_feed", "label": "Total Feed/Reels/Shorts Diunggah", "type": "number"},
+    {"name": "link_konten", "label": "Link URL Konten Terbit", "type": "text"},
+    {"name": "top_topic", "label": "Top Topic Response Story", "type": "text"}
+  ],
+  "Accounting": [
+    {"name": "po_bahan", "label": "Purchasing Bahan Baku (PO Rp)", "type": "number"},
+    {"name": "waktu_closing", "label": "Timestamp Closing Jurnal", "type": "time"},
+    {"name": "selisih_rekon", "label": "Nominal Selisih Rekonsiliasi (Rp)", "type": "number"}
+  ],
+  "Admin Gudang": [
+    {"name": "selisih_opname", "label": "Selisih Opname Sampling", "type": "number"},
+    {"name": "kritis_exp", "label": "Bahan Kritis/Exp < 7 Hari", "type": "text"},
+    {"name": "verif_supplier", "label": "Log Verifikasi Barang Supplier", "type": "checkbox"}
+  ],
+  "Barista": [
+    {"name": "cup_terjual", "label": "Total Cup Terjual", "type": "number"},
+    {"name": "waste_minuman", "label": "Waste Minuman Gagal (ML)", "type": "number"},
+    {"name": "cek_backflush", "label": "Checklist Backflush Mesin", "type": "checkbox"}
+  ]
+}
