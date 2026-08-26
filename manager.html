@@ -3,76 +3,221 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Executive Owner - SATU SISTEM PASTRYFITY</title>
+  <title>Manager - SATU SISTEM PASTRYFITY</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; background-color: #EBF3FA; padding: 24px; }
-    .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(25px); border-radius: 24px; padding: 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.04); }
+    .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(25px); border-radius: 24px; padding: 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.04); border: 1px solid rgba(255, 255, 255, 0.5); }
+    .nav-btn { padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 14px; text-align: center; }
+    .active-nav { background: #2A6B9C; color: white; box-shadow: 0 4px 15px rgba(42, 107, 156, 0.2); }
+    .inactive-nav { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; hover:bg-gray-50; }
   </style>
 </head>
 <body>
-  <div class="max-w-7xl mx-auto space-y-6">
-    <div class="glass flex justify-between items-center mb-2">
+  <div class="max-w-6xl mx-auto space-y-6">
+    <div class="glass flex flex-col md:flex-row justify-between items-center p-6 mb-6">
       <div>
-        <h1 class="text-2xl font-bold text-[#2A6B9C]">Executive Dashboard</h1>
-        <p class="text-sm text-slate-500">SATU SISTEM PASTRYFITY - Monitoring Performa Konsolidasi</p>
+        <h1 class="text-2xl font-bold text-[#2A6B9C]">Manager Dashboard</h1>
+        <p class="text-sm text-slate-500">SATU SISTEM PASTRYFITY - HRIS & KPI</p>
       </div>
-      <a href="index.html" class="bg-red-50 text-red-600 px-5 py-2 rounded-xl font-bold text-sm hover:bg-red-100">Logout</a>
+      <a href="index.html" class="mt-4 md:mt-0 bg-red-50 text-red-600 px-5 py-2 rounded-xl font-bold text-sm border border-red-100 hover:bg-red-100 transition">Logout System</a>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div class="glass flex flex-col justify-center">
-        <p class="text-xs font-semibold text-slate-500 uppercase">Rata-Rata Kinerja Tim</p>
-        <p class="text-4xl font-bold text-[#2A6B9C] mt-2">88% <span class="text-sm text-green-500 font-semibold align-middle">Grade B</span></p>
+    <!-- Navigasi -->
+    <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-3 mb-6">
+      <div class="nav-btn active-nav flex-1" onclick="switchMenu('menu-users')">Manajemen Karyawan</div>
+      <div class="nav-btn inactive-nav flex-1" onclick="switchMenu('menu-approval')">Approval Pengajuan</div>
+      <div class="nav-btn inactive-nav flex-1" onclick="switchMenu('menu-kpi')">Review KPI & Laporan</div>
+    </div>
+
+    <!-- MENU 1: MANAJEMEN KARYAWAN -->
+    <div id="menu-users" class="glass grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 overflow-x-auto">
+        <h2 class="text-lg font-bold mb-4 text-slate-800">Database Master Karyawan</h2>
+        <table class="w-full text-left text-sm border-collapse">
+          <thead>
+            <tr class="bg-slate-100 text-slate-600">
+              <th class="p-3 rounded-tl-lg">Nama</th>
+              <th class="p-3">Posisi</th>
+              <th class="p-3">Tgl Masuk</th>
+              <th class="p-3">PIN</th>
+              <th class="p-3">Status</th>
+              <th class="p-3 rounded-tr-lg text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="user-table-body">
+            <!-- Render via JS -->
+            <tr><td colspan="6" class="p-4 text-center text-slate-400">Memuat data...</td></tr>
+          </tbody>
+        </table>
       </div>
-      <div class="glass flex flex-col justify-center">
-        <p class="text-xs font-semibold text-slate-500 uppercase">Karyawan Grade D (Risiko)</p>
-        <p class="text-4xl font-bold text-red-500 mt-2">1 <span class="text-sm text-slate-400 font-semibold align-middle">Orang</span></p>
-      </div>
-      <div class="glass flex flex-col justify-center">
-        <p class="text-xs font-semibold text-slate-500 uppercase">Rata-Rata Food Cost</p>
-        <p class="text-4xl font-bold text-orange-500 mt-2">32% <span class="text-sm text-slate-400 font-semibold align-middle">Batas 30%</span></p>
-      </div>
-      <div class="glass flex flex-col justify-center">
-        <p class="text-xs font-semibold text-slate-500 uppercase">Total Waste MTD (Bulan Ini)</p>
-        <p class="text-4xl font-bold text-[#2A6B9C] mt-2">4.5 <span class="text-sm text-slate-400 font-semibold align-middle">Kg</span></p>
+      
+      <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-inner">
+        <h3 class="font-bold text-[#2A6B9C] mb-4 text-lg">Tambah / Edit User</h3>
+        <input type="text" placeholder="Nama Lengkap" class="w-full p-3 mb-3 rounded-xl border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">
+        <label class="text-xs font-semibold text-slate-500 px-1">Tanggal Lahir</label>
+        <input type="date" class="w-full p-3 mb-3 rounded-xl border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">
+        <label class="text-xs font-semibold text-slate-500 px-1">Tanggal Masuk</label>
+        <input type="date" class="w-full p-3 mb-3 rounded-xl border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">
+        <select class="w-full p-3 mb-3 rounded-xl border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">
+          <option>Admin Toko</option><option>Bakery</option><option>Head Chef</option><option>R&D</option><option>Konten Kreator</option><option>Accounting</option><option>Admin Gudang</option><option>Barista</option>
+        </select>
+        <input type="text" placeholder="Buat PIN Baru (6 Digit)" maxlength="6" class="w-full p-3 mb-6 rounded-xl border border-gray-300 text-sm font-mono tracking-widest outline-none focus:ring-2 focus:ring-[#2A6B9C]">
+        <button onclick="alert('Fitur simpan (Integrasi Backend Action required)')" class="w-full bg-[#2A6B9C] text-white py-3 rounded-xl font-bold shadow-md hover:bg-blue-800 transition">Simpan Data Akun</button>
       </div>
     </div>
 
-    <!-- Charts -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div class="glass">
-        <h2 class="text-lg font-bold text-slate-800 mb-4">Tren Kinerja & Grade Tim (6 Bulan)</h2>
-        <canvas id="trendChart" height="200"></canvas>
+    <!-- MENU 2: APPROVAL PENGAJUAN -->
+    <div id="menu-approval" class="glass hidden">
+      <h2 class="text-lg font-bold mb-4 text-slate-800">Antrean Pengajuan (Cuti / Off Mingguan / Izin)</h2>
+      <div class="space-y-4">
+        <!-- Kartu Approval Dummy -->
+        <div class="border border-slate-200 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center bg-white shadow-sm">
+          <div class="mb-4 md:mb-0">
+            <h4 class="font-bold text-lg text-slate-800">Budi Raharjo <span class="text-sm font-normal text-slate-500 ml-2">(Admin Toko)</span></h4>
+            <div class="flex items-center space-x-2 mt-1">
+              <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-md font-bold">Off Mingguan</span>
+              <span class="text-sm text-slate-600 font-medium">Tanggal: 28 Agustus 2026</span>
+            </div>
+            <p class="text-sm text-slate-500 mt-2"><strong>Alasan:</strong> Acara keluarga di luar kota.</p>
+            <a href="#" class="text-xs text-[#2A6B9C] font-semibold underline mt-2 block">Lihat Lampiran Dokumen</a>
+          </div>
+          <div class="flex flex-col space-y-2 w-full md:w-auto">
+            <input type="text" placeholder="Catatan Manager (Opsional)" class="p-2 border rounded-lg text-xs w-full">
+            <div class="flex space-x-2">
+              <button onclick="alert('Pengajuan Disetujui')" class="flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-sm transition">Approve</button>
+              <button onclick="alert('Pengajuan Ditolak')" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-sm transition">Tolak</button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="glass">
-        <h2 class="text-lg font-bold text-slate-800 mb-4">Distribusi Waste per Divisi</h2>
-        <canvas id="wasteChart" height="200"></canvas>
+    </div>
+
+    <!-- MENU 3: REVIEW KPI & LAPORAN -->
+    <div id="menu-kpi" class="glass hidden">
+      <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+        <div>
+          <h2 class="text-lg font-bold text-slate-800">Review KPI Harian & Bulanan</h2>
+          <p class="text-xs text-slate-500">Evaluasi performa berdasarkan input laporan harian.</p>
+        </div>
+        <button onclick="downloadSuratPDF()" class="mt-4 md:mt-0 bg-slate-800 text-white px-5 py-2 rounded-xl font-bold text-sm shadow hover:bg-slate-700 transition">Cetak Surat Rapor (PDF)</button>
       </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm border-collapse">
+          <thead>
+            <tr class="bg-slate-100">
+              <th class="p-3 border-b">Nama Karyawan</th>
+              <th class="p-3 border-b text-center">Kehadiran (Laporan)</th>
+              <th class="p-3 border-b text-center">Skor KPI Terkini</th>
+              <th class="p-3 border-b text-center">Prediksi Grade</th>
+              <th class="p-3 border-b text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="kpi-table-body">
+            <tr>
+              <td class="p-3 border-b font-semibold">Budi Raharjo</td>
+              <td class="p-3 border-b text-center">20 Hari</td>
+              <td class="p-3 border-b text-center font-bold">88%</td>
+              <td class="p-3 border-b text-center"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full font-bold">B</span></td>
+              <td class="p-3 border-b text-center"><button class="text-[#2A6B9C] font-semibold text-xs hover:underline">Detail Harian</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Hidden Template Surat Resmi untuk PDF -->
+  <div id="pdf-surat-template" class="hidden p-10 bg-white text-black w-[800px] mx-auto font-serif">
+    <div class="text-center border-b-2 border-black pb-4 mb-6">
+      <h1 class="text-2xl font-bold uppercase">SATU SISTEM PASTRYFITY</h1>
+      <p class="text-sm">Laporan Evaluasi Kinerja Karyawan (KPI) - Periode Berjalan</p>
+    </div>
+    <div class="mb-6 space-y-2 text-sm">
+      <p><strong>Diberikan Kepada:</strong> Budi Raharjo</p>
+      <p><strong>Posisi / Divisi:</strong> Admin Toko</p>
+      <p><strong>Tanggal Dokumen:</strong> <span id="tgl-cetak"></span></p>
+    </div>
+    <p class="text-sm text-justify mb-4">Berdasarkan hasil evaluasi laporan harian dan metrik operasional yang telah dicapai selama periode bulan ini, manajemen memberikan penilaian kinerja sebagai berikut:</p>
+    <table class="w-full border-collapse border border-black text-sm mb-6">
+      <tr class="bg-gray-100"><th class="border border-black p-2">Kriteria Penilaian</th><th class="border border-black p-2 text-center">Hasil</th></tr>
+      <tr><td class="border border-black p-2">Total Kehadiran (Input Laporan)</td><td class="border border-black p-2 text-center">20 Hari</td></tr>
+      <tr><td class="border border-black p-2">Rata-rata Skor Kualitas & Metrik</td><td class="border border-black p-2 text-center">88%</td></tr>
+      <tr><td class="border border-black p-2 font-bold">Grade Akhir</td><td class="border border-black p-2 text-center font-bold text-lg">B</td></tr>
+    </table>
+    <p class="text-sm text-justify mb-16">Status kelanjutan kontrak dan pencairan insentif disesuaikan dengan aturan perusahaan yang berlaku. Keputusan ini dibuat secara sistematis oleh sistem.</p>
+    <div class="flex justify-between items-center px-10">
+      <div class="text-center"><p class="text-sm mb-16">Mengetahui,</p><p class="text-sm font-bold underline">Manager Operasional</p></div>
+      <div class="text-center"><p class="text-sm mb-16">Disetujui,</p><p class="text-sm font-bold underline">Executive Owner</p></div>
     </div>
   </div>
 
   <script>
-    const ctxTrend = document.getElementById('trendChart').getContext('2d');
-    new Chart(ctxTrend, {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
-        datasets: [{ label: 'Rata-rata Skor (%)', data: [82, 85, 84, 88, 87, 88], borderColor: '#2A6B9C', backgroundColor: 'rgba(42, 107, 156, 0.1)', fill: true, tension: 0.4 }]
-      }
-    });
+    document.getElementById('tgl-cetak').innerText = new Date().toLocaleDateString('id-ID');
 
-    const ctxWaste = document.getElementById('wasteChart').getContext('2d');
-    new Chart(ctxWaste, {
-      type: 'bar',
-      data: {
-        labels: ['Bakery (Oven)', 'Head Chef (Dapur)', 'Barista (Bar)'],
-        datasets: [{ label: 'Total Waste (Kg/Liter)', data: [2.1, 1.8, 0.6], backgroundColor: '#ef4444', borderRadius: 8 }]
+    async function loadUsersForManager() {
+      try {
+        const res = await fetch('data/users.json');
+        const users = await res.json();
+        const tbody = document.getElementById('user-table-body');
+        tbody.innerHTML = '';
+        users.forEach(u => {
+          if(u.role === 'employee') {
+            const statusBadge = u.status === 'ACTIVE' 
+              ? '<span class="bg-green-100 text-green-700 px-2 py-1 rounded-md text-xs font-semibold">Aktif</span>'
+              : '<span class="bg-red-100 text-red-700 px-2 py-1 rounded-md text-xs font-semibold">Terkunci</span>';
+            tbody.innerHTML += `
+              <tr class="border-b border-slate-100 hover:bg-slate-50">
+                <td class="p-3 font-medium text-slate-800">${u.name}</td>
+                <td class="p-3 text-slate-600">${u.division}</td>
+                <td class="p-3 text-slate-600">${u.join_date}</td>
+                <td class="p-3"><span class="bg-slate-200 px-2 py-1 rounded font-mono tracking-widest text-xs">${u.pin}</span></td>
+                <td class="p-3">${statusBadge}</td>
+                <td class="p-3 text-center"><button class="text-blue-600 hover:text-blue-800 font-semibold text-xs border border-blue-200 px-2 py-1 rounded">Edit</button></td>
+              </tr>
+            `;
+          }
+        });
+      } catch(e) {
+        document.getElementById('user-table-body').innerHTML = '<tr><td colspan="6" class="p-4 text-center text-red-500">Gagal memuat JSON.</td></tr>';
       }
-    });
+    }
+    loadUsersForManager();
+
+    function switchMenu(targetId) {
+      ['menu-users', 'menu-approval', 'menu-kpi'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(targetId).classList.remove('hidden');
+      
+      const btns = document.querySelectorAll('.nav-btn');
+      btns.forEach(btn => {
+        btn.classList.remove('active-nav');
+        btn.classList.add('inactive-nav');
+      });
+      event.target.classList.add('active-nav');
+      event.target.classList.remove('inactive-nav');
+    }
+
+    function downloadSuratPDF() {
+      const element = document.getElementById('pdf-surat-template');
+      element.classList.remove('hidden'); 
+      
+      const opt = {
+        margin:       0.5,
+        filename:     'Surat_Resmi_KPI_Budi.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(element).save().then(() => {
+        element.classList.add('hidden');
+      });
+    }
   </script>
 </body>
 </html>
