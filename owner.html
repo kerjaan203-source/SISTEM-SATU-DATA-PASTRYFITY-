@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owner Dashboard - Executive View</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart JS untuk Grafik Interaktif -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { 'milk-blue': '#EBF3FA', 'deep-blue': '#2A6B9C' }, borderRadius: { 'ios': '32px' } } } }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; background-color: #EBF3FA; }
+    .glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.4); }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 p-8">
+  <div class="max-w-7xl mx-auto space-y-6">
+    
+    <!-- Header -->
+    <div class="glass rounded-ios p-6 flex justify-between items-center shadow-sm">
+      <div>
+        <h1 class="text-2xl font-bold text-deep-blue">Executive Dashboard</h1>
+        <p class="text-sm text-slate-500">Level 3 Access - Monitoring Performa Konsolidasi</p>
+      </div>
+      <a href="index.html" class="bg-red-100 text-red-600 px-4 py-2 rounded-full font-semibold text-sm">Logout</a>
+    </div>
+
+    <!-- 4 Kartu KPI Ringkasan -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="glass rounded-2xl p-5 shadow-sm">
+        <p class="text-xs font-semibold text-slate-500 uppercase">Rata-Rata Kinerja Tim</p>
+        <p class="text-3xl font-bold text-deep-blue mt-1">88% <span class="text-sm text-green-500">Grade B</span></p>
+      </div>
+      <div class="glass rounded-2xl p-5 shadow-sm">
+        <p class="text-xs font-semibold text-slate-500 uppercase">Karyawan Grade D (Risiko)</p>
+        <p class="text-3xl font-bold text-red-500 mt-1">1 <span class="text-sm text-slate-400">Orang</span></p>
+      </div>
+      <div class="glass rounded-2xl p-5 shadow-sm">
+        <p class="text-xs font-semibold text-slate-500 uppercase">Rata-Rata Food Cost</p>
+        <p class="text-3xl font-bold text-orange-500 mt-1">32% <span class="text-sm text-slate-400">Batas Max 30%</span></p>
+      </div>
+      <div class="glass rounded-2xl p-5 shadow-sm">
+        <p class="text-xs font-semibold text-slate-500 uppercase">Total Waste MTD (Bulan ini)</p>
+        <p class="text-3xl font-bold text-deep-blue mt-1">4.5 <span class="text-sm text-slate-400">Kg</span></p>
+      </div>
+    </div>
+
+    <!-- Area Grafik Visual -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="glass rounded-ios p-6 shadow-sm">
+        <h2 class="text-lg font-bold text-deep-blue mb-4">Tren Kinerja & Grade Tim (6 Bulan)</h2>
+        <canvas id="trendChart" height="200"></canvas>
+      </div>
+      
+      <div class="glass rounded-ios p-6 shadow-sm">
+        <h2 class="text-lg font-bold text-deep-blue mb-4">Distribusi Waste per Divisi</h2>
+        <canvas id="wasteChart" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Inisialisasi Chart 1: Line Chart Tren
+    const ctxTrend = document.getElementById('trendChart').getContext('2d');
+    new Chart(ctxTrend, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+        datasets: [{
+          label: 'Rata-rata Skor (%)',
+          data: [82, 85, 84, 88, 87, 88],
+          borderColor: '#2A6B9C',
+          backgroundColor: 'rgba(42, 107, 156, 0.1)',
+          fill: true,
+          tension: 0.4 // Membuat kurva melengkung (smooth)
+        }]
+      }
+    });
+
+    // Inisialisasi Chart 2: Bar Chart Waste
+    const ctxWaste = document.getElementById('wasteChart').getContext('2d');
+    new Chart(ctxWaste, {
+      type: 'bar',
+      data: {
+        labels: ['Bakery (Oven)', 'Head Chef (Dapur)', 'Barista (Bar)'],
+        datasets: [{
+          label: 'Total Waste (Kg/Liter)',
+          data: [2.1, 1.8, 0.6],
+          backgroundColor: '#ef4444',
+          borderRadius: 8
+        }]
+      }
+    });
+  </script>
+</body>
+</html>
