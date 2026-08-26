@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Karyawan Portal - Sistem KPI Cake Shop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'milk-blue': '#EBF3FA',
+            'deep-blue': '#2A6B9C'
+          },
+          boxShadow: {
+            'ios-soft': '0 8px 30px rgba(0,0,0,0.06)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; background-color: #EBF3FA; overflow-x: hidden; }
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .squircle { border-radius: 32px; }
+    .keypad-btn {
+      transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .keypad-btn:active {
+      transform: scale(0.9);
+      background-color: #EBF3FA;
+    }
+    /* Dynamic Island Toast */
+    #toast {
+      position: fixed; top: 16px; left: 50%; transform: translate(-50%, -100%);
+      background: black; color: white; padding: 12px 24px; border-radius: 9999px;
+      font-weight: 500; font-size: 14px; opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    #toast.show { transform: translate(-50%, 0); opacity: 1; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col items-center justify-center p-4">
+
+  <div id="toast">Laporan Berhasil Dikirim!</div>
+
+  <!-- Screen 1: PIN Login -->
+  <div id="login-screen" class="w-full max-w-sm glass squircle shadow-ios-soft p-8 flex flex-col items-center">
+    <h1 class="text-2xl font-bold text-deep-blue mb-2">CakeShop KPI</h1>
+    <p class="text-sm text-slate-500 mb-8">Masukkan 6-Digit PIN Anda</p>
+    
+    <div class="flex space-x-3 mb-8" id="pin-indicators">
+      <div class="w-4 h-4 rounded-full bg-slate-200 transition-colors duration-200"></div>
+      <div class="w-4 h-4 rounded-full bg-slate-200 transition-colors duration-200"></div>
+      <div class="w-4 h-4 rounded-full bg-slate-200 transition-colors duration-200"></div>
+      <div class="w-4 h-4 rounded-full bg-slate-200 transition-colors duration-200"></div>
+      <div class="w-4 h-4 rounded-full bg-slate-200 transition-colors duration-200"></div>
+      <div class="w-4 h-4 rounded-full bg-slate-200 transition-colors duration-200"></div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-6 w-full px-4">
+      <button class="keypad-btn w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center text-2xl font-semibold" onclick="pressKey(1)">1</button>
+      <button class="keypad-btn w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center text-2xl font-semibold" onclick="pressKey(2)">2</button>
+      <button class="keypad-btn w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center text-2xl font-semibold" onclick="pressKey(3)">3</button>
+      <button class="keypad-btn w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center text-2xl font-semibold" onclick="pressKey(4)">4</button>
+      <button class="keypad-btn w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center text-2xl font-semibold" onclick="pressKey(5)">5</button>
+      <button class="keypad-btn w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center text-2xl font-semibold" onclick="pressKey(6)">6</button>
+      <button class="keypad-btn w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center text-2xl font-semibold" onclick="pressKey(7)">7</button>
+      <button class="keypad-btn w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center text-2xl font-semibold" onclick="pressKey(8)">8</button>
+      <button class="keypad-btn w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center text-2xl font-semibold" onclick="pressKey(9)">9</button>
+      <div></div>
+      <button class="keypad-btn w-16 h-16 rounded-full bg-white shadow-sm flex items-center justify-center text-2xl font-semibold" onclick="pressKey(0)">0</button>
+      <button class="keypad-btn w-16 h-16 rounded-full bg-red-50 text-red-500 shadow-sm flex items-center justify-center text-lg font-bold" onclick="pressDelete()">del</button>
+    </div>
+  </div>
+
+  <!-- Screen 2: Laporan Harian (Hidden by default) -->
+  <div id="form-screen" class="w-full max-w-md hidden">
+    <div class="glass squircle shadow-ios-soft p-6">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h2 class="text-xl font-bold text-deep-blue" id="user-name-display">Halo, Nama</h2>
+          <p class="text-xs font-semibold text-white bg-deep-blue px-2 py-1 rounded-full inline-block mt-1" id="user-div-display">Divisi</p>
+        </div>
+        <button onclick="logout()" class="text-sm text-red-500 font-semibold bg-red-50 px-3 py-1 rounded-full">Keluar</button>
+      </div>
+
+      <form id="daily-report-form" class="space-y-4">
+        <!-- Wajib -->
+        <div>
+          <label class="block text-sm font-semibold mb-1 text-slate-700">Inisiatif Hari Ini <span class="text-red-500">*</span></label>
+          <textarea required class="w-full bg-white/50 border border-white rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-deep-blue/30 text-sm" rows="2" placeholder="Apa inisiatif ekstra Anda hari ini?"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-1 text-slate-700">Kendala Lapangan <span class="text-red-500">*</span></label>
+          <textarea required class="w-full bg-white/50 border border-white rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-deep-blue/30 text-sm" rows="2" placeholder="Ada kendala apa di shift ini?"></textarea>
+        </div>
+
+        <div class="w-full h-px bg-slate-200 my-4"></div>
+        <h3 class="font-bold text-deep-blue text-sm mb-2">Metrik Divisi Anda</h3>
+        
+        <!-- Dynamic Fields Container -->
+        <div id="dynamic-fields" class="space-y-4"></div>
+
+        <button type="submit" class="w-full mt-6 bg-deep-blue text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 transition-transform duration-200">
+          Kirim Laporan
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let currentPin = "";
+    let usersData = [];
+    let schemaData = {};
+    let activeUser = null;
+
+    async function loadData() {
+      try {
+        const [uRes, sRes] = await Promise.all([
+          fetch('data/users.json'),
+          fetch('data/kpi-schema.json')
+        ]);
+        usersData = await uRes.json();
+        schemaData = await sRes.json();
+      } catch (e) {
+        console.error("Gagal memuat data dari folder 'data/'. Pastikan struktur folder sudah benar di GitHub.");
+      }
+    }
+    loadData();
+
+    function pressKey(num) {
+      if (currentPin.length < 6) {
+        currentPin += num;
+        updateIndicators();
+        if (currentPin.length === 6) verifyPin();
+      }
+    }
+
+    function pressDelete() {
+      if (currentPin.length > 0) {
+        currentPin = currentPin.slice(0, -1);
+        updateIndicators();
+      }
+    }
+
+    function updateIndicators() {
+      const dots = document.querySelectorAll('#pin-indicators div');
+      dots.forEach((dot, index) => {
+        if (index < currentPin.length) {
+          dot.classList.remove('bg-slate-200');
+          dot.classList.add('bg-deep-blue');
+        } else {
+          dot.classList.remove('bg-deep-blue');
+          dot.classList.add('bg-slate-200');
+        }
+      });
+    }
+
+    function verifyPin() {
+      activeUser = usersData.find(u => u.pin === currentPin);
+      if (activeUser) {
+        if (activeUser.status === 'INACTIVE_AUTO_RESIGNED') {
+          alert('Akun Anda terkunci otomatis oleh sistem (Akumulasi 2x Grade D). Silakan hubungi Manager.');
+          currentPin = ""; updateIndicators(); return;
+        }
+
+        // Redirect based on role
+        if (activeUser.role === 'manager') { window.location.href = 'manager.html'; return; }
+        if (activeUser.role === 'owner') { window.location.href = 'owner.html'; return; }
+
+        // Is Employee - Show Form
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('form-screen').classList.remove('hidden');
+        document.getElementById('user-name-display').innerText = `Halo, ${activeUser.name.split(' ')[0]}`;
+        document.getElementById('user-div-display').innerText = activeUser.division;
+        renderDynamicForm(activeUser.division);
+      } else {
+        alert('PIN Salah atau tidak terdaftar!');
+        currentPin = ""; updateIndicators();
+      }
+    }
+
+    function renderDynamicForm(division) {
+      const container = document.getElementById('dynamic-fields');
+      container.innerHTML = '';
+      const fields = schemaData[division] || [];
+      
+      if(fields.length === 0) {
+        container.innerHTML = '<p class="text-xs text-red-500">Skema divisi tidak ditemukan.</p>';
+        return;
+      }
+      
+      fields.forEach(field => {
+        const div = document.createElement('div');
+        if (field.type === 'checkbox') {
+          div.className = "flex items-center space-x-3 bg-white/50 p-3 rounded-xl border border-white";
+          div.innerHTML = `
+            <input type="checkbox" id="${field.name}" class="w-5 h-5 text-deep-blue focus:ring-deep-blue border-gray-300 rounded">
+            <label for="${field.name}" class="text-sm font-medium text-slate-700">${field.label}</label>
+          `;
+        } else {
+          div.innerHTML = `
+            <label class="block text-sm font-semibold mb-1 text-slate-700">${field.label}</label>
+            <input type="${field.type}" id="${field.name}" required placeholder="${field.placeholder || ''}" 
+                   class="w-full bg-white/50 border border-white rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-deep-blue/30 text-sm">
+          `;
+        }
+        container.appendChild(div);
+      });
+    }
+
+    document.getElementById('daily-report-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      // Show iOS Dynamic Island Toast
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+        logout(); // Auto reset to keypad
+      }, 2500);
+    });
+
+    function logout() {
+      activeUser = null;
+      currentPin = "";
+      updateIndicators();
+      document.getElementById('form-screen').classList.add('hidden');
+      document.getElementById('login-screen').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
