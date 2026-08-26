@@ -1,0 +1,47 @@
+[
+  {
+    "id": "U001",
+    "pin": "999888",
+    "role": "manager",
+    "name": "Master Manager",
+    "status": "ACTIVE",
+    "grade_d_count": 0,
+    "division": "Management"
+  },
+  {
+    "id": "U002",
+    "pin": "777777",
+    "role": "owner",
+    "name": "Business Owner",
+    "status": "ACTIVE",
+    "grade_d_count": 0,
+    "division": "Executive"
+  },
+  {
+    "id": "U003",
+    "pin": "123456",
+    "role": "employee",
+    "name": "Budi - Admin",
+    "status": "ACTIVE",
+    "grade_d_count": 0,
+    "division": "Admin Toko"
+  },
+  {
+    "id": "U004",
+    "pin": "654321",
+    "role": "employee",
+    "name": "Siti - Bakery",
+    "status": "ACTIVE",
+    "grade_d_count": 1,
+    "division": "Bakery"
+  },
+  {
+    "id": "U005",
+    "pin": "112233",
+    "role": "employee",
+    "name": "Doni - Barista",
+    "status": "INACTIVE_AUTO_RESIGNED",
+    "grade_d_count": 2,
+    "division": "Barista"
+  }
+]
