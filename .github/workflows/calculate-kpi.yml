@@ -1,8 +1,7 @@
-name: System KPI Automation (Monthly Reset & Evaluation)
+name: Evaluasi Bulanan & Auto-Lock Akun
 
 on:
   schedule:
-    # Berjalan otomatis setiap akhir bulan pada pukul 00:00 WIB (17:00 UTC)
     - cron: '0 17 28-31 * *' 
   workflow_dispatch:
 
@@ -13,40 +12,30 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Run Auto-Calculate KPI & Enforce Lock Rule (2x Grade D)
+      - name: Run Python Evaluation Logic
         run: |
-          echo "Memulai evaluasi KPI Bulanan..."
           python3 -c "
           import json, os
-          
           file_path = 'data/users.json'
           try:
               with open(file_path, 'r') as f:
                   users = json.load(f)
-              
-              changes_made = False
+              changes = False
               for user in users:
                   if user['role'] == 'employee' and user['status'] == 'ACTIVE':
-                      # Logika kunci akun: Jika akumulasi Grade D mencapai 2, ganti status.
                       if user['grade_d_count'] >= 2:
                           user['status'] = 'INACTIVE_AUTO_RESIGNED'
-                          changes_made = True
-                          print(f\"-> Akun {user['name']} dikunci otomatis (2x Grade D).\")
-              
-              if changes_made:
+                          changes = True
+              if changes:
                   with open(file_path, 'w') as f:
                       json.dump(users, f, indent=2)
-                  print('Update berhasil disimpan ke users.json')
-              else:
-                  print('Tidak ada akun yang terkena penalti lock bulan ini.')
-                  
           except Exception as e:
-              print('Gagal menjalankan script Python:', e)
+              print('Error:', e)
           "
 
-      - name: Commit & Push Data
+      - name: Commit Status Lock
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add data/users.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-Update: Mengunci Akun 2x Grade D" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "System: Auto-lock akun 2x Grade D" && git push)
