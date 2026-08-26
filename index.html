@@ -9,7 +9,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; background-color: #EBF3FA; }
     .glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.4); }
-    .tab-active { background-color: #2A6B9C; color: white; }
+    .tab-active { background-color: #2A6B9C; color: white; box-shadow: 0 4px 10px rgba(42, 107, 156, 0.2); }
     .tab-inactive { background-color: transparent; color: #64748b; border: 1px solid #cbd5e1; }
   </style>
 </head>
@@ -18,12 +18,12 @@
   <!-- Screen 1: Login -->
   <div id="login-screen" class="w-full max-w-sm glass rounded-3xl p-8 flex flex-col items-center">
     <h1 class="text-2xl font-bold text-[#2A6B9C] mb-2 text-center">SATU SISTEM PASTRYFITY</h1>
-    <p class="text-sm text-slate-500 mb-8">Portal Karyawan</p>
+    <p class="text-sm text-slate-500 mb-8">Portal Login Terpadu</p>
     <input type="password" id="pin-input" maxlength="6" inputmode="numeric" class="w-full text-center tracking-[1em] text-2xl font-bold p-4 rounded-xl border border-gray-300 mb-4 focus:ring-2 focus:ring-[#2A6B9C] outline-none" placeholder="••••••">
     <button onclick="verifyPin()" class="w-full bg-[#2A6B9C] text-white font-bold py-3 rounded-xl shadow active:scale-95 transition">Login dengan PIN</button>
   </div>
 
-  <!-- Screen 2: Dashboard -->
+  <!-- Screen 2: Dashboard Karyawan -->
   <div id="dashboard-screen" class="w-full max-w-md hidden space-y-4">
     <div class="glass rounded-3xl p-6 shadow-sm">
       <div class="flex justify-between items-start mb-6">
@@ -36,15 +36,15 @@
 
       <!-- Tab Navigation -->
       <div class="flex space-x-2 mb-6">
-        <button onclick="switchTab('pengajuan')" id="tab-pengajuan" class="flex-1 py-2 rounded-xl text-sm font-bold tab-active">Pengajuan Absen</button>
-        <button onclick="switchTab('laporan')" id="tab-laporan" class="flex-1 py-2 rounded-xl text-sm font-bold tab-inactive">Laporan Harian</button>
+        <button onclick="switchTab('pengajuan')" id="tab-pengajuan" class="flex-1 py-2 rounded-xl text-sm font-bold tab-active transition">Pengajuan Absen</button>
+        <button onclick="switchTab('laporan')" id="tab-laporan" class="flex-1 py-2 rounded-xl text-sm font-bold tab-inactive transition">Laporan Harian</button>
       </div>
 
       <!-- TAB 1: PENGAJUAN -->
       <div id="view-pengajuan" class="space-y-4">
         <form onsubmit="event.preventDefault(); alert('Pengajuan Terkirim!'); this.reset();" class="bg-white p-4 rounded-2xl border shadow-sm">
           <label class="block text-sm font-semibold mb-1">Jenis Pengajuan</label>
-          <select required class="w-full p-2 rounded-lg border text-sm mb-3 outline-none focus:ring-2">
+          <select required class="w-full p-2 rounded-lg border text-sm mb-3 outline-none focus:ring-2 focus:ring-[#2A6B9C]">
             <option value="Cuti">Cuti Tahunan</option>
             <option value="Off">Off Mingguan</option>
             <option value="Sakit">Izin / Sakit</option>
@@ -62,33 +62,32 @@
           </div>
           
           <label class="block text-sm font-semibold mb-1">Alasan Lengkap</label>
-          <textarea required rows="2" class="w-full p-2 rounded-lg border text-sm mb-3 outline-none" placeholder="Alasan..."></textarea>
+          <textarea required rows="2" class="w-full p-2 rounded-lg border text-sm mb-3 outline-none focus:ring-2 focus:ring-[#2A6B9C]" placeholder="Alasan..."></textarea>
           
           <label class="block text-sm font-semibold mb-1">Lampiran (Max 1MB)</label>
-          <input type="file" accept="image/*,.pdf" class="w-full text-xs text-slate-500 mb-4">
+          <input type="file" accept="image/*,.pdf" class="w-full text-xs text-slate-500 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-[#2A6B9C]">
           
-          <button type="submit" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl shadow">Kirim Pengajuan</button>
+          <button type="submit" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl shadow active:scale-95 transition">Kirim Pengajuan</button>
         </form>
       </div>
 
-      <!-- TAB 2: LAPORAN HARIAN (Dinamis dari Manager) -->
+      <!-- TAB 2: LAPORAN HARIAN -->
       <div id="view-laporan" class="hidden space-y-4">
         <form onsubmit="event.preventDefault(); alert('Laporan Harian Tersimpan!'); this.reset();" class="bg-white p-4 rounded-2xl border shadow-sm">
           <label class="block text-sm font-semibold mb-1">Inisiatif Hari Ini <span class="text-red-500">*</span></label>
-          <textarea required class="w-full p-2 rounded-lg border text-sm mb-3 outline-none" rows="2"></textarea>
+          <textarea required class="w-full p-2 rounded-lg border text-sm mb-3 outline-none focus:ring-2 focus:ring-[#2A6B9C]" rows="2"></textarea>
           
           <label class="block text-sm font-semibold mb-1">Kendala Lapangan <span class="text-red-500">*</span></label>
-          <textarea required class="w-full p-2 rounded-lg border text-sm mb-3 outline-none" rows="2"></textarea>
+          <textarea required class="w-full p-2 rounded-lg border text-sm mb-3 outline-none focus:ring-2 focus:ring-[#2A6B9C]" rows="2"></textarea>
 
           <div class="w-full h-px bg-slate-200 my-4"></div>
           <h3 class="font-bold text-[#2A6B9C] text-sm mb-3">Tugas Khusus Divisi Anda</h3>
           
-          <!-- DIRENDER OLEH JAVASCRIPT MEMBACA LOKAL STORAGE -->
           <div id="dynamic-fields" class="space-y-3 mb-6 bg-blue-50/50 p-3 rounded-xl border border-blue-100">
-            <!-- Isi muncul disini -->
+            <!-- Dirender otomatis oleh Javascript -->
           </div>
 
-          <button type="submit" class="w-full bg-[#2A6B9C] text-white font-bold py-3 rounded-xl shadow">Kirim Laporan</button>
+          <button type="submit" class="w-full bg-[#2A6B9C] text-white font-bold py-3 rounded-xl shadow active:scale-95 transition">Kirim Laporan</button>
         </form>
       </div>
 
@@ -97,46 +96,79 @@
 
   <script>
     let activeUser = null;
+    
+    // Inisialisasi Database LocalStorage
     let users = JSON.parse(localStorage.getItem('sys_users')) || [];
     let schema = JSON.parse(localStorage.getItem('sys_schema')) || {};
+
+    // PENTING: Jika data kosong di browser baru, kita paksa inject data awal agar Manager bisa login
+    if(users.length === 0) {
+      users = [
+        { id: "M01", pin: "999888", role: "manager", name: "Master Manager" },
+        { id: "O01", pin: "777777", role: "owner", name: "Business Owner" },
+        { id: "U03", pin: "123456", role: "employee", name: "Budi Raharjo", division: "Admin Toko" },
+        { id: "U04", pin: "654321", role: "employee", name: "Siti Aminah", division: "Bakery" }
+      ];
+      localStorage.setItem('sys_users', JSON.stringify(users));
+    }
+
+    if(Object.keys(schema).length === 0) {
+      schema = { "Admin Toko": [{name: "omset", label: "Omset Cash (Rp)", type: "number"}], "Bakery": [] };
+      localStorage.setItem('sys_schema', JSON.stringify(schema));
+    }
 
     function verifyPin() {
       const pin = document.getElementById('pin-input').value;
       activeUser = users.find(u => u.pin === pin);
       
       if (activeUser) {
+        // Redirect System untuk Manager dan Owner
+        if (activeUser.role === 'manager') { 
+            window.location.href = 'manager.html'; 
+            return; 
+        }
+        if (activeUser.role === 'owner') { 
+            window.location.href = 'owner.html'; 
+            return; 
+        }
+
+        // Tampilan Karyawan Biasa
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('dashboard-screen').classList.remove('hidden');
         document.getElementById('user-greeting').innerText = `Halo, ${activeUser.name.split(' ')[0]}`;
         document.getElementById('div-name').innerText = activeUser.division;
         
-        // Render form sesuai data yang diubah Manager
         renderDynamicForm(activeUser.division);
         document.getElementById('pin-input').value = "";
       } else {
         alert('PIN Tidak Ditemukan! Pastikan Manager telah mendaftarkan PIN Anda.');
+        document.getElementById('pin-input').value = "";
       }
     }
 
+    // Perbaikan fungsi Switch Tab
     function switchTab(tab) {
+      // Sembunyikan semua isi
       document.getElementById('view-pengajuan').classList.add('hidden');
       document.getElementById('view-laporan').classList.add('hidden');
-      document.getElementById('tab-pengajuan').className = "flex-1 py-2 rounded-xl text-sm font-bold tab-inactive";
-      document.getElementById('tab-laporan').className = "flex-1 py-2 rounded-xl text-sm font-bold tab-inactive";
       
+      // Reset warna tombol
+      document.getElementById('tab-pengajuan').className = "flex-1 py-2 rounded-xl text-sm font-bold tab-inactive transition";
+      document.getElementById('tab-laporan').className = "flex-1 py-2 rounded-xl text-sm font-bold tab-inactive transition";
+      
+      // Aktifkan yang dipilih
       document.getElementById(`view-${tab}`).classList.remove('hidden');
-      document.getElementById(`tab-${tab}`).className = "flex-1 py-2 rounded-xl text-sm font-bold tab-active";
+      document.getElementById(`tab-${tab}`).className = "flex-1 py-2 rounded-xl text-sm font-bold tab-active transition";
     }
 
     function renderDynamicForm(division) {
       const container = document.getElementById('dynamic-fields');
       container.innerHTML = '';
       
-      // Ambil skema yang dibuat Manager dari localStorage
       const fields = schema[division] || [];
       
       if(fields.length === 0) {
-        container.innerHTML = '<p class="text-xs text-red-500 italic">Belum ada form tugas yang diatur Manager untuk posisi ini.</p>';
+        container.innerHTML = '<p class="text-xs text-slate-500 italic">Belum ada tugas spesifik yang ditugaskan oleh Manager.</p>';
         return;
       }
       
@@ -144,11 +176,11 @@
         const div = document.createElement('div');
         if (f.type === 'checkbox') {
           div.className = "flex items-center space-x-3 bg-white p-2 border rounded-lg";
-          div.innerHTML = `<input type="checkbox" required class="w-5 h-5 text-[#2A6B9C] rounded border-gray-300">
-                           <label class="text-sm font-medium">${f.label}</label>`;
+          div.innerHTML = `<input type="checkbox" class="w-5 h-5 text-[#2A6B9C] rounded border-gray-300">
+                           <label class="text-sm font-medium text-slate-700">${f.label}</label>`;
         } else {
-          div.innerHTML = `<label class="block text-sm font-semibold mb-1">${f.label}</label>
-                           <input type="${f.type}" required class="w-full p-2 rounded-lg border text-sm outline-none">`;
+          div.innerHTML = `<label class="block text-sm font-semibold mb-1 text-slate-700">${f.label}</label>
+                           <input type="${f.type}" required class="w-full p-2 rounded-lg border text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">`;
         }
         container.appendChild(div);
       });
@@ -158,7 +190,7 @@
       activeUser = null;
       document.getElementById('dashboard-screen').classList.add('hidden');
       document.getElementById('login-screen').classList.remove('hidden');
-      switchTab('pengajuan');
+      switchTab('pengajuan'); // Reset kembali ke tab awal
     }
   </script>
 </body>
