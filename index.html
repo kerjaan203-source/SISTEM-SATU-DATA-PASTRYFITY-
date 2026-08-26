@@ -15,7 +15,6 @@
 </head>
 <body class="min-h-screen text-slate-800 flex flex-col items-center justify-center p-4">
 
-  <!-- Screen 1: Login -->
   <div id="login-screen" class="w-full max-w-sm glass rounded-3xl p-8 flex flex-col items-center">
     <h1 class="text-2xl font-bold text-[#2A6B9C] mb-2 text-center">SATU SISTEM PASTRYFITY</h1>
     <p class="text-sm text-slate-500 mb-8">Portal Login Terpadu</p>
@@ -23,7 +22,6 @@
     <button onclick="verifyPin()" class="w-full bg-[#2A6B9C] text-white font-bold py-3 rounded-xl shadow active:scale-95 transition">Login dengan PIN</button>
   </div>
 
-  <!-- Screen 2: Dashboard Karyawan -->
   <div id="dashboard-screen" class="w-full max-w-md hidden space-y-4">
     <div class="glass rounded-3xl p-6 shadow-sm">
       <div class="flex justify-between items-start mb-6">
@@ -34,13 +32,11 @@
         <button onclick="logout()" class="bg-red-50 text-red-500 text-xs px-3 py-1 rounded-full font-bold">Keluar</button>
       </div>
 
-      <!-- Tab Navigation -->
       <div class="flex space-x-2 mb-6">
         <button onclick="switchTab('pengajuan')" id="tab-pengajuan" class="flex-1 py-2 rounded-xl text-sm font-bold tab-active transition">Pengajuan Absen</button>
         <button onclick="switchTab('laporan')" id="tab-laporan" class="flex-1 py-2 rounded-xl text-sm font-bold tab-inactive transition">Laporan Harian</button>
       </div>
 
-      <!-- TAB 1: PENGAJUAN -->
       <div id="view-pengajuan" class="space-y-4">
         <form onsubmit="submitPengajuanToGitHub(event)" class="bg-white p-4 rounded-2xl border shadow-sm">
           <label class="block text-sm font-semibold mb-1">Jenis Pengajuan</label>
@@ -51,17 +47,14 @@
           </select>
           <div class="flex space-x-3 mb-3">
             <div class="w-1/2">
-              <label class="block text-sm font-semibold mb-1">Tgl Mulai</label>
-              <input type="date" id="req-mulai" required class="w-full p-2 rounded-lg border text-sm outline-none">
+              <label class="block text-sm font-semibold mb-1">Tgl Mulai</label><input type="date" id="req-mulai" required class="w-full p-2 rounded-lg border text-sm outline-none">
             </div>
             <div class="w-1/2">
-              <label class="block text-sm font-semibold mb-1">Tgl Selesai</label>
-              <input type="date" id="req-selesai" required class="w-full p-2 rounded-lg border text-sm outline-none">
+              <label class="block text-sm font-semibold mb-1">Tgl Selesai</label><input type="date" id="req-selesai" required class="w-full p-2 rounded-lg border text-sm outline-none">
             </div>
           </div>
           <label class="block text-sm font-semibold mb-1">Alasan Lengkap</label>
-          <textarea id="req-alasan" required rows="2" class="w-full p-2 rounded-lg border text-sm mb-3 outline-none focus:ring-2 focus:ring-[#2A6B9C]" placeholder="Alasan..."></textarea>
-          
+          <textarea id="req-alasan" required rows="2" class="w-full p-2 rounded-lg border text-sm mb-3 outline-none focus:ring-2 focus:ring-[#2A6B9C]"></textarea>
           <button id="btn-submit-req" type="submit" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl shadow active:scale-95 transition">Kirim Pengajuan</button>
         </form>
 
@@ -72,18 +65,15 @@
         <div id="riwayat-pengajuan" class="space-y-2 mt-2"></div>
       </div>
 
-      <!-- TAB 2: LAPORAN HARIAN -->
       <div id="view-laporan" class="hidden space-y-4">
         <form onsubmit="event.preventDefault(); alert('Laporan Harian Tersimpan secara Lokal!'); this.reset();" class="bg-white p-4 rounded-2xl border shadow-sm">
           <label class="block text-sm font-semibold mb-1">Inisiatif Hari Ini <span class="text-red-500">*</span></label>
           <textarea required class="w-full p-2 rounded-lg border text-sm mb-3 outline-none focus:ring-2 focus:ring-[#2A6B9C]" rows="2"></textarea>
           <label class="block text-sm font-semibold mb-1">Kendala Lapangan <span class="text-red-500">*</span></label>
           <textarea required class="w-full p-2 rounded-lg border text-sm mb-3 outline-none focus:ring-2 focus:ring-[#2A6B9C]" rows="2"></textarea>
-          
           <div class="w-full h-px bg-slate-200 my-4"></div>
           <h3 class="font-bold text-[#2A6B9C] text-sm mb-3">Tugas Khusus Divisi Anda</h3>
           <div id="dynamic-fields" class="space-y-3 mb-6 bg-blue-50/50 p-3 rounded-xl border border-blue-100"></div>
-
           <button type="submit" class="w-full bg-[#2A6B9C] text-white font-bold py-3 rounded-xl shadow active:scale-95 transition">Kirim Laporan</button>
         </form>
       </div>
@@ -92,7 +82,6 @@
 
   <script>
     // --- KONFIGURASI GITHUB API ---
-    
     const TOKEN_PART_1 = 'github_pat_11CLESV4Q0efdIjTaQsvZO_8lI6XbHc4tH';
     const TOKEN_PART_2 = 'MMaq1bfnCbfBOKqIL2sptPkMvu5sOoTk7TVQKIKGIllUC6j6';
     const GITHUB_TOKEN = TOKEN_PART_1 + TOKEN_PART_2; 
@@ -101,12 +90,14 @@
     const REPO_NAME = 'SISTEM-SATU-DATA-PASTRYFITY-';       
     const FILE_PATH = 'data/requests.json';
 
+    let activeUser = null;
+    let users = JSON.parse(localStorage.getItem('sys_users')) || [];
+    let schema = JSON.parse(localStorage.getItem('sys_schema')) || {};
+
     if(users.length === 0) {
       users = [
         { id: "M01", pin: "999888", role: "manager", name: "Master Manager" },
-        { id: "O01", pin: "777777", role: "owner", name: "Business Owner" },
-        { id: "U03", pin: "123456", role: "employee", name: "Budi Raharjo", division: "Admin Toko" },
-        { id: "U04", pin: "654321", role: "employee", name: "Siti Aminah", division: "Bakery" }
+        { id: "U03", pin: "123456", role: "employee", name: "Budi Raharjo", division: "Admin Toko" }
       ];
       localStorage.setItem('sys_users', JSON.stringify(users));
     }
@@ -116,14 +107,13 @@
       activeUser = users.find(u => u.pin === pin);
       if (activeUser) {
         if (activeUser.role === 'manager') { window.location.href = 'manager.html'; return; }
-        if (activeUser.role === 'owner') { window.location.href = 'owner.html'; return; }
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('dashboard-screen').classList.remove('hidden');
         document.getElementById('user-greeting').innerText = `Halo, ${activeUser.name.split(' ')[0]}`;
         document.getElementById('div-name').innerText = activeUser.division;
         
         renderDynamicForm(activeUser.division);
-        loadMyRequests(); // Tarik data riwayat dari GitHub saat login
+        loadMyRequests(); 
         document.getElementById('pin-input').value = "";
       } else {
         alert('PIN Tidak Ditemukan!');
@@ -139,7 +129,6 @@
       document.getElementById(`tab-${tab}`).className = "flex-1 py-2 rounded-xl text-sm font-bold tab-active transition";
     }
 
-    // --- FITUR GITHUB API (KARYAWAN) ---
     async function loadMyRequests() {
       const container = document.getElementById('riwayat-pengajuan');
       container.innerHTML = '<p class="text-xs text-blue-500">Memuat riwayat dari server...</p>';
@@ -151,7 +140,6 @@
         const data = await response.json();
         const requestsData = JSON.parse(decodeURIComponent(escape(atob(data.content))));
         
-        // Filter khusus user yang login
         const myRequests = requestsData.filter(r => r.userId === activeUser.id).reverse();
         container.innerHTML = '';
         if(myRequests.length === 0) {
@@ -175,17 +163,15 @@
     async function submitPengajuanToGitHub(e) {
       e.preventDefault();
       const btn = document.getElementById('btn-submit-req');
-      btn.innerText = "Mengirim ke Server..."; btn.disabled = true;
+      btn.innerText = "Mengirim..."; btn.disabled = true;
 
       try {
-        // 1. Tarik file terbaru dulu
         const getRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
           headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }, cache: 'no-store'
         });
         const getData = await getRes.json();
         let currentData = JSON.parse(decodeURIComponent(escape(atob(getData.content))));
 
-        // 2. Tambahkan data baru
         currentData.push({
           id: "REQ-" + Date.now(), userId: activeUser.id, nama: activeUser.name, divisi: activeUser.division,
           jenis: document.getElementById('req-jenis').value, tgl_mulai: document.getElementById('req-mulai').value,
@@ -193,20 +179,18 @@
           status: "Pending", catatan_manager: ""
         });
 
-        // 3. Tembak kembali ke GitHub
         const updatedContent = btoa(unescape(encodeURIComponent(JSON.stringify(currentData, null, 2))));
         const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
           method: 'PUT',
           headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: `Karyawan mengajukan absen`, content: updatedContent, sha: getData.sha })
+          body: JSON.stringify({ message: `Karyawan absen`, content: updatedContent, sha: getData.sha })
         });
         
         if (!putRes.ok) throw new Error();
-        alert('Berhasil! Pengajuan terkirim ke Manager.');
-        e.target.reset();
-        loadMyRequests();
+        alert('Berhasil! Pengajuan terkirim.');
+        e.target.reset(); loadMyRequests();
       } catch (err) {
-        alert('Gagal mengirim ke server GitHub. Cek koneksi / Token.');
+        alert('Gagal mengirim. Pastikan file requests.json sudah ada di repo Anda.');
       } finally {
         btn.innerText = "Kirim Pengajuan"; btn.disabled = false;
       }
@@ -216,7 +200,7 @@
       const container = document.getElementById('dynamic-fields');
       container.innerHTML = '';
       const fields = schema[division] || [];
-      if(fields.length === 0) { container.innerHTML = '<p class="text-xs text-slate-500 italic">Belum ada tugas tambahan dari Manager.</p>'; return; }
+      if(fields.length === 0) { container.innerHTML = '<p class="text-xs text-slate-500 italic">Belum ada tugas.</p>'; return; }
       fields.forEach(f => {
         const div = document.createElement('div');
         if (f.type === 'checkbox') {
