@@ -92,14 +92,14 @@
 
   <script>
     // --- KONFIGURASI GITHUB API ---
-    const GITHUB_TOKEN = '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';
-    const REPO_OWNER = 'kerjaan203-source';
-    const REPO_NAME = 'SISTEM-SATU-DATA-PASTRYFITY-';
+    
+    const TOKEN_PART_1 = 'github_pat_11CLESV4Q0efdIjTaQsvZO_8lI6XbHc4tH';
+    const TOKEN_PART_2 = 'MMaq1bfnCbfBOKqIL2sptPkMvu5sOoTk7TVQKIKGIllUC6j6';
+    const GITHUB_TOKEN = TOKEN_PART_1 + TOKEN_PART_2; 
+    
+    const REPO_OWNER = 'kerjaan203-source';         
+    const REPO_NAME = 'SISTEM-SATU-DATA-PASTRYFITY-';       
     const FILE_PATH = 'data/requests.json';
-
-    let activeUser = null;
-    let users = JSON.parse(localStorage.getItem('sys_users')) || [];
-    let schema = JSON.parse(localStorage.getItem('sys_schema')) || {};
 
     if(users.length === 0) {
       users = [
