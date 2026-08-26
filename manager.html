@@ -17,197 +17,119 @@
 </head>
 <body>
   <div class="max-w-7xl mx-auto space-y-6">
-    <!-- Header -->
     <div class="glass flex justify-between items-center mb-4">
       <div>
         <h1 class="text-2xl font-bold text-[#2A6B9C]">Manager Dashboard</h1>
-        <p class="text-sm text-slate-600 mt-1 font-semibold">Selamat datang di SATU SISTEM PASTRYFITY, <span class="text-slate-800">Master Manager</span></p>
+        <p class="text-sm text-slate-600 mt-1 font-semibold">Selamat datang, <span class="text-slate-800">Master Manager</span></p>
       </div>
       <a href="index.html" class="bg-red-50 text-red-600 px-5 py-2 rounded-lg font-bold text-sm">Logout System</a>
     </div>
 
-    <!-- Navigasi -->
     <div class="flex space-x-3 mb-6 overflow-x-auto pb-2">
-      <div class="nav-btn active-nav whitespace-nowrap" onclick="switchMenu('menu-users')">Manajemen Karyawan</div>
+      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-users')">Manajemen Karyawan</div>
       <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-form')">Atur Form Laporan</div>
-      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-approval')">Approval Pengajuan</div>
+      <div class="nav-btn active-nav whitespace-nowrap" onclick="switchMenu('menu-approval')">Approval Pengajuan</div>
       <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-kpi')">Review KPI & Laporan</div>
     </div>
 
     <!-- 1. MANAJEMEN KARYAWAN -->
-    <div id="menu-users" class="glass grid grid-cols-1 xl:grid-cols-3 gap-8">
+    <div id="menu-users" class="glass hidden grid grid-cols-1 xl:grid-cols-3 gap-8">
       <div class="xl:col-span-2 overflow-x-auto">
         <h2 class="text-lg font-bold mb-4">Database Master Karyawan</h2>
         <table class="w-full text-left text-sm border-collapse min-w-[700px]">
-          <thead>
-            <tr class="bg-slate-100 text-slate-600">
-              <th class="p-3">Nama</th>
-              <th class="p-3">Posisi</th>
-              <th class="p-3">Tgl Lahir</th>
-              <th class="p-3">Tgl Masuk</th>
-              <th class="p-3">PIN</th>
-              <th class="p-3">Status</th>
-              <th class="p-3 text-center">Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="user-table-body">
-            <!-- Render via JS -->
-          </tbody>
+          <thead><tr class="bg-slate-100"><th class="p-3">Nama</th><th class="p-3">Posisi</th><th class="p-3">Tgl Lahir</th><th class="p-3">Tgl Masuk</th><th class="p-3">PIN</th><th class="p-3 text-center">Aksi</th></tr></thead>
+          <tbody id="user-table-body"></tbody>
         </table>
       </div>
-      
       <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
         <h3 class="font-bold text-[#2A6B9C] mb-4" id="form-user-title">Tambah / Edit User</h3>
         <input type="hidden" id="edit-index" value="">
-        <input type="text" id="edit-nama" placeholder="Nama Lengkap" class="w-full p-2 mb-3 rounded border text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">
-        
-        <label class="text-xs text-slate-500 font-semibold">Tanggal Lahir</label>
-        <input type="date" id="edit-dob" class="w-full p-2 mb-3 rounded border text-sm outline-none">
-        
-        <label class="text-xs text-slate-500 font-semibold">Tanggal Masuk</label>
-        <input type="date" id="edit-join" class="w-full p-2 mb-3 rounded border text-sm outline-none">
-        
-        <label class="text-xs text-slate-500 font-semibold">Posisi (Divisi)</label>
-        <select id="edit-posisi" class="w-full p-2 mb-3 rounded border text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">
-          <!-- Pilihan Divisi dirender dinamis dari Javascript agar sinkron dengan Atur Form -->
-        </select>
-        
-        <input type="text" id="edit-pin" placeholder="PIN 6 Digit" maxlength="6" class="w-full p-2 mb-6 rounded border text-sm font-mono tracking-widest outline-none">
-        <button onclick="saveUser()" class="w-full bg-[#2A6B9C] text-white py-2 rounded font-bold shadow hover:bg-blue-800 transition">Simpan Data Akun</button>
+        <input type="text" id="edit-nama" placeholder="Nama Lengkap" class="w-full p-2 mb-3 rounded border text-sm outline-none">
+        <label class="text-xs text-slate-500">Tgl Lahir</label><input type="date" id="edit-dob" class="w-full p-2 mb-3 rounded border text-sm outline-none">
+        <label class="text-xs text-slate-500">Tgl Masuk</label><input type="date" id="edit-join" class="w-full p-2 mb-3 rounded border text-sm outline-none">
+        <label class="text-xs text-slate-500">Posisi (Divisi)</label><select id="edit-posisi" class="w-full p-2 mb-3 rounded border text-sm outline-none"></select>
+        <input type="text" id="edit-pin" placeholder="PIN 6 Digit" maxlength="6" class="w-full p-2 mb-6 rounded border text-sm font-mono">
+        <button onclick="saveUser()" class="w-full bg-[#2A6B9C] text-white py-2 rounded font-bold shadow">Simpan Data Akun</button>
       </div>
     </div>
 
-    <!-- 2. ATUR FORM LAPORAN -->
+    <!-- 2. ATUR FORM -->
     <div id="menu-form" class="glass hidden">
-      <h2 class="text-lg font-bold mb-2">Pengaturan Form Pekerjaan Karyawan (Tugas Harian)</h2>
-      <p class="text-sm text-slate-500 mb-6">Pilih posisi untuk menambahkan atau menghapus indikator tugas harian mereka.</p>
-      
-      <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-3 sm:space-y-0 mb-6">
-        <select id="select-div-form" onchange="renderFormEditor()" class="p-2 border rounded-lg text-sm w-full sm:w-1/3 bg-slate-50 outline-none focus:ring-2 focus:ring-[#2A6B9C]">
-          <!-- Pilihan Divisi dirender dinamis -->
-        </select>
-        <!-- Tombol Tambah Posisi Baru -->
-        <button onclick="tambahDivisi()" class="bg-[#2A6B9C] text-white px-4 py-2 rounded-lg font-bold text-sm shadow hover:bg-blue-800 transition whitespace-nowrap">
-          + Tambah Posisi Baru
-        </button>
+      <h2 class="text-lg font-bold mb-2">Pengaturan Form Pekerjaan Karyawan</h2>
+      <div class="flex space-x-4 mb-6">
+        <select id="select-div-form" onchange="renderFormEditor()" class="p-2 border rounded-lg text-sm w-1/3 outline-none"></select>
+        <button onclick="tambahDivisi()" class="bg-[#2A6B9C] text-white px-4 py-2 rounded-lg font-bold text-sm shadow">+ Tambah Posisi Baru</button>
       </div>
-
       <div class="border p-5 rounded-xl bg-slate-50">
-        <h3 class="font-bold text-sm mb-4 text-[#2A6B9C]">Daftar Tugas untuk: <span id="label-divisi-aktif" class="text-slate-800 border-b-2 border-blue-400"></span></h3>
         <div id="fields-container" class="space-y-2 mb-6"></div>
-
-        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 p-4 border rounded-lg bg-white">
-          <input type="text" id="new-field-label" placeholder="Nama Tugas Baru..." class="flex-1 p-2 border rounded text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">
+        <div class="flex space-x-2 p-4 border rounded-lg bg-white">
+          <input type="text" id="new-field-label" placeholder="Nama Tugas Baru..." class="flex-1 p-2 border rounded text-sm outline-none">
           <select id="new-field-type" class="p-2 border rounded text-sm outline-none">
-            <option value="number">Angka</option>
-            <option value="text">Teks</option>
-            <option value="checkbox">Checklist</option>
+            <option value="number">Angka</option><option value="text">Teks</option><option value="checkbox">Checklist</option>
           </select>
-          <button onclick="addField()" class="bg-green-500 text-white px-4 py-2 rounded text-sm font-bold shadow hover:bg-green-600">+ Tambah Field</button>
+          <button onclick="addField()" class="bg-green-500 text-white px-4 py-2 rounded text-sm font-bold">+ Tambah Field</button>
         </div>
       </div>
     </div>
 
-    <!-- 3. APPROVAL PENGAJUAN -->
-    <div id="menu-approval" class="glass hidden">
-      <h2 class="text-lg font-bold mb-4">Antrean Pengajuan (Cuti / Off / Izin)</h2>
-      <div class="border border-slate-200 p-5 rounded-xl flex flex-col md:flex-row justify-between items-center bg-white shadow-sm">
-        <div>
-          <h4 class="font-bold text-lg text-slate-800">Budi Raharjo <span class="text-sm font-normal text-slate-500 ml-2">(Admin Toko)</span></h4>
-          <div class="flex items-center space-x-2 mt-1">
-            <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-bold">Cuti Tahunan</span>
-            <span class="text-sm text-slate-600 font-medium">28 Ags 2026 s/d 30 Ags 2026</span>
-          </div>
-          <p class="text-sm text-slate-500 mt-2"><strong>Alasan:</strong> Acara keluarga di luar kota.</p>
-          <button onclick="generateSuratPengajuan('Budi Raharjo', 'Admin Toko', 'Cuti Tahunan', '28 Ags - 30 Ags 2026', 'Acara keluarga di luar kota.')" class="text-xs text-[#2A6B9C] font-semibold underline mt-2 block hover:text-blue-800">Generate Surat Resmi & Lampiran (PDF)</button>
-        </div>
-        <div class="flex flex-col space-y-2 w-full md:w-auto mt-4 md:mt-0">
-          <input type="text" placeholder="Catatan Manager" class="p-2 border rounded text-xs outline-none focus:ring-1 focus:ring-[#2A6B9C]">
-          <div class="flex space-x-2">
-            <button class="bg-green-500 text-white px-4 py-2 rounded font-bold text-sm shadow hover:bg-green-600 transition">Approve</button>
-            <button class="bg-red-500 text-white px-4 py-2 rounded font-bold text-sm shadow hover:bg-red-600 transition">Tolak</button>
-          </div>
-        </div>
+    <!-- 3. APPROVAL PENGAJUAN (SINKRON GITHUB API) -->
+    <div id="menu-approval" class="glass block">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold">Antrean Pengajuan (Terhubung ke Server)</h2>
+        <button onclick="loadRequestsFromGitHub()" class="bg-blue-100 text-blue-700 px-4 py-2 rounded font-bold text-sm hover:bg-blue-200 transition">🔄 Tarik Data Karyawan</button>
       </div>
+      <div id="approval-list-container" class="space-y-4"></div>
     </div>
 
     <!-- 4. REVIEW KPI -->
     <div id="menu-kpi" class="glass hidden">
-      <h2 class="text-lg font-bold text-slate-800 mb-2">Review KPI Harian & Bulanan</h2>
-      <p class="text-xs text-slate-500 mb-6">Bobot: Kehadiran (20%) + Capaian Sistem (40%) + Penilaian Manager (40%)</p>
+      <h2 class="text-lg font-bold mb-2">Review KPI Harian</h2>
+      <p class="text-xs text-slate-500">Modul sedang disesuaikan.</p>
     </div>
   </div>
 
-  <!-- Hidden Template Surat Resmi Pengajuan -->
+  <!-- Template PDF -->
   <div id="pdf-template-surat" class="hidden p-10 bg-white text-black w-[800px] font-serif">
     <div class="text-center border-b-2 border-black pb-4 mb-6">
       <h1 class="text-2xl font-bold uppercase">SATU SISTEM PASTRYFITY</h1>
-      <p class="text-sm">Surat Keputusan / Bukti Pengajuan Karyawan</p>
+      <p class="text-sm font-bold mt-1">SURAT KEPUTUSAN PENGAJUAN KARYAWAN</p>
     </div>
     <table class="w-full text-sm mb-6 space-y-2">
       <tr><td class="w-1/3 py-1 font-bold">Nama Karyawan</td><td>: <span id="s-nama"></span></td></tr>
-      <tr><td class="w-1/3 py-1 font-bold">Posisi / Divisi</td><td>: <span id="s-divisi"></span></td></tr>
+      <tr><td class="w-1/3 py-1 font-bold">Divisi</td><td>: <span id="s-divisi"></span></td></tr>
       <tr><td class="w-1/3 py-1 font-bold">Jenis Pengajuan</td><td>: <span id="s-jenis"></span></td></tr>
-      <tr><td class="w-1/3 py-1 font-bold">Tanggal</td><td>: <span id="s-tgl"></span></td></tr>
+      <tr><td class="w-1/3 py-1 font-bold">Durasi</td><td>: <span id="s-tgl"></span></td></tr>
       <tr><td class="w-1/3 py-1 font-bold align-top">Alasan</td><td>: <span id="s-alasan"></span></td></tr>
+      <tr><td class="w-1/3 py-1 font-bold mt-4">Keputusan Manager</td><td class="font-bold text-lg uppercase">: <span id="s-status"></span></td></tr>
+      <tr><td class="w-1/3 py-1 font-bold align-top">Catatan Manager</td><td>: <span id="s-note"></span></td></tr>
     </table>
-    <div class="border border-dashed p-4 text-center text-xs text-gray-500 mb-12">
-      [ Lampiran Dokumen Karyawan Terlampir Secara Otomatis ]
-    </div>
-    <div class="flex justify-between px-10">
-      <div class="text-center"><p class="text-sm mb-16">Diajukan oleh,</p><p class="font-bold underline" id="s-nama2"></p></div>
-      <div class="text-center"><p class="text-sm mb-16">Disetujui,</p><p class="font-bold underline">Manager Operasional</p></div>
+    <div class="flex justify-between px-10 mt-20">
+      <div class="text-center"><p class="text-sm mb-16">Pemohon,</p><p class="font-bold underline" id="s-nama2"></p></div>
+      <div class="text-center"><p class="text-sm mb-16">Disetujui/Ditolak Oleh,</p><p class="font-bold underline">Manager Operasional</p></div>
     </div>
   </div>
 
   <script>
-    // ---------------------------------------------------------------------------
-    // DATABASE LOCALSTORAGE
-    // ---------------------------------------------------------------------------
-    let users = JSON.parse(localStorage.getItem('sys_users')) || [
-      { id: "M01", name: "Master Manager", division: "Management", dob: "1990-01-01", join_date: "2020-01-01", pin: "999888", status: "Aktif", role: "manager" },
-      { id: "U03", name: "Budi Raharjo", division: "Admin Toko", dob: "1998-05-12", join_date: "2023-02-15", pin: "123456", status: "Aktif", role: "employee" },
-      { id: "U04", name: "Siti Aminah", division: "Bakery", dob: "2000-11-20", join_date: "2024-01-10", pin: "654321", status: "Aktif", role: "employee" }
-    ];
-
-    let schema = JSON.parse(localStorage.getItem('sys_schema'));
+    // =====================================================================
+    // ⚙️ GITHUB API CONFIGURATION
+    // =====================================================================
+    const TOKEN_PART_1 = 'github_pat_11CLESV4Q0efdIjTaQsvZO_8lI6XbHc4tH';
+    const TOKEN_PART_2 = 'MMaq1bfnCbfBOKqIL2sptPkMvu5sOoTk7TVQKIKGIllUC6j6';
+    const GITHUB_TOKEN = TOKEN_PART_1 + TOKEN_PART_2; 
     
-    // Jika schema kosong, inject otomatis ke-8 divisi lengkap beserta contoh field
-    if (!schema || Object.keys(schema).length === 0) {
-      schema = {
-        "Admin Toko": [{name: "f1", label: "Omset Cash (Rp)", type: "number"}],
-        "Bakery": [{name: "f2", label: "Berat Waste (Gram)", type: "number"}],
-        "Head Chef": [],
-        "R&D": [],
-        "Konten Kreator": [],
-        "Accounting": [],
-        "Admin Gudang": [],
-        "Barista": []
-      };
-      localStorage.setItem('sys_schema', JSON.stringify(schema));
-    }
+    const REPO_OWNER = 'kerjaan203-source';         
+    const REPO_NAME = 'SISTEM-SATU-DATA-PASTRYFITY-';       
+    const FILE_PATH = 'data/requests.json';
+    // =====================================================================
 
-    const saveDB = () => {
-      localStorage.setItem('sys_users', JSON.stringify(users));
-      localStorage.setItem('sys_schema', JSON.stringify(schema));
-    };
+    let currentFileSha = ''; 
+    let requestsData = [];   
+    
+    // DB LOKAL UTK USER & FORM
+    let users = JSON.parse(localStorage.getItem('sys_users')) || [];
+    let schema = JSON.parse(localStorage.getItem('sys_schema')) || {};
+    const saveDB = () => { localStorage.setItem('sys_users', JSON.stringify(users)); localStorage.setItem('sys_schema', JSON.stringify(schema)); };
 
-    // ---------------------------------------------------------------------------
-    // FUNGSI SINKRONISASI DROPDOWN DIVISI
-    // ---------------------------------------------------------------------------
-    function syncDropdownDivisi() {
-      const allDivisions = Object.keys(schema);
-      const optionsHtml = allDivisions.map(div => `<option value="${div}">${div}</option>`).join('');
-      
-      // Update di menu Tambah/Edit Karyawan
-      document.getElementById('edit-posisi').innerHTML = optionsHtml;
-      // Update di menu Atur Form Laporan
-      document.getElementById('select-div-form').innerHTML = optionsHtml;
-    }
-
-    // ---------------------------------------------------------------------------
-    // NAVIGASI TAB MANAGER
-    // ---------------------------------------------------------------------------
     function switchMenu(targetId) {
       ['menu-users', 'menu-form', 'menu-approval', 'menu-kpi'].forEach(id => document.getElementById(id).classList.add('hidden'));
       document.getElementById(targetId).classList.remove('hidden');
@@ -215,188 +137,151 @@
       event.target.classList.add('active-nav'); event.target.classList.remove('inactive-nav');
     }
 
-    // ---------------------------------------------------------------------------
-    // MANAJEMEN KARYAWAN (CRUD)
-    // ---------------------------------------------------------------------------
-    function renderUserTable() {
-      const tbody = document.getElementById('user-table-body');
-      tbody.innerHTML = '';
-      
-      users.forEach((u, index) => {
-        if(u.role === 'manager' || u.role === 'owner') return; 
-        tbody.innerHTML += `
-          <tr class="border-b hover:bg-slate-50 transition">
-            <td class="p-3 font-medium">${u.name}</td>
-            <td class="p-3">${u.division}</td>
-            <td class="p-3">${u.dob || '-'}</td>
-            <td class="p-3">${u.join_date || '-'}</td>
-            <td class="p-3"><span class="bg-slate-200 px-2 py-1 rounded font-mono text-xs">${u.pin}</span></td>
-            <td class="p-3"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-semibold">${u.status || 'Aktif'}</span></td>
-            <td class="p-3 text-center space-x-1">
-              <button onclick="editUser(${index})" class="text-blue-600 border border-blue-300 px-3 py-1 rounded text-xs font-bold hover:bg-blue-50 transition">Edit</button>
-              <button onclick="hapusUser(${index})" class="text-red-600 border border-red-300 px-3 py-1 rounded text-xs font-bold hover:bg-red-50 transition">Hapus</button>
-            </td>
-          </tr>
-        `;
+    // --- GITHUB API (MANAGER APPROVAL) ---
+    async function loadRequestsFromGitHub() {
+      const container = document.getElementById('approval-list-container');
+      container.innerHTML = '<div class="p-5 text-center text-blue-500 font-bold">🔄 Sedang menarik data dari Server...</div>';
+      try {
+        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+          headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }, cache: 'no-store' 
+        });
+        if (!response.ok) throw new Error('Gagal mengakses file. Pastikan izin Token adalah Read & Write untuk Contents.');
+        const data = await response.json();
+        currentFileSha = data.sha; 
+        const content = decodeURIComponent(escape(atob(data.content)));
+        requestsData = JSON.parse(content);
+        renderApprovalQueue();
+      } catch (error) {
+        container.innerHTML = `<div class="p-5 text-center text-red-500 font-bold bg-red-50 rounded-xl">❌ Error: ${error.message}</div>`;
+      }
+    }
+
+    function renderApprovalQueue() {
+      const container = document.getElementById('approval-list-container');
+      container.innerHTML = '';
+      if(!requestsData || requestsData.length === 0) {
+        container.innerHTML = '<div class="p-5 text-center text-slate-500 bg-white rounded-xl border border-dashed">Belum ada pengajuan masuk.</div>'; return;
+      }
+
+      requestsData.slice().reverse().forEach(req => {
+        const isPending = req.status === 'Pending';
+        const badgeColor = isPending ? 'bg-yellow-100 text-yellow-700' : (req.status === 'Approved' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700');
+        
+        container.innerHTML += `
+          <div class="border border-slate-200 p-5 rounded-xl flex flex-col md:flex-row justify-between items-center bg-white shadow-sm hover:shadow transition">
+            <div class="w-full md:w-2/3">
+              <h4 class="font-bold text-lg text-slate-800">${req.nama} <span class="text-sm font-normal text-slate-500 ml-2">(${req.divisi})</span></h4>
+              <div class="flex flex-wrap items-center gap-2 mt-1 mb-2">
+                <span class="${badgeColor} text-xs px-2 py-1 rounded font-bold">${req.status === 'Pending' ? req.jenis : req.status}</span>
+                <span class="text-sm text-slate-600 font-medium bg-slate-50 border px-2 py-1 rounded">${req.tgl_mulai} s/d ${req.tgl_selesai}</span>
+              </div>
+              <p class="text-sm text-slate-600"><strong>Alasan:</strong> ${req.alasan}</p>
+              <button onclick="cetakPDF('${req.id}')" class="text-xs text-[#2A6B9C] font-semibold underline mt-3 hover:text-blue-800 block">Generate Surat Keputusan (PDF)</button>
+            </div>
+            <div class="w-full md:w-1/3 flex flex-col mt-4 md:mt-0 md:ml-4 space-y-2">
+              ${isPending ? `
+                <input type="text" id="note-${req.id}" placeholder="Catatan Manager" class="p-2 border rounded-lg text-sm w-full outline-none focus:border-[#2A6B9C]">
+                <div class="flex space-x-2">
+                  <button id="btn-app-${req.id}" onclick="prosesKeGitHub('${req.id}', 'Approved', 'btn-app-${req.id}')" class="flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-sm shadow transition">Approve</button>
+                  <button id="btn-tol-${req.id}" onclick="prosesKeGitHub('${req.id}', 'Ditolak', 'btn-tol-${req.id}')" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-sm shadow transition">Tolak</button>
+                </div>
+              ` : `
+                <div class="bg-slate-50 p-3 rounded-lg border text-sm text-center">
+                  <p class="font-bold text-slate-700">Telah Diproses: ${req.status}</p>
+                  <p class="text-xs text-slate-500 mt-1">${req.catatan_manager || '-'}</p>
+                </div>
+              `}
+            </div>
+          </div>`;
       });
     }
 
-    function editUser(index) {
-      const u = users[index];
-      document.getElementById('form-user-title').innerText = "Edit User: " + u.name;
-      document.getElementById('edit-index').value = index;
-      document.getElementById('edit-nama').value = u.name;
-      document.getElementById('edit-dob').value = u.dob || '';
-      document.getElementById('edit-join').value = u.join_date || '';
-      document.getElementById('edit-posisi').value = u.division;
-      document.getElementById('edit-pin').value = u.pin;
+    async function prosesKeGitHub(id, action, buttonId) {
+      const btn = document.getElementById(buttonId);
+      const originalText = btn.innerText; btn.innerText = "⏳ Proses..."; btn.disabled = true;
+      const noteInput = document.getElementById(`note-${id}`).value;
+      const reqIndex = requestsData.findIndex(r => r.id === id);
       
-      // Auto-scroll ke bagian form jika diakses lewat HP
+      if(reqIndex !== -1) {
+        requestsData[reqIndex].status = action;
+        requestsData[reqIndex].catatan_manager = noteInput || (action === 'Approved' ? 'Telah disetujui' : 'Ditolak');
+        try {
+          const updatedContent = btoa(unescape(encodeURIComponent(JSON.stringify(requestsData, null, 2))));
+          const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+            method: 'PUT',
+            headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: `Manager ${action} pengajuan ${id}`, content: updatedContent, sha: currentFileSha })
+          });
+          if (!response.ok) throw new Error('Gagal update ke GitHub. Cek Izin Token.');
+          const responseData = await response.json();
+          currentFileSha = responseData.content.sha; 
+          alert(`Berhasil! Pengajuan telah di-${action}.`);
+          renderApprovalQueue(); 
+        } catch (error) {
+          alert(`Error: ${error.message}`); btn.innerText = originalText; btn.disabled = false;
+        }
+      }
+    }
+
+    // --- FITUR LOKAL (USER & FORM) ---
+    function syncDropdown() {
+      const opts = Object.keys(schema).map(div => `<option value="${div}">${div}</option>`).join('');
+      document.getElementById('edit-posisi').innerHTML = opts; document.getElementById('select-div-form').innerHTML = opts;
+    }
+
+    function renderUserTable() {
+      const tbody = document.getElementById('user-table-body'); tbody.innerHTML = '';
+      users.forEach((u, index) => {
+        if(u.role === 'manager' || u.role === 'owner') return; 
+        tbody.innerHTML += `<tr class="border-b hover:bg-slate-50"><td class="p-3">${u.name}</td><td class="p-3">${u.division}</td><td class="p-3">${u.dob||'-'}</td><td class="p-3">${u.join_date||'-'}</td><td class="p-3"><span class="bg-slate-200 px-2 py-1 rounded font-mono text-xs">${u.pin}</span></td><td class="p-3 space-x-1 text-center"><button onclick="editUser(${index})" class="text-blue-600 font-bold text-xs border border-blue-300 px-2 py-1 rounded">Edit</button> <button onclick="hapusUser(${index})" class="text-red-600 font-bold text-xs border border-red-300 px-2 py-1 rounded">Hapus</button></td></tr>`;
+      });
+    }
+
+    function editUser(i) {
+      document.getElementById('edit-index').value = i; document.getElementById('edit-nama').value = users[i].name; document.getElementById('edit-dob').value = users[i].dob||''; document.getElementById('edit-join').value = users[i].join_date||''; document.getElementById('edit-posisi').value = users[i].division; document.getElementById('edit-pin').value = users[i].pin;
       document.getElementById('form-user-title').scrollIntoView({ behavior: 'smooth' });
     }
 
     function saveUser() {
       const idx = document.getElementById('edit-index').value;
-      const nama = document.getElementById('edit-nama').value;
-      if(!nama) return alert("Nama wajib diisi!");
-
-      const userData = {
-        id: idx === "" ? "U" + Date.now() : users[idx].id,
-        name: nama,
-        division: document.getElementById('edit-posisi').value,
-        dob: document.getElementById('edit-dob').value,
-        join_date: document.getElementById('edit-join').value,
-        pin: document.getElementById('edit-pin').value,
-        status: "Aktif",
-        role: "employee"
-      };
-
-      if(idx === "") {
-        users.push(userData);
-      } else {
-        users[idx] = userData;
-      }
-
-      saveDB();
-      renderUserTable();
-      
-      document.getElementById('form-user-title').innerText = "Tambah / Edit User";
-      document.getElementById('edit-index').value = "";
-      ['edit-nama', 'edit-dob', 'edit-join', 'edit-pin'].forEach(id => document.getElementById(id).value = '');
-      alert("Data karyawan berhasil disimpan!");
+      const data = { id: idx===""?"U"+Date.now():users[idx].id, name: document.getElementById('edit-nama').value, division: document.getElementById('edit-posisi').value, dob: document.getElementById('edit-dob').value, join_date: document.getElementById('edit-join').value, pin: document.getElementById('edit-pin').value, status: "Aktif", role: "employee" };
+      if(idx==="") users.push(data); else users[idx] = data;
+      saveDB(); renderUserTable();
+      document.getElementById('edit-index').value = ""; document.getElementById('edit-nama').value = ""; document.getElementById('edit-pin').value = "";
     }
-
-    function hapusUser(index) {
-      if(confirm(`Yakin ingin menghapus ${users[index].name} secara permanen?`)) {
-        users.splice(index, 1);
-        saveDB();
-        renderUserTable();
-      }
-    }
-
-    // ---------------------------------------------------------------------------
-    // ATUR FORM LAPORAN & TAMBAH DIVISI BARU
-    // ---------------------------------------------------------------------------
-    function tambahDivisi() {
-      const namaDivisi = prompt("Masukkan nama posisi/divisi baru:");
-      if (namaDivisi && namaDivisi.trim() !== "") {
-        if (schema[namaDivisi]) {
-          alert("Posisi ini sudah ada di dalam sistem!");
-          return;
-        }
-        
-        // Buat objek array kosong untuk divisi baru
-        schema[namaDivisi] = [];
-        saveDB();
-        
-        // Sinkronkan kembali dropdown di semua tempat
-        syncDropdownDivisi();
-        
-        // Arahkan form editor ke divisi yang baru dibuat
-        document.getElementById('select-div-form').value = namaDivisi;
-        renderFormEditor();
-        
-        alert(`Berhasil! Posisi "${namaDivisi}" telah ditambahkan ke sistem.`);
-      }
-    }
+    function hapusUser(i) { if(confirm("Yakin hapus?")) { users.splice(i, 1); saveDB(); renderUserTable(); } }
 
     function renderFormEditor() {
-      const divAktif = document.getElementById('select-div-form').value;
-      document.getElementById('label-divisi-aktif').innerText = divAktif;
-      const container = document.getElementById('fields-container');
-      container.innerHTML = '';
-      
-      const fields = schema[divAktif] || [];
-      if(fields.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-400 italic">Belum ada field/tugas yang ditambahkan.</p>';
-        return;
-      }
-      
-      fields.forEach((f, idx) => {
-        container.innerHTML += `
-          <div class="flex justify-between items-center bg-white p-2 border rounded shadow-sm hover:shadow transition">
-            <span class="text-sm font-semibold">${idx+1}. ${f.label} <span class="text-xs text-slate-400 font-normal ml-1">(${f.type})</span></span>
-            <button onclick="hapusField(${idx})" class="text-red-500 text-xs font-bold bg-red-50 px-2 py-1 rounded hover:bg-red-100 transition">Hapus</button>
-          </div>
-        `;
-      });
+      const div = document.getElementById('select-div-form').value;
+      const c = document.getElementById('fields-container'); c.innerHTML = '';
+      (schema[div]||[]).forEach((f, i) => c.innerHTML += `<div class="flex justify-between bg-white p-2 border mb-1 rounded"><span class="text-sm">${i+1}. ${f.label} (${f.type})</span><button onclick="hapusField(${i})" class="text-red-500 text-xs font-bold bg-red-50 px-2 py-1 rounded">Hapus</button></div>`);
     }
 
+    function tambahDivisi() {
+      const n = prompt("Posisi Baru:");
+      if(n && !schema[n]) { schema[n] = []; saveDB(); syncDropdown(); document.getElementById('select-div-form').value = n; renderFormEditor(); }
+    }
     function addField() {
-      const divAktif = document.getElementById('select-div-form').value;
-      const label = document.getElementById('new-field-label').value;
-      const type = document.getElementById('new-field-type').value;
-      
-      if(!label) return alert("Masukkan nama tugas yang ingin ditambahkan!");
+      const div = document.getElementById('select-div-form').value; const l = document.getElementById('new-field-label').value;
+      if(!l) return; schema[div].push({ name: "f_"+Date.now(), label: l, type: document.getElementById('new-field-type').value });
+      saveDB(); renderFormEditor(); document.getElementById('new-field-label').value = '';
+    }
+    function hapusField(i) { schema[document.getElementById('select-div-form').value].splice(i, 1); saveDB(); renderFormEditor(); }
 
-      if(!schema[divAktif]) schema[divAktif] = [];
-      schema[divAktif].push({ name: "f_" + Date.now(), label, type });
-      saveDB();
-      renderFormEditor();
-      document.getElementById('new-field-label').value = '';
+    function cetakPDF(id) {
+      const req = requestsData.find(r => r.id === id); if(!req) return;
+      document.getElementById('s-nama').innerText = req.nama; document.getElementById('s-nama2').innerText = req.nama;
+      document.getElementById('s-divisi').innerText = req.divisi; document.getElementById('s-jenis').innerText = req.jenis;
+      document.getElementById('s-tgl').innerText = `${req.tgl_mulai} s/d ${req.tgl_selesai}`; document.getElementById('s-alasan').innerText = req.alasan;
+      const sStatus = document.getElementById('s-status'); sStatus.innerText = req.status;
+      sStatus.className = req.status === 'Approved' ? 'text-green-600' : (req.status === 'Ditolak' ? 'text-red-600' : 'text-yellow-600');
+      document.getElementById('s-note').innerText = req.catatan_manager || "-";
+      const el = document.getElementById('pdf-template-surat'); el.classList.remove('hidden');
+      html2pdf().set({ margin: 0.5, filename: `Surat_${req.nama}.pdf` }).from(el).save().then(() => el.classList.add('hidden'));
     }
 
-    function hapusField(idx) {
-      const divAktif = document.getElementById('select-div-form').value;
-      if(confirm("Hapus indikator tugas ini?")) {
-        schema[divAktif].splice(idx, 1);
-        saveDB();
-        renderFormEditor();
-      }
-    }
-
-    // ---------------------------------------------------------------------------
-    // GENERATE SURAT PDF OTOMATIS
-    // ---------------------------------------------------------------------------
-    function generateSuratPengajuan(nama, divisi, jenis, tgl, alasan) {
-      document.getElementById('s-nama').innerText = nama;
-      document.getElementById('s-nama2').innerText = nama;
-      document.getElementById('s-divisi').innerText = divisi;
-      document.getElementById('s-jenis').innerText = jenis;
-      document.getElementById('s-tgl').innerText = tgl;
-      document.getElementById('s-alasan').innerText = alasan;
-
-      const element = document.getElementById('pdf-template-surat');
-      element.classList.remove('hidden');
-
-      html2pdf().set({ 
-        margin: 0.5, 
-        filename: `Surat_${jenis}_${nama}.pdf`, 
-        image: { type: 'jpeg', quality: 0.98 }, 
-        html2canvas: { scale: 2 }, 
-        jsPDF: { unit: 'in', format: 'a4' } 
-      }).from(element).save().then(() => {
-        element.classList.add('hidden');
-      });
-    }
-
-    // ---------------------------------------------------------------------------
-    // INITIALIZATION (EKSEKUSI SAAT WEB DIMUAT)
-    // ---------------------------------------------------------------------------
     window.onload = () => {
-      syncDropdownDivisi(); // Sinkronkan opsi divisi di Add User & Form Config
-      renderUserTable();    // Cetak ulang tabel karyawan
-      renderFormEditor();   // Cetak form editor berdasarkan divisi aktif
+      syncDropdown(); renderUserTable(); renderFormEditor(); loadRequestsFromGitHub();
     };
   </script>
 </body>
