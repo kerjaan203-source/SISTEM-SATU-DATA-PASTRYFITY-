@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manager - SATU SISTEM PASTRYFITY</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Library html2pdf -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -17,11 +18,11 @@
 </head>
 <body>
   <div class="max-w-7xl mx-auto space-y-6">
-    <!-- Header Baru -->
+    <!-- Header -->
     <div class="glass flex justify-between items-center mb-4">
       <div>
         <h1 class="text-2xl font-bold text-[#2A6B9C]">Manager Dashboard</h1>
-        <p class="text-sm text-slate-600 mt-1 font-semibold">Selamat datang di SATU SISTEM PASTRYFITY, <span id="manager-name-display" class="text-slate-800">Master Manager</span></p>
+        <p class="text-sm text-slate-600 mt-1 font-semibold">Selamat datang di SATU SISTEM PASTRYFITY, <span class="text-slate-800">Master Manager</span></p>
       </div>
       <a href="index.html" class="bg-red-50 text-red-600 px-5 py-2 rounded-lg font-bold text-sm">Logout System</a>
     </div>
@@ -58,8 +59,8 @@
       
       <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
         <h3 class="font-bold text-[#2A6B9C] mb-4" id="form-user-title">Tambah / Edit User</h3>
-        <input type="hidden" id="edit-id">
-        <input type="text" id="edit-nama" placeholder="Nama Lengkap" class="w-full p-2 mb-3 rounded border text-sm focus:ring-2 focus:ring-[#2A6B9C] outline-none">
+        <input type="hidden" id="edit-index" value="">
+        <input type="text" id="edit-nama" placeholder="Nama Lengkap" class="w-full p-2 mb-3 rounded border text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">
         
         <label class="text-xs text-slate-500 font-semibold">Tanggal Lahir</label>
         <input type="date" id="edit-dob" class="w-full p-2 mb-3 rounded border text-sm outline-none">
@@ -69,100 +70,121 @@
         
         <label class="text-xs text-slate-500 font-semibold">Posisi (Divisi)</label>
         <select id="edit-posisi" class="w-full p-2 mb-3 rounded border text-sm outline-none">
-          <!-- Dinamis dari Schema -->
+          <option value="Admin Toko">Admin Toko</option>
+          <option value="Bakery">Bakery</option>
+          <option value="Head Chef">Head Chef</option>
+          <option value="Barista">Barista</option>
         </select>
         
-        <input type="text" id="edit-pin" placeholder="Buat PIN Baru (6 Digit)" maxlength="6" class="w-full p-2 mb-6 rounded border text-sm font-mono tracking-widest outline-none">
+        <input type="text" id="edit-pin" placeholder="PIN 6 Digit" maxlength="6" class="w-full p-2 mb-6 rounded border text-sm font-mono tracking-widest outline-none">
         <button onclick="saveUser()" class="w-full bg-[#2A6B9C] text-white py-2 rounded font-bold shadow hover:bg-blue-800">Simpan Data Akun</button>
       </div>
     </div>
 
-    <!-- 2. ATUR FORM (TERINTEGRASI) -->
+    <!-- 2. ATUR FORM LAPORAN -->
     <div id="menu-form" class="glass hidden">
       <h2 class="text-lg font-bold mb-2">Pengaturan Form Pekerjaan Karyawan (Tugas Harian)</h2>
-      <p class="text-sm text-slate-500 mb-6">Tambahkan divisi baru atau edit isian laporan harian. Data akan langsung ter-update di layar karyawan.</p>
+      <p class="text-sm text-slate-500 mb-6">Pilih posisi untuk menambahkan atau menghapus indikator tugas harian mereka.</p>
       
-      <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 mb-6">
-        <select id="select-div-form" onchange="renderFormEditor()" class="p-2 border rounded-lg text-sm w-full md:w-1/3 bg-slate-50 outline-none focus:ring-2 focus:ring-[#2A6B9C]">
-          <!-- Dinamis -->
+      <div class="flex space-x-4 mb-6">
+        <select id="select-div-form" onchange="renderFormEditor()" class="p-2 border rounded-lg text-sm w-1/3 bg-slate-50 outline-none">
+          <option value="Admin Toko">Admin Toko</option>
+          <option value="Bakery">Bakery</option>
         </select>
-        <button onclick="tambahDivisiBaru()" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap">+ Tambah Posisi/Divisi Baru</button>
       </div>
 
-      <!-- List Indikator -->
       <div class="border p-5 rounded-xl bg-slate-50">
-        <h3 class="font-bold text-sm mb-4 text-[#2A6B9C]">Daftar Input Form untuk <span id="label-divisi-aktif">...</span></h3>
-        <div id="fields-container" class="space-y-2 mb-6">
-          <!-- Render Field via JS -->
-        </div>
+        <h3 class="font-bold text-sm mb-4 text-[#2A6B9C]">Daftar Tugas untuk: <span id="label-divisi-aktif">Admin Toko</span></h3>
+        <div id="fields-container" class="space-y-2 mb-6"></div>
 
-        <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 p-4 border rounded-lg bg-white">
-          <input type="text" id="new-field-label" placeholder="Nama Tugas/Input Baru..." class="flex-1 p-2 border rounded text-sm outline-none">
+        <div class="flex space-x-2 p-4 border rounded-lg bg-white">
+          <input type="text" id="new-field-label" placeholder="Nama Tugas Baru..." class="flex-1 p-2 border rounded text-sm outline-none">
           <select id="new-field-type" class="p-2 border rounded text-sm outline-none">
-            <option value="number">Input Angka (Rp/Kg/Pcs)</option>
-            <option value="text">Input Teks Bebas</option>
-            <option value="checkbox">Checklist (Ya/Tidak)</option>
+            <option value="number">Angka</option>
+            <option value="text">Teks</option>
+            <option value="checkbox">Checklist</option>
           </select>
-          <button onclick="addField()" class="bg-green-500 text-white px-4 py-2 rounded text-sm font-bold shadow hover:bg-green-600">+ Tambah Field</button>
+          <button onclick="addField()" class="bg-green-500 text-white px-4 py-2 rounded text-sm font-bold shadow">+ Tambah Field</button>
         </div>
       </div>
     </div>
 
     <!-- 3. APPROVAL PENGAJUAN -->
     <div id="menu-approval" class="glass hidden">
-      <!-- (Sama dengan sebelumnya, tapi layout dirapikan sedikit) -->
       <h2 class="text-lg font-bold mb-4">Antrean Pengajuan (Cuti / Off / Izin)</h2>
-      <div class="border border-slate-200 p-5 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center bg-white shadow-sm">
-        <div class="mb-4 md:mb-0">
+      <div class="border border-slate-200 p-5 rounded-xl flex flex-col md:flex-row justify-between items-center bg-white shadow-sm">
+        <div>
           <h4 class="font-bold text-lg text-slate-800">Budi Raharjo <span class="text-sm font-normal text-slate-500 ml-2">(Admin Toko)</span></h4>
-          <div class="flex flex-wrap items-center gap-2 mt-1">
+          <div class="flex items-center space-x-2 mt-1">
             <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-bold">Cuti Tahunan</span>
-            <span class="text-sm text-slate-600 font-medium bg-slate-100 px-2 rounded">28 Ags 2026 s/d 30 Ags 2026</span>
+            <span class="text-sm text-slate-600 font-medium">28 Ags 2026 s/d 30 Ags 2026</span>
           </div>
           <p class="text-sm text-slate-500 mt-2"><strong>Alasan:</strong> Acara keluarga di luar kota.</p>
-          <button class="text-xs text-[#2A6B9C] font-semibold underline mt-2 block">Generate Surat Resmi & Lampiran (PDF)</button>
+          <!-- Tombol Generate Surat Resmi PDF Perorangan -->
+          <button onclick="generateSuratPengajuan('Budi Raharjo', 'Admin Toko', 'Cuti Tahunan', '28 Ags - 30 Ags 2026', 'Acara keluarga di luar kota.')" class="text-xs text-[#2A6B9C] font-semibold underline mt-2 block">Generate Surat Resmi & Lampiran (PDF)</button>
         </div>
-        <div class="flex flex-col space-y-2 w-full md:w-auto">
-          <input type="text" placeholder="Catatan Manager (Opsional)" class="p-2 border rounded text-xs w-full">
+        <div class="flex flex-col space-y-2 w-full md:w-auto mt-4 md:mt-0">
+          <input type="text" placeholder="Catatan Manager" class="p-2 border rounded text-xs">
           <div class="flex space-x-2">
-            <button class="flex-1 bg-green-500 text-white px-4 py-2 rounded font-bold text-sm">Approve</button>
-            <button class="flex-1 bg-red-500 text-white px-4 py-2 rounded font-bold text-sm">Tolak</button>
+            <button class="bg-green-500 text-white px-4 py-2 rounded font-bold text-sm">Approve</button>
+            <button class="bg-red-500 text-white px-4 py-2 rounded font-bold text-sm">Tolak</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 4. REVIEW KPI (Sama) -->
+    <!-- 4. REVIEW KPI -->
     <div id="menu-kpi" class="glass hidden">
       <h2 class="text-lg font-bold text-slate-800 mb-2">Review KPI Harian & Bulanan</h2>
-      <p class="text-xs text-slate-500 mb-6">Bobot: Kehadiran (20%) + Capaian Sistem (40%) + Penilaian Laporan Harian oleh Manager (40%)</p>
-      <!-- (Tabel KPI seperti kode sebelumnya) -->
+      <p class="text-xs text-slate-500 mb-6">Bobot: Kehadiran (20%) + Capaian Sistem (40%) + Penilaian Manager (40%)</p>
+    </div>
+  </div>
+
+  <!-- Hidden Template Surat Resmi Pengajuan -->
+  <div id="pdf-template-surat" class="hidden p-10 bg-white text-black w-[800px] font-serif">
+    <div class="text-center border-b-2 border-black pb-4 mb-6">
+      <h1 class="text-2xl font-bold uppercase">SATU SISTEM PASTRYFITY</h1>
+      <p class="text-sm">Surat Keputusan / Bukti Pengajuan Karyawan</p>
+    </div>
+    <table class="w-full text-sm mb-6 space-y-2">
+      <tr><td class="w-1/3 py-1 font-bold">Nama Karyawan</td><td>: <span id="s-nama"></span></td></tr>
+      <tr><td class="w-1/3 py-1 font-bold">Posisi / Divisi</td><td>: <span id="s-divisi"></span></td></tr>
+      <tr><td class="w-1/3 py-1 font-bold">Jenis Pengajuan</td><td>: <span id="s-jenis"></span></td></tr>
+      <tr><td class="w-1/3 py-1 font-bold">Tanggal</td><td>: <span id="s-tgl"></span></td></tr>
+      <tr><td class="w-1/3 py-1 font-bold align-top">Alasan</td><td>: <span id="s-alasan"></span></td></tr>
+    </table>
+    <div class="border border-dashed p-4 text-center text-xs text-gray-500 mb-12">
+      [ Lampiran Dokumen Karyawan Terlampir Secara Otomatis ]
+    </div>
+    <div class="flex justify-between px-10">
+      <div class="text-center"><p class="text-sm mb-16">Diajukan oleh,</p><p class="font-bold underline" id="s-nama2"></p></div>
+      <div class="text-center"><p class="text-sm mb-16">Disetujui,</p><p class="font-bold underline">Manager Operasional</p></div>
     </div>
   </div>
 
   <script>
-    // ---------------------------------------------------
-    // INIT LOCAL STORAGE (SIMULASI DATABASE REAL-TIME)
-    // ---------------------------------------------------
+    // ---------------------------------------------------------------------------
+    // DATABASE LOCALSTORAGE (Terintegrasi Penuh)
+    // ---------------------------------------------------------------------------
     let users = JSON.parse(localStorage.getItem('sys_users')) || [
-      { id: "U003", name: "Budi Raharjo", division: "Admin Toko", join_date: "2023-02-15", pin: "123456", status: "Aktif", dob: "1998-05-12" }
+      { id: "M01", name: "Master Manager", division: "Management", dob: "1990-01-01", join_date: "2020-01-01", pin: "999888", status: "Aktif", role: "manager" },
+      { id: "U03", name: "Budi Raharjo", division: "Admin Toko", dob: "1998-05-12", join_date: "2023-02-15", pin: "123456", status: "Aktif", role: "employee" },
+      { id: "U04", name: "Siti Aminah", division: "Bakery", dob: "2000-11-20", join_date: "2024-01-10", pin: "654321", status: "Aktif", role: "employee" }
     ];
-    
-    let kpiSchema = JSON.parse(localStorage.getItem('sys_schema')) || {
-      "Admin Toko": [{name: "omset_cash", label: "Omset Cash (Rp)", type: "number"}],
-      "Bakery": [{name: "berat_waste", label: "Berat Waste/Defect (Gram)", type: "number"}],
-      "Head Chef": [], "R&D": [], "Konten Kreator": [], "Accounting": [], "Admin Gudang": [], "Barista": []
+
+    let schema = JSON.parse(localStorage.getItem('sys_schema')) || {
+      "Admin Toko": [{name: "omset", label: "Omset Cash (Rp)", type: "number"}],
+      "Bakery": [{name: "waste", label: "Berat Waste (Gram)", type: "number"}]
     };
 
-    // Fungsi Save DB
     const saveDB = () => {
       localStorage.setItem('sys_users', JSON.stringify(users));
-      localStorage.setItem('sys_schema', JSON.stringify(kpiSchema));
+      localStorage.setItem('sys_schema', JSON.stringify(schema));
     };
 
-    // ---------------------------------------------------
-    // FUNGSI MENU & RENDER
-    // ---------------------------------------------------
+    // ---------------------------------------------------------------------------
+    // NAVIGASI TAB MANAGER
+    // ---------------------------------------------------------------------------
     function switchMenu(targetId) {
       ['menu-users', 'menu-form', 'menu-approval', 'menu-kpi'].forEach(id => document.getElementById(id).classList.add('hidden'));
       document.getElementById(targetId).classList.remove('hidden');
@@ -170,118 +192,154 @@
       event.target.classList.add('active-nav'); event.target.classList.remove('inactive-nav');
     }
 
-    // CRUD USER
+    // ---------------------------------------------------------------------------
+    // MANAJEMEN KARYAWAN (CRUD & EDIT AKTIF)
+    // ---------------------------------------------------------------------------
     function renderUserTable() {
       const tbody = document.getElementById('user-table-body');
       tbody.innerHTML = '';
+      
       users.forEach((u, index) => {
+        if(u.role === 'manager' || u.role === 'owner') return; // Sembunyikan akun executive dari list edit karyawan
         tbody.innerHTML += `
           <tr class="border-b hover:bg-slate-50">
             <td class="p-3 font-medium">${u.name}</td>
             <td class="p-3">${u.division}</td>
-            <td class="p-3">${u.dob}</td>
-            <td class="p-3">${u.join_date}</td>
+            <td class="p-3">${u.dob || '-'}</td>
+            <td class="p-3">${u.join_date || '-'}</td>
             <td class="p-3"><span class="bg-slate-200 px-2 py-1 rounded font-mono text-xs">${u.pin}</span></td>
-            <td class="p-3"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-semibold">${u.status}</span></td>
-            <td class="p-3 text-center flex justify-center space-x-2 mt-1">
+            <td class="p-3"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-semibold">${u.status || 'Aktif'}</span></td>
+            <td class="p-3 text-center space-x-1">
               <button onclick="editUser(${index})" class="text-blue-600 border border-blue-300 px-2 py-1 rounded text-xs font-bold hover:bg-blue-50">Edit</button>
               <button onclick="hapusUser(${index})" class="text-red-600 border border-red-300 px-2 py-1 rounded text-xs font-bold hover:bg-red-50">Hapus</button>
             </td>
           </tr>
         `;
       });
-      // Update Dropdown Posisi di Form Edit User
-      const selectPosisi = document.getElementById('edit-posisi');
-      selectPosisi.innerHTML = Object.keys(kpiSchema).map(div => `<option value="${div}">${div}</option>`).join('');
+    }
+
+    function editUser(index) {
+      const u = users[index];
+      document.getElementById('form-user-title').innerText = "Edit User: " + u.name;
+      document.getElementById('edit-index').value = index;
+      document.getElementById('edit-nama').value = u.name;
+      document.getElementById('edit-dob').value = u.dob || '';
+      document.getElementById('edit-join').value = u.join_date || '';
+      document.getElementById('edit-posisi').value = u.division;
+      document.getElementById('edit-pin').value = u.pin;
     }
 
     function saveUser() {
-      const idx = document.getElementById('edit-id').value;
+      const idx = document.getElementById('edit-index').value;
       const nama = document.getElementById('edit-nama').value;
-      if(!nama) return alert("Nama harus diisi!");
-      
+      if(!nama) return alert("Nama wajib diisi!");
+
       const userData = {
-        id: "U" + Date.now(), name: nama, division: document.getElementById('edit-posisi').value,
-        join_date: document.getElementById('edit-join').value, dob: document.getElementById('edit-dob').value,
-        pin: document.getElementById('edit-pin').value, status: "Aktif"
+        id: idx === "" ? "U" + Date.now() : users[idx].id,
+        name: nama,
+        division: document.getElementById('edit-posisi').value,
+        dob: document.getElementById('edit-dob').value,
+        join_date: document.getElementById('edit-join').value,
+        pin: document.getElementById('edit-pin').value,
+        status: "Aktif",
+        role: "employee"
       };
 
-      if(idx === "") users.push(userData);
-      else users[idx] = {...users[idx], ...userData};
+      if(idx === "") {
+        users.push(userData);
+      } else {
+        users[idx] = userData;
+      }
+
+      saveDB();
+      renderUserTable();
       
-      saveDB(); renderUserTable();
+      // Reset Form
       document.getElementById('form-user-title').innerText = "Tambah / Edit User";
-      ['edit-id', 'edit-nama', 'edit-dob', 'edit-join', 'edit-pin'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('edit-index').value = "";
+      ['edit-nama', 'edit-dob', 'edit-join', 'edit-pin'].forEach(id => document.getElementById(id).value = '');
+      alert("Data karyawan berhasil disimpan!");
     }
 
     function hapusUser(index) {
-      if(confirm(`Yakin ingin menghapus karyawan ${users[index].name}?`)) {
+      if(confirm(`Yakin ingin menghapus ${users[index].name}?`)) {
         users.splice(index, 1);
-        saveDB(); renderUserTable();
+        saveDB();
+        renderUserTable();
       }
     }
 
-    // CRUD FORM / DIVISI (No-Code Config)
+    // ---------------------------------------------------------------------------
+    // ATUR FORM LAPORAN
+    // ---------------------------------------------------------------------------
     function initFormEditor() {
       const select = document.getElementById('select-div-form');
-      select.innerHTML = Object.keys(kpiSchema).map(div => `<option value="${div}">${div}</option>`).join('');
+      select.innerHTML = Object.keys(schema).map(div => `<option value="${div}">${div}</option>`).join('');
       renderFormEditor();
     }
 
     function renderFormEditor() {
       const divAktif = document.getElementById('select-div-form').value;
       document.getElementById('label-divisi-aktif').innerText = divAktif;
-      
       const container = document.getElementById('fields-container');
       container.innerHTML = '';
       
-      const fields = kpiSchema[divAktif] || [];
-      if(fields.length === 0) container.innerHTML = '<p class="text-xs text-slate-400 italic">Belum ada form tugas khusus untuk posisi ini.</p>';
+      const fields = schema[divAktif] || [];
+      if(fields.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400 italic">Belum ada field tugas.</p>';
+        return;
+      }
       
       fields.forEach((f, idx) => {
         container.innerHTML += `
-          <div class="flex justify-between items-center bg-white p-3 border rounded shadow-sm">
-            <div>
-              <span class="text-sm font-semibold block">${idx+1}. ${f.label}</span>
-              <span class="text-xs text-slate-500">Tipe Input: ${f.type}</span>
-            </div>
+          <div class="flex justify-between items-center bg-white p-2 border rounded shadow-sm">
+            <span class="text-sm font-semibold">${idx+1}. ${f.label} (${f.type})</span>
             <button onclick="hapusField(${idx})" class="text-red-500 text-xs font-bold bg-red-50 px-2 py-1 rounded">Hapus</button>
           </div>
         `;
       });
     }
 
-    function tambahDivisiBaru() {
-      const divBaru = prompt("Masukkan nama posisi/divisi baru:");
-      if(divBaru && !kpiSchema[divBaru]) {
-        kpiSchema[divBaru] = [];
-        saveDB(); initFormEditor(); renderUserTable();
-        document.getElementById('select-div-form').value = divBaru;
-        renderFormEditor();
-      }
-    }
-
     function addField() {
       const divAktif = document.getElementById('select-div-form').value;
       const label = document.getElementById('new-field-label').value;
       const type = document.getElementById('new-field-type').value;
-      
       if(!label) return alert("Masukkan nama tugas!");
-      
-      kpiSchema[divAktif].push({
-        name: "field_" + Date.now(), label: label, type: type
-      });
-      saveDB(); renderFormEditor();
+
+      if(!schema[divAktif]) schema[divAktif] = [];
+      schema[divAktif].push({ name: "f_" + Date.now(), label, type });
+      saveDB();
+      renderFormEditor();
       document.getElementById('new-field-label').value = '';
     }
 
     function hapusField(idx) {
       const divAktif = document.getElementById('select-div-form').value;
-      kpiSchema[divAktif].splice(idx, 1);
-      saveDB(); renderFormEditor();
+      schema[divAktif].splice(idx, 1);
+      saveDB();
+      renderFormEditor();
     }
 
-    // Eksekusi Awal
+    // ---------------------------------------------------------------------------
+    // GENERATE SURAT PDF OTOMATIS (PERORANGAN)
+    // ---------------------------------------------------------------------------
+    function generateSuratPengajuan(nama, divisi, jenis, tgl, alasan) {
+      document.getElementById('s-nama').innerText = nama;
+      document.getElementById('s-nama2').innerText = nama;
+      document.getElementById('s-divisi').innerText = divisi;
+      document.getElementById('s-jenis').innerText = jenis;
+      document.getElementById('s-tgl').innerText = tgl;
+      document.getElementById('s-alasan').innerText = alasan;
+
+      const element = document.getElementById('pdf-template-surat');
+      element.classList.remove('hidden');
+
+      html2pdf().set({ margin: 0.5, filename: `Surat_${jenis}_${nama}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4' } }).from(element).save().then(() => {
+        element.classList.add('hidden');
+      });
+    }
+
+    // Eksekusi saat halaman dimuat
     renderUserTable();
     initFormEditor();
   </script>
