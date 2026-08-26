@@ -42,66 +42,65 @@
 
       <!-- TAB 1: PENGAJUAN -->
       <div id="view-pengajuan" class="space-y-4">
-        <form onsubmit="event.preventDefault(); alert('Pengajuan Terkirim!'); this.reset();" class="bg-white p-4 rounded-2xl border shadow-sm">
+        <form onsubmit="submitPengajuanToGitHub(event)" class="bg-white p-4 rounded-2xl border shadow-sm">
           <label class="block text-sm font-semibold mb-1">Jenis Pengajuan</label>
-          <select required class="w-full p-2 rounded-lg border text-sm mb-3 outline-none focus:ring-2 focus:ring-[#2A6B9C]">
-            <option value="Cuti">Cuti Tahunan</option>
-            <option value="Off">Off Mingguan</option>
-            <option value="Sakit">Izin / Sakit</option>
+          <select id="req-jenis" required class="w-full p-2 rounded-lg border text-sm mb-3 outline-none focus:ring-2 focus:ring-[#2A6B9C]">
+            <option value="Cuti Tahunan">Cuti Tahunan</option>
+            <option value="Off Mingguan">Off Mingguan</option>
+            <option value="Izin/Sakit">Izin / Sakit</option>
           </select>
-          
           <div class="flex space-x-3 mb-3">
             <div class="w-1/2">
               <label class="block text-sm font-semibold mb-1">Tgl Mulai</label>
-              <input type="date" required class="w-full p-2 rounded-lg border text-sm outline-none">
+              <input type="date" id="req-mulai" required class="w-full p-2 rounded-lg border text-sm outline-none">
             </div>
             <div class="w-1/2">
               <label class="block text-sm font-semibold mb-1">Tgl Selesai</label>
-              <input type="date" required class="w-full p-2 rounded-lg border text-sm outline-none">
+              <input type="date" id="req-selesai" required class="w-full p-2 rounded-lg border text-sm outline-none">
             </div>
           </div>
-          
           <label class="block text-sm font-semibold mb-1">Alasan Lengkap</label>
-          <textarea required rows="2" class="w-full p-2 rounded-lg border text-sm mb-3 outline-none focus:ring-2 focus:ring-[#2A6B9C]" placeholder="Alasan..."></textarea>
+          <textarea id="req-alasan" required rows="2" class="w-full p-2 rounded-lg border text-sm mb-3 outline-none focus:ring-2 focus:ring-[#2A6B9C]" placeholder="Alasan..."></textarea>
           
-          <label class="block text-sm font-semibold mb-1">Lampiran (Max 1MB)</label>
-          <input type="file" accept="image/*,.pdf" class="w-full text-xs text-slate-500 mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-[#2A6B9C]">
-          
-          <button type="submit" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl shadow active:scale-95 transition">Kirim Pengajuan</button>
+          <button id="btn-submit-req" type="submit" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl shadow active:scale-95 transition">Kirim Pengajuan</button>
         </form>
+
+        <div class="flex justify-between items-center mt-6">
+          <h3 class="font-bold text-sm text-[#2A6B9C]">Riwayat Pengajuan</h3>
+          <button onclick="loadMyRequests()" class="text-xs text-blue-500 underline font-bold">Refresh Data</button>
+        </div>
+        <div id="riwayat-pengajuan" class="space-y-2 mt-2"></div>
       </div>
 
       <!-- TAB 2: LAPORAN HARIAN -->
       <div id="view-laporan" class="hidden space-y-4">
-        <form onsubmit="event.preventDefault(); alert('Laporan Harian Tersimpan!'); this.reset();" class="bg-white p-4 rounded-2xl border shadow-sm">
+        <form onsubmit="event.preventDefault(); alert('Laporan Harian Tersimpan secara Lokal!'); this.reset();" class="bg-white p-4 rounded-2xl border shadow-sm">
           <label class="block text-sm font-semibold mb-1">Inisiatif Hari Ini <span class="text-red-500">*</span></label>
           <textarea required class="w-full p-2 rounded-lg border text-sm mb-3 outline-none focus:ring-2 focus:ring-[#2A6B9C]" rows="2"></textarea>
-          
           <label class="block text-sm font-semibold mb-1">Kendala Lapangan <span class="text-red-500">*</span></label>
           <textarea required class="w-full p-2 rounded-lg border text-sm mb-3 outline-none focus:ring-2 focus:ring-[#2A6B9C]" rows="2"></textarea>
-
+          
           <div class="w-full h-px bg-slate-200 my-4"></div>
           <h3 class="font-bold text-[#2A6B9C] text-sm mb-3">Tugas Khusus Divisi Anda</h3>
-          
-          <div id="dynamic-fields" class="space-y-3 mb-6 bg-blue-50/50 p-3 rounded-xl border border-blue-100">
-            <!-- Dirender otomatis oleh Javascript -->
-          </div>
+          <div id="dynamic-fields" class="space-y-3 mb-6 bg-blue-50/50 p-3 rounded-xl border border-blue-100"></div>
 
           <button type="submit" class="w-full bg-[#2A6B9C] text-white font-bold py-3 rounded-xl shadow active:scale-95 transition">Kirim Laporan</button>
         </form>
       </div>
-
     </div>
   </div>
 
   <script>
+    // --- KONFIGURASI GITHUB API ---
+    const GITHUB_TOKEN = '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';
+    const REPO_OWNER = 'kerjaan203-source';
+    const REPO_NAME = 'SISTEM-SATU-DATA-PASTRYFITY-';
+    const FILE_PATH = 'data/requests.json';
+
     let activeUser = null;
-    
-    // Inisialisasi Database LocalStorage
     let users = JSON.parse(localStorage.getItem('sys_users')) || [];
     let schema = JSON.parse(localStorage.getItem('sys_schema')) || {};
 
-    // PENTING: Jika data kosong di browser baru, kita paksa inject data awal agar Manager bisa login
     if(users.length === 0) {
       users = [
         { id: "M01", pin: "999888", role: "manager", name: "Master Manager" },
@@ -112,75 +111,118 @@
       localStorage.setItem('sys_users', JSON.stringify(users));
     }
 
-    if(Object.keys(schema).length === 0) {
-      schema = { "Admin Toko": [{name: "omset", label: "Omset Cash (Rp)", type: "number"}], "Bakery": [] };
-      localStorage.setItem('sys_schema', JSON.stringify(schema));
-    }
-
     function verifyPin() {
       const pin = document.getElementById('pin-input').value;
       activeUser = users.find(u => u.pin === pin);
-      
       if (activeUser) {
-        // Redirect System untuk Manager dan Owner
-        if (activeUser.role === 'manager') { 
-            window.location.href = 'manager.html'; 
-            return; 
-        }
-        if (activeUser.role === 'owner') { 
-            window.location.href = 'owner.html'; 
-            return; 
-        }
-
-        // Tampilan Karyawan Biasa
+        if (activeUser.role === 'manager') { window.location.href = 'manager.html'; return; }
+        if (activeUser.role === 'owner') { window.location.href = 'owner.html'; return; }
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('dashboard-screen').classList.remove('hidden');
         document.getElementById('user-greeting').innerText = `Halo, ${activeUser.name.split(' ')[0]}`;
         document.getElementById('div-name').innerText = activeUser.division;
         
         renderDynamicForm(activeUser.division);
+        loadMyRequests(); // Tarik data riwayat dari GitHub saat login
         document.getElementById('pin-input').value = "";
       } else {
-        alert('PIN Tidak Ditemukan! Pastikan Manager telah mendaftarkan PIN Anda.');
-        document.getElementById('pin-input').value = "";
+        alert('PIN Tidak Ditemukan!');
       }
     }
 
-    // Perbaikan fungsi Switch Tab
     function switchTab(tab) {
-      // Sembunyikan semua isi
       document.getElementById('view-pengajuan').classList.add('hidden');
       document.getElementById('view-laporan').classList.add('hidden');
-      
-      // Reset warna tombol
       document.getElementById('tab-pengajuan').className = "flex-1 py-2 rounded-xl text-sm font-bold tab-inactive transition";
       document.getElementById('tab-laporan').className = "flex-1 py-2 rounded-xl text-sm font-bold tab-inactive transition";
-      
-      // Aktifkan yang dipilih
       document.getElementById(`view-${tab}`).classList.remove('hidden');
       document.getElementById(`tab-${tab}`).className = "flex-1 py-2 rounded-xl text-sm font-bold tab-active transition";
+    }
+
+    // --- FITUR GITHUB API (KARYAWAN) ---
+    async function loadMyRequests() {
+      const container = document.getElementById('riwayat-pengajuan');
+      container.innerHTML = '<p class="text-xs text-blue-500">Memuat riwayat dari server...</p>';
+      try {
+        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+          headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }, cache: 'no-store'
+        });
+        if (!response.ok) throw new Error();
+        const data = await response.json();
+        const requestsData = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+        
+        // Filter khusus user yang login
+        const myRequests = requestsData.filter(r => r.userId === activeUser.id).reverse();
+        container.innerHTML = '';
+        if(myRequests.length === 0) {
+          container.innerHTML = '<p class="text-xs text-slate-500 italic">Belum ada pengajuan.</p>';
+          return;
+        }
+        myRequests.forEach(req => {
+          let badgeColor = req.status === 'Approved' ? 'bg-green-100 text-green-700' : req.status === 'Ditolak' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700';
+          container.innerHTML += `
+            <div class="p-3 border rounded-xl bg-white shadow-sm flex flex-col mb-2">
+              <div class="flex justify-between items-start mb-1"><span class="font-bold text-sm">${req.jenis}</span><span class="text-[10px] font-bold px-2 py-1 rounded ${badgeColor}">${req.status}</span></div>
+              <span class="text-xs text-slate-500">${req.tgl_mulai} s/d ${req.tgl_selesai}</span>
+              ${req.catatan_manager ? `<p class="text-xs mt-2 bg-slate-50 p-2 rounded border border-slate-100 text-slate-600"><strong>Note:</strong> ${req.catatan_manager}</p>` : ''}
+            </div>`;
+        });
+      } catch (e) {
+        container.innerHTML = '<p class="text-xs text-red-500">Gagal menarik data dari server.</p>';
+      }
+    }
+
+    async function submitPengajuanToGitHub(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-submit-req');
+      btn.innerText = "Mengirim ke Server..."; btn.disabled = true;
+
+      try {
+        // 1. Tarik file terbaru dulu
+        const getRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+          headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }, cache: 'no-store'
+        });
+        const getData = await getRes.json();
+        let currentData = JSON.parse(decodeURIComponent(escape(atob(getData.content))));
+
+        // 2. Tambahkan data baru
+        currentData.push({
+          id: "REQ-" + Date.now(), userId: activeUser.id, nama: activeUser.name, divisi: activeUser.division,
+          jenis: document.getElementById('req-jenis').value, tgl_mulai: document.getElementById('req-mulai').value,
+          tgl_selesai: document.getElementById('req-selesai').value, alasan: document.getElementById('req-alasan').value,
+          status: "Pending", catatan_manager: ""
+        });
+
+        // 3. Tembak kembali ke GitHub
+        const updatedContent = btoa(unescape(encodeURIComponent(JSON.stringify(currentData, null, 2))));
+        const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+          method: 'PUT',
+          headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: `Karyawan mengajukan absen`, content: updatedContent, sha: getData.sha })
+        });
+        
+        if (!putRes.ok) throw new Error();
+        alert('Berhasil! Pengajuan terkirim ke Manager.');
+        e.target.reset();
+        loadMyRequests();
+      } catch (err) {
+        alert('Gagal mengirim ke server GitHub. Cek koneksi / Token.');
+      } finally {
+        btn.innerText = "Kirim Pengajuan"; btn.disabled = false;
+      }
     }
 
     function renderDynamicForm(division) {
       const container = document.getElementById('dynamic-fields');
       container.innerHTML = '';
-      
       const fields = schema[division] || [];
-      
-      if(fields.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-500 italic">Belum ada tugas spesifik yang ditugaskan oleh Manager.</p>';
-        return;
-      }
-      
+      if(fields.length === 0) { container.innerHTML = '<p class="text-xs text-slate-500 italic">Belum ada tugas tambahan dari Manager.</p>'; return; }
       fields.forEach(f => {
         const div = document.createElement('div');
         if (f.type === 'checkbox') {
-          div.className = "flex items-center space-x-3 bg-white p-2 border rounded-lg";
-          div.innerHTML = `<input type="checkbox" class="w-5 h-5 text-[#2A6B9C] rounded border-gray-300">
-                           <label class="text-sm font-medium text-slate-700">${f.label}</label>`;
+          div.innerHTML = `<input type="checkbox" class="w-4 h-4 mr-2"><label class="text-sm font-medium text-slate-700">${f.label}</label>`;
         } else {
-          div.innerHTML = `<label class="block text-sm font-semibold mb-1 text-slate-700">${f.label}</label>
-                           <input type="${f.type}" required class="w-full p-2 rounded-lg border text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">`;
+          div.innerHTML = `<label class="block text-sm font-semibold mb-1 text-slate-700">${f.label}</label><input type="${f.type}" required class="w-full p-2 rounded-lg border text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">`;
         }
         container.appendChild(div);
       });
@@ -190,7 +232,6 @@
       activeUser = null;
       document.getElementById('dashboard-screen').classList.add('hidden');
       document.getElementById('login-screen').classList.remove('hidden');
-      switchTab('pengajuan'); // Reset kembali ke tab awal
     }
   </script>
 </body>
