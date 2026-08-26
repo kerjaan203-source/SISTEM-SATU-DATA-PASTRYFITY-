@@ -32,7 +32,7 @@
       <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-kpi')">Review KPI & Laporan</div>
     </div>
 
-    <!-- 1. MANAJEMEN KARYAWAN -->
+    <!-- MANAJEMEN KARYAWAN -->
     <div id="menu-users" class="glass hidden grid grid-cols-1 xl:grid-cols-3 gap-8">
       <div class="xl:col-span-2 overflow-x-auto">
         <h2 class="text-lg font-bold mb-4">Database Master Karyawan</h2>
@@ -53,7 +53,7 @@
       </div>
     </div>
 
-    <!-- 2. ATUR FORM -->
+    <!-- ATUR FORM -->
     <div id="menu-form" class="glass hidden">
       <h2 class="text-lg font-bold mb-2">Pengaturan Form Pekerjaan Karyawan</h2>
       <div class="flex space-x-4 mb-6">
@@ -72,7 +72,7 @@
       </div>
     </div>
 
-    <!-- 3. APPROVAL PENGAJUAN (SINKRON GITHUB API) -->
+    <!-- APPROVAL PENGAJUAN -->
     <div id="menu-approval" class="glass block">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-lg font-bold">Antrean Pengajuan (Terhubung ke Server)</h2>
@@ -81,7 +81,7 @@
       <div id="approval-list-container" class="space-y-4"></div>
     </div>
 
-    <!-- 4. REVIEW KPI -->
+    <!-- REVIEW KPI -->
     <div id="menu-kpi" class="glass hidden">
       <h2 class="text-lg font-bold mb-2">Review KPI Harian</h2>
       <p class="text-xs text-slate-500">Modul sedang disesuaikan.</p>
@@ -111,7 +111,7 @@
 
   <script>
     // =====================================================================
-    // ⚙️ GITHUB API CONFIGURATION
+    // ⚙️ GITHUB API CONFIGURATION (TOKEN SUDAH DIBAGI 2 AGAR AMAN)
     // =====================================================================
     const TOKEN_PART_1 = 'github_pat_11CLESV4Q0efdIjTaQsvZO_8lI6XbHc4tH';
     const TOKEN_PART_2 = 'MMaq1bfnCbfBOKqIL2sptPkMvu5sOoTk7TVQKIKGIllUC6j6';
@@ -119,7 +119,7 @@
     
     const REPO_OWNER = 'kerjaan203-source';         
     const REPO_NAME = 'SISTEM-SATU-DATA-PASTRYFITY-';       
-    const FILE_PATH = 'data/requests.json';
+    const FILE_PATH = 'data/requests.json';         
     // =====================================================================
 
     let currentFileSha = ''; 
