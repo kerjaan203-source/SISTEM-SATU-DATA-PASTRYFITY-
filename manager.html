@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manager - SATU SISTEM PASTRYFITY</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Library html2pdf -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -69,15 +68,12 @@
         <input type="date" id="edit-join" class="w-full p-2 mb-3 rounded border text-sm outline-none">
         
         <label class="text-xs text-slate-500 font-semibold">Posisi (Divisi)</label>
-        <select id="edit-posisi" class="w-full p-2 mb-3 rounded border text-sm outline-none">
-          <option value="Admin Toko">Admin Toko</option>
-          <option value="Bakery">Bakery</option>
-          <option value="Head Chef">Head Chef</option>
-          <option value="Barista">Barista</option>
+        <select id="edit-posisi" class="w-full p-2 mb-3 rounded border text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">
+          <!-- Pilihan Divisi dirender dinamis dari Javascript agar sinkron dengan Atur Form -->
         </select>
         
         <input type="text" id="edit-pin" placeholder="PIN 6 Digit" maxlength="6" class="w-full p-2 mb-6 rounded border text-sm font-mono tracking-widest outline-none">
-        <button onclick="saveUser()" class="w-full bg-[#2A6B9C] text-white py-2 rounded font-bold shadow hover:bg-blue-800">Simpan Data Akun</button>
+        <button onclick="saveUser()" class="w-full bg-[#2A6B9C] text-white py-2 rounded font-bold shadow hover:bg-blue-800 transition">Simpan Data Akun</button>
       </div>
     </div>
 
@@ -86,25 +82,28 @@
       <h2 class="text-lg font-bold mb-2">Pengaturan Form Pekerjaan Karyawan (Tugas Harian)</h2>
       <p class="text-sm text-slate-500 mb-6">Pilih posisi untuk menambahkan atau menghapus indikator tugas harian mereka.</p>
       
-      <div class="flex space-x-4 mb-6">
-        <select id="select-div-form" onchange="renderFormEditor()" class="p-2 border rounded-lg text-sm w-1/3 bg-slate-50 outline-none">
-          <option value="Admin Toko">Admin Toko</option>
-          <option value="Bakery">Bakery</option>
+      <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-3 sm:space-y-0 mb-6">
+        <select id="select-div-form" onchange="renderFormEditor()" class="p-2 border rounded-lg text-sm w-full sm:w-1/3 bg-slate-50 outline-none focus:ring-2 focus:ring-[#2A6B9C]">
+          <!-- Pilihan Divisi dirender dinamis -->
         </select>
+        <!-- Tombol Tambah Posisi Baru -->
+        <button onclick="tambahDivisi()" class="bg-[#2A6B9C] text-white px-4 py-2 rounded-lg font-bold text-sm shadow hover:bg-blue-800 transition whitespace-nowrap">
+          + Tambah Posisi Baru
+        </button>
       </div>
 
       <div class="border p-5 rounded-xl bg-slate-50">
-        <h3 class="font-bold text-sm mb-4 text-[#2A6B9C]">Daftar Tugas untuk: <span id="label-divisi-aktif">Admin Toko</span></h3>
+        <h3 class="font-bold text-sm mb-4 text-[#2A6B9C]">Daftar Tugas untuk: <span id="label-divisi-aktif" class="text-slate-800 border-b-2 border-blue-400"></span></h3>
         <div id="fields-container" class="space-y-2 mb-6"></div>
 
-        <div class="flex space-x-2 p-4 border rounded-lg bg-white">
-          <input type="text" id="new-field-label" placeholder="Nama Tugas Baru..." class="flex-1 p-2 border rounded text-sm outline-none">
+        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 p-4 border rounded-lg bg-white">
+          <input type="text" id="new-field-label" placeholder="Nama Tugas Baru..." class="flex-1 p-2 border rounded text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">
           <select id="new-field-type" class="p-2 border rounded text-sm outline-none">
             <option value="number">Angka</option>
             <option value="text">Teks</option>
             <option value="checkbox">Checklist</option>
           </select>
-          <button onclick="addField()" class="bg-green-500 text-white px-4 py-2 rounded text-sm font-bold shadow">+ Tambah Field</button>
+          <button onclick="addField()" class="bg-green-500 text-white px-4 py-2 rounded text-sm font-bold shadow hover:bg-green-600">+ Tambah Field</button>
         </div>
       </div>
     </div>
@@ -120,14 +119,13 @@
             <span class="text-sm text-slate-600 font-medium">28 Ags 2026 s/d 30 Ags 2026</span>
           </div>
           <p class="text-sm text-slate-500 mt-2"><strong>Alasan:</strong> Acara keluarga di luar kota.</p>
-          <!-- Tombol Generate Surat Resmi PDF Perorangan -->
-          <button onclick="generateSuratPengajuan('Budi Raharjo', 'Admin Toko', 'Cuti Tahunan', '28 Ags - 30 Ags 2026', 'Acara keluarga di luar kota.')" class="text-xs text-[#2A6B9C] font-semibold underline mt-2 block">Generate Surat Resmi & Lampiran (PDF)</button>
+          <button onclick="generateSuratPengajuan('Budi Raharjo', 'Admin Toko', 'Cuti Tahunan', '28 Ags - 30 Ags 2026', 'Acara keluarga di luar kota.')" class="text-xs text-[#2A6B9C] font-semibold underline mt-2 block hover:text-blue-800">Generate Surat Resmi & Lampiran (PDF)</button>
         </div>
         <div class="flex flex-col space-y-2 w-full md:w-auto mt-4 md:mt-0">
-          <input type="text" placeholder="Catatan Manager" class="p-2 border rounded text-xs">
+          <input type="text" placeholder="Catatan Manager" class="p-2 border rounded text-xs outline-none focus:ring-1 focus:ring-[#2A6B9C]">
           <div class="flex space-x-2">
-            <button class="bg-green-500 text-white px-4 py-2 rounded font-bold text-sm">Approve</button>
-            <button class="bg-red-500 text-white px-4 py-2 rounded font-bold text-sm">Tolak</button>
+            <button class="bg-green-500 text-white px-4 py-2 rounded font-bold text-sm shadow hover:bg-green-600 transition">Approve</button>
+            <button class="bg-red-500 text-white px-4 py-2 rounded font-bold text-sm shadow hover:bg-red-600 transition">Tolak</button>
           </div>
         </div>
       </div>
@@ -164,7 +162,7 @@
 
   <script>
     // ---------------------------------------------------------------------------
-    // DATABASE LOCALSTORAGE (Terintegrasi Penuh)
+    // DATABASE LOCALSTORAGE
     // ---------------------------------------------------------------------------
     let users = JSON.parse(localStorage.getItem('sys_users')) || [
       { id: "M01", name: "Master Manager", division: "Management", dob: "1990-01-01", join_date: "2020-01-01", pin: "999888", status: "Aktif", role: "manager" },
@@ -172,15 +170,40 @@
       { id: "U04", name: "Siti Aminah", division: "Bakery", dob: "2000-11-20", join_date: "2024-01-10", pin: "654321", status: "Aktif", role: "employee" }
     ];
 
-    let schema = JSON.parse(localStorage.getItem('sys_schema')) || {
-      "Admin Toko": [{name: "omset", label: "Omset Cash (Rp)", type: "number"}],
-      "Bakery": [{name: "waste", label: "Berat Waste (Gram)", type: "number"}]
-    };
+    let schema = JSON.parse(localStorage.getItem('sys_schema'));
+    
+    // Jika schema kosong, inject otomatis ke-8 divisi lengkap beserta contoh field
+    if (!schema || Object.keys(schema).length === 0) {
+      schema = {
+        "Admin Toko": [{name: "f1", label: "Omset Cash (Rp)", type: "number"}],
+        "Bakery": [{name: "f2", label: "Berat Waste (Gram)", type: "number"}],
+        "Head Chef": [],
+        "R&D": [],
+        "Konten Kreator": [],
+        "Accounting": [],
+        "Admin Gudang": [],
+        "Barista": []
+      };
+      localStorage.setItem('sys_schema', JSON.stringify(schema));
+    }
 
     const saveDB = () => {
       localStorage.setItem('sys_users', JSON.stringify(users));
       localStorage.setItem('sys_schema', JSON.stringify(schema));
     };
+
+    // ---------------------------------------------------------------------------
+    // FUNGSI SINKRONISASI DROPDOWN DIVISI
+    // ---------------------------------------------------------------------------
+    function syncDropdownDivisi() {
+      const allDivisions = Object.keys(schema);
+      const optionsHtml = allDivisions.map(div => `<option value="${div}">${div}</option>`).join('');
+      
+      // Update di menu Tambah/Edit Karyawan
+      document.getElementById('edit-posisi').innerHTML = optionsHtml;
+      // Update di menu Atur Form Laporan
+      document.getElementById('select-div-form').innerHTML = optionsHtml;
+    }
 
     // ---------------------------------------------------------------------------
     // NAVIGASI TAB MANAGER
@@ -193,16 +216,16 @@
     }
 
     // ---------------------------------------------------------------------------
-    // MANAJEMEN KARYAWAN (CRUD & EDIT AKTIF)
+    // MANAJEMEN KARYAWAN (CRUD)
     // ---------------------------------------------------------------------------
     function renderUserTable() {
       const tbody = document.getElementById('user-table-body');
       tbody.innerHTML = '';
       
       users.forEach((u, index) => {
-        if(u.role === 'manager' || u.role === 'owner') return; // Sembunyikan akun executive dari list edit karyawan
+        if(u.role === 'manager' || u.role === 'owner') return; 
         tbody.innerHTML += `
-          <tr class="border-b hover:bg-slate-50">
+          <tr class="border-b hover:bg-slate-50 transition">
             <td class="p-3 font-medium">${u.name}</td>
             <td class="p-3">${u.division}</td>
             <td class="p-3">${u.dob || '-'}</td>
@@ -210,8 +233,8 @@
             <td class="p-3"><span class="bg-slate-200 px-2 py-1 rounded font-mono text-xs">${u.pin}</span></td>
             <td class="p-3"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-semibold">${u.status || 'Aktif'}</span></td>
             <td class="p-3 text-center space-x-1">
-              <button onclick="editUser(${index})" class="text-blue-600 border border-blue-300 px-2 py-1 rounded text-xs font-bold hover:bg-blue-50">Edit</button>
-              <button onclick="hapusUser(${index})" class="text-red-600 border border-red-300 px-2 py-1 rounded text-xs font-bold hover:bg-red-50">Hapus</button>
+              <button onclick="editUser(${index})" class="text-blue-600 border border-blue-300 px-3 py-1 rounded text-xs font-bold hover:bg-blue-50 transition">Edit</button>
+              <button onclick="hapusUser(${index})" class="text-red-600 border border-red-300 px-3 py-1 rounded text-xs font-bold hover:bg-red-50 transition">Hapus</button>
             </td>
           </tr>
         `;
@@ -227,6 +250,9 @@
       document.getElementById('edit-join').value = u.join_date || '';
       document.getElementById('edit-posisi').value = u.division;
       document.getElementById('edit-pin').value = u.pin;
+      
+      // Auto-scroll ke bagian form jika diakses lewat HP
+      document.getElementById('form-user-title').scrollIntoView({ behavior: 'smooth' });
     }
 
     function saveUser() {
@@ -254,7 +280,6 @@
       saveDB();
       renderUserTable();
       
-      // Reset Form
       document.getElementById('form-user-title').innerText = "Tambah / Edit User";
       document.getElementById('edit-index').value = "";
       ['edit-nama', 'edit-dob', 'edit-join', 'edit-pin'].forEach(id => document.getElementById(id).value = '');
@@ -262,7 +287,7 @@
     }
 
     function hapusUser(index) {
-      if(confirm(`Yakin ingin menghapus ${users[index].name}?`)) {
+      if(confirm(`Yakin ingin menghapus ${users[index].name} secara permanen?`)) {
         users.splice(index, 1);
         saveDB();
         renderUserTable();
@@ -270,12 +295,29 @@
     }
 
     // ---------------------------------------------------------------------------
-    // ATUR FORM LAPORAN
+    // ATUR FORM LAPORAN & TAMBAH DIVISI BARU
     // ---------------------------------------------------------------------------
-    function initFormEditor() {
-      const select = document.getElementById('select-div-form');
-      select.innerHTML = Object.keys(schema).map(div => `<option value="${div}">${div}</option>`).join('');
-      renderFormEditor();
+    function tambahDivisi() {
+      const namaDivisi = prompt("Masukkan nama posisi/divisi baru:");
+      if (namaDivisi && namaDivisi.trim() !== "") {
+        if (schema[namaDivisi]) {
+          alert("Posisi ini sudah ada di dalam sistem!");
+          return;
+        }
+        
+        // Buat objek array kosong untuk divisi baru
+        schema[namaDivisi] = [];
+        saveDB();
+        
+        // Sinkronkan kembali dropdown di semua tempat
+        syncDropdownDivisi();
+        
+        // Arahkan form editor ke divisi yang baru dibuat
+        document.getElementById('select-div-form').value = namaDivisi;
+        renderFormEditor();
+        
+        alert(`Berhasil! Posisi "${namaDivisi}" telah ditambahkan ke sistem.`);
+      }
     }
 
     function renderFormEditor() {
@@ -286,15 +328,15 @@
       
       const fields = schema[divAktif] || [];
       if(fields.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-400 italic">Belum ada field tugas.</p>';
+        container.innerHTML = '<p class="text-xs text-slate-400 italic">Belum ada field/tugas yang ditambahkan.</p>';
         return;
       }
       
       fields.forEach((f, idx) => {
         container.innerHTML += `
-          <div class="flex justify-between items-center bg-white p-2 border rounded shadow-sm">
-            <span class="text-sm font-semibold">${idx+1}. ${f.label} (${f.type})</span>
-            <button onclick="hapusField(${idx})" class="text-red-500 text-xs font-bold bg-red-50 px-2 py-1 rounded">Hapus</button>
+          <div class="flex justify-between items-center bg-white p-2 border rounded shadow-sm hover:shadow transition">
+            <span class="text-sm font-semibold">${idx+1}. ${f.label} <span class="text-xs text-slate-400 font-normal ml-1">(${f.type})</span></span>
+            <button onclick="hapusField(${idx})" class="text-red-500 text-xs font-bold bg-red-50 px-2 py-1 rounded hover:bg-red-100 transition">Hapus</button>
           </div>
         `;
       });
@@ -304,7 +346,8 @@
       const divAktif = document.getElementById('select-div-form').value;
       const label = document.getElementById('new-field-label').value;
       const type = document.getElementById('new-field-type').value;
-      if(!label) return alert("Masukkan nama tugas!");
+      
+      if(!label) return alert("Masukkan nama tugas yang ingin ditambahkan!");
 
       if(!schema[divAktif]) schema[divAktif] = [];
       schema[divAktif].push({ name: "f_" + Date.now(), label, type });
@@ -315,13 +358,15 @@
 
     function hapusField(idx) {
       const divAktif = document.getElementById('select-div-form').value;
-      schema[divAktif].splice(idx, 1);
-      saveDB();
-      renderFormEditor();
+      if(confirm("Hapus indikator tugas ini?")) {
+        schema[divAktif].splice(idx, 1);
+        saveDB();
+        renderFormEditor();
+      }
     }
 
     // ---------------------------------------------------------------------------
-    // GENERATE SURAT PDF OTOMATIS (PERORANGAN)
+    // GENERATE SURAT PDF OTOMATIS
     // ---------------------------------------------------------------------------
     function generateSuratPengajuan(nama, divisi, jenis, tgl, alasan) {
       document.getElementById('s-nama').innerText = nama;
@@ -334,14 +379,25 @@
       const element = document.getElementById('pdf-template-surat');
       element.classList.remove('hidden');
 
-      html2pdf().set({ margin: 0.5, filename: `Surat_${jenis}_${nama}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4' } }).from(element).save().then(() => {
+      html2pdf().set({ 
+        margin: 0.5, 
+        filename: `Surat_${jenis}_${nama}.pdf`, 
+        image: { type: 'jpeg', quality: 0.98 }, 
+        html2canvas: { scale: 2 }, 
+        jsPDF: { unit: 'in', format: 'a4' } 
+      }).from(element).save().then(() => {
         element.classList.add('hidden');
       });
     }
 
-    // Eksekusi saat halaman dimuat
-    renderUserTable();
-    initFormEditor();
+    // ---------------------------------------------------------------------------
+    // INITIALIZATION (EKSEKUSI SAAT WEB DIMUAT)
+    // ---------------------------------------------------------------------------
+    window.onload = () => {
+      syncDropdownDivisi(); // Sinkronkan opsi divisi di Add User & Form Config
+      renderUserTable();    // Cetak ulang tabel karyawan
+      renderFormEditor();   // Cetak form editor berdasarkan divisi aktif
+    };
   </script>
 </body>
 </html>
