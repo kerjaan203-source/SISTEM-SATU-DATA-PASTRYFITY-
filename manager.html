@@ -5,123 +5,154 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manager - SATU SISTEM PASTRYFITY</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- html2pdf untuk Cetak Rapor & Surat Pengajuan Otomatis -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; background-color: #EBF3FA; padding: 24px; }
-    .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(25px); border-radius: 24px; padding: 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.04); border: 1px solid rgba(255, 255, 255, 0.5); }
-    .nav-btn { padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 14px; text-align: center; }
-    .active-nav { background: #2A6B9C; color: white; box-shadow: 0 4px 15px rgba(42, 107, 156, 0.2); }
-    .inactive-nav { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; hover:bg-gray-50; }
+    .glass { background: rgba(255, 255, 255, 0.9); border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    .nav-btn { padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; text-align: center; font-size: 14px; }
+    .active-nav { background: #2A6B9C; color: white; }
+    .inactive-nav { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
   </style>
 </head>
 <body>
-  <div class="max-w-6xl mx-auto space-y-6">
-    <div class="glass flex flex-col md:flex-row justify-between items-center p-6 mb-6">
+  <div class="max-w-7xl mx-auto space-y-6">
+    <div class="glass flex justify-between items-center mb-4">
       <div>
         <h1 class="text-2xl font-bold text-[#2A6B9C]">Manager Dashboard</h1>
         <p class="text-sm text-slate-500">SATU SISTEM PASTRYFITY - HRIS & KPI</p>
       </div>
-      <a href="index.html" class="mt-4 md:mt-0 bg-red-50 text-red-600 px-5 py-2 rounded-xl font-bold text-sm border border-red-100 hover:bg-red-100 transition">Logout System</a>
+      <a href="index.html" class="bg-red-50 text-red-600 px-5 py-2 rounded-lg font-bold text-sm">Logout System</a>
     </div>
 
     <!-- Navigasi -->
-    <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-3 mb-6">
+    <div class="flex space-x-3 mb-6">
       <div class="nav-btn active-nav flex-1" onclick="switchMenu('menu-users')">Manajemen Karyawan</div>
+      <div class="nav-btn inactive-nav flex-1" onclick="switchMenu('menu-form')">Atur Form Laporan</div>
       <div class="nav-btn inactive-nav flex-1" onclick="switchMenu('menu-approval')">Approval Pengajuan</div>
       <div class="nav-btn inactive-nav flex-1" onclick="switchMenu('menu-kpi')">Review KPI & Laporan</div>
     </div>
 
-    <!-- MENU 1: MANAJEMEN KARYAWAN -->
+    <!-- 1. MANAJEMEN KARYAWAN -->
     <div id="menu-users" class="glass grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="lg:col-span-2 overflow-x-auto">
-        <h2 class="text-lg font-bold mb-4 text-slate-800">Database Master Karyawan</h2>
+        <h2 class="text-lg font-bold mb-4">Database Master Karyawan</h2>
         <table class="w-full text-left text-sm border-collapse">
           <thead>
             <tr class="bg-slate-100 text-slate-600">
-              <th class="p-3 rounded-tl-lg">Nama</th>
+              <th class="p-3">Nama</th>
               <th class="p-3">Posisi</th>
               <th class="p-3">Tgl Masuk</th>
               <th class="p-3">PIN</th>
               <th class="p-3">Status</th>
-              <th class="p-3 rounded-tr-lg text-center">Aksi</th>
+              <th class="p-3 text-center">Aksi</th>
             </tr>
           </thead>
           <tbody id="user-table-body">
             <!-- Render via JS -->
-            <tr><td colspan="6" class="p-4 text-center text-slate-400">Memuat data...</td></tr>
           </tbody>
         </table>
       </div>
       
-      <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-inner">
-        <h3 class="font-bold text-[#2A6B9C] mb-4 text-lg">Tambah / Edit User</h3>
-        <input type="text" placeholder="Nama Lengkap" class="w-full p-3 mb-3 rounded-xl border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">
-        <label class="text-xs font-semibold text-slate-500 px-1">Tanggal Lahir</label>
-        <input type="date" class="w-full p-3 mb-3 rounded-xl border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">
-        <label class="text-xs font-semibold text-slate-500 px-1">Tanggal Masuk</label>
-        <input type="date" class="w-full p-3 mb-3 rounded-xl border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">
-        <select class="w-full p-3 mb-3 rounded-xl border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-[#2A6B9C]">
-          <option>Admin Toko</option><option>Bakery</option><option>Head Chef</option><option>R&D</option><option>Konten Kreator</option><option>Accounting</option><option>Admin Gudang</option><option>Barista</option>
+      <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+        <h3 class="font-bold text-[#2A6B9C] mb-4" id="form-user-title">Tambah / Edit User</h3>
+        <input type="hidden" id="edit-id">
+        <input type="text" id="edit-nama" placeholder="Nama Lengkap" class="w-full p-2 mb-3 rounded border text-sm">
+        <label class="text-xs text-slate-500">Tanggal Lahir</label>
+        <input type="date" id="edit-dob" class="w-full p-2 mb-3 rounded border text-sm">
+        <label class="text-xs text-slate-500">Tanggal Masuk</label>
+        <input type="date" id="edit-join" class="w-full p-2 mb-3 rounded border text-sm">
+        <select id="edit-posisi" class="w-full p-2 mb-3 rounded border text-sm">
+          <option value="Admin Toko">Admin Toko</option>
+          <option value="Bakery">Bakery</option>
         </select>
-        <input type="text" placeholder="Buat PIN Baru (6 Digit)" maxlength="6" class="w-full p-3 mb-6 rounded-xl border border-gray-300 text-sm font-mono tracking-widest outline-none focus:ring-2 focus:ring-[#2A6B9C]">
-        <button onclick="alert('Fitur simpan (Integrasi Backend Action required)')" class="w-full bg-[#2A6B9C] text-white py-3 rounded-xl font-bold shadow-md hover:bg-blue-800 transition">Simpan Data Akun</button>
+        <input type="text" id="edit-pin" placeholder="Buat PIN Baru (6 Digit)" maxlength="6" class="w-full p-2 mb-6 rounded border text-sm font-mono">
+        <button onclick="saveUser()" class="w-full bg-[#2A6B9C] text-white py-2 rounded font-bold">Simpan Data Akun</button>
       </div>
     </div>
 
-    <!-- MENU 2: APPROVAL PENGAJUAN -->
+    <!-- 2. ATUR FORM (NEW) -->
+    <div id="menu-form" class="glass hidden">
+      <h2 class="text-lg font-bold mb-4">Pengaturan Form Pekerjaan Karyawan (Tugas Harian)</h2>
+      <p class="text-sm text-slate-500 mb-4">Pilih divisi untuk menambahkan atau menghapus isian laporan harian mereka.</p>
+      <div class="flex space-x-4">
+        <select id="select-div-form" class="p-2 border rounded text-sm w-1/3">
+          <option>Admin Toko</option>
+          <option>Bakery</option>
+        </select>
+        <button onclick="alert('Form berhasil diload (Simulasi)')" class="bg-slate-200 px-4 py-2 rounded text-sm font-bold">Load Indikator</button>
+      </div>
+      <!-- List Indikator -->
+      <div class="mt-4 border p-4 rounded bg-slate-50">
+        <div class="flex justify-between items-center bg-white p-2 border mb-2 rounded">
+          <span class="text-sm font-semibold">1. Omset Cash (Angka)</span>
+          <button class="text-red-500 text-xs font-bold">Hapus</button>
+        </div>
+        <div class="flex space-x-2 mt-4">
+          <input type="text" placeholder="Nama Tugas Baru..." class="flex-1 p-2 border rounded text-sm">
+          <button class="bg-green-500 text-white px-4 py-2 rounded text-sm font-bold">+ Tambah Field</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. APPROVAL PENGAJUAN -->
     <div id="menu-approval" class="glass hidden">
-      <h2 class="text-lg font-bold mb-4 text-slate-800">Antrean Pengajuan (Cuti / Off Mingguan / Izin)</h2>
+      <h2 class="text-lg font-bold mb-4">Antrean Pengajuan (Cuti / Off Mingguan / Izin)</h2>
       <div class="space-y-4">
-        <!-- Kartu Approval Dummy -->
-        <div class="border border-slate-200 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center bg-white shadow-sm">
+        
+        <!-- Kartu Pengajuan -->
+        <div class="border border-slate-200 p-5 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center bg-white">
           <div class="mb-4 md:mb-0">
             <h4 class="font-bold text-lg text-slate-800">Budi Raharjo <span class="text-sm font-normal text-slate-500 ml-2">(Admin Toko)</span></h4>
             <div class="flex items-center space-x-2 mt-1">
-              <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-md font-bold">Off Mingguan</span>
-              <span class="text-sm text-slate-600 font-medium">Tanggal: 28 Agustus 2026</span>
+              <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-bold">Cuti Tahunan</span>
+              <span class="text-sm text-slate-600 font-medium">Mulai: 28 Agustus 2026</span>
             </div>
             <p class="text-sm text-slate-500 mt-2"><strong>Alasan:</strong> Acara keluarga di luar kota.</p>
-            <a href="#" class="text-xs text-[#2A6B9C] font-semibold underline mt-2 block">Lihat Lampiran Dokumen</a>
+            <button onclick="generateSuratCuti('Budi Raharjo', 'Admin Toko', 'Cuti Tahunan', '28 Agustus 2026', 'Acara keluarga di luar kota.')" class="text-xs text-[#2A6B9C] font-semibold underline mt-2 block">Generate Surat Resmi & Lampiran (PDF)</button>
           </div>
           <div class="flex flex-col space-y-2 w-full md:w-auto">
-            <input type="text" placeholder="Catatan Manager (Opsional)" class="p-2 border rounded-lg text-xs w-full">
+            <input type="text" placeholder="Catatan Manager (Opsional)" class="p-2 border rounded text-xs w-full">
             <div class="flex space-x-2">
-              <button onclick="alert('Pengajuan Disetujui')" class="flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-sm transition">Approve</button>
-              <button onclick="alert('Pengajuan Ditolak')" class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-sm transition">Tolak</button>
+              <button onclick="this.innerText='Approved'; this.className='flex-1 bg-green-700 text-white px-4 py-2 rounded font-bold text-sm';" class="flex-1 bg-green-500 text-white px-4 py-2 rounded font-bold text-sm">Approve</button>
+              <button onclick="this.innerText='Ditolak'; this.className='flex-1 bg-red-700 text-white px-4 py-2 rounded font-bold text-sm';" class="flex-1 bg-red-500 text-white px-4 py-2 rounded font-bold text-sm">Tolak</button>
             </div>
           </div>
         </div>
+
       </div>
     </div>
 
-    <!-- MENU 3: REVIEW KPI & LAPORAN -->
+    <!-- 4. REVIEW KPI & PENILAIAN MANAGER -->
     <div id="menu-kpi" class="glass hidden">
-      <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-        <div>
-          <h2 class="text-lg font-bold text-slate-800">Review KPI Harian & Bulanan</h2>
-          <p class="text-xs text-slate-500">Evaluasi performa berdasarkan input laporan harian.</p>
-        </div>
-        <button onclick="downloadSuratPDF()" class="mt-4 md:mt-0 bg-slate-800 text-white px-5 py-2 rounded-xl font-bold text-sm shadow hover:bg-slate-700 transition">Cetak Surat Rapor (PDF)</button>
-      </div>
+      <h2 class="text-lg font-bold text-slate-800 mb-2">Review KPI Harian & Bulanan</h2>
+      <p class="text-xs text-slate-500 mb-6">Bobot: Kehadiran (20%) + Sistem (40%) + Penilaian Manager (40%)</p>
+      
       <div class="overflow-x-auto">
         <table class="w-full text-left text-sm border-collapse">
           <thead>
             <tr class="bg-slate-100">
               <th class="p-3 border-b">Nama Karyawan</th>
-              <th class="p-3 border-b text-center">Kehadiran (Laporan)</th>
-              <th class="p-3 border-b text-center">Skor KPI Terkini</th>
-              <th class="p-3 border-b text-center">Prediksi Grade</th>
-              <th class="p-3 border-b text-center">Aksi</th>
+              <th class="p-3 border-b text-center">Kehadiran</th>
+              <th class="p-3 border-b text-center">Skor KPI</th>
+              <th class="p-3 border-b text-center">Grade</th>
+              <th class="p-3 border-b text-center">Aksi Laporan</th>
+              <th class="p-3 border-b text-center">Cetak (Individu)</th>
             </tr>
           </thead>
-          <tbody id="kpi-table-body">
+          <tbody>
             <tr>
               <td class="p-3 border-b font-semibold">Budi Raharjo</td>
               <td class="p-3 border-b text-center">20 Hari</td>
-              <td class="p-3 border-b text-center font-bold">88%</td>
+              <td class="p-3 border-b text-center font-bold text-[#2A6B9C]">88%</td>
               <td class="p-3 border-b text-center"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full font-bold">B</span></td>
-              <td class="p-3 border-b text-center"><button class="text-[#2A6B9C] font-semibold text-xs hover:underline">Detail Harian</button></td>
+              <td class="p-3 border-b text-center">
+                <button onclick="reviewHarian('Budi Raharjo')" class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded font-bold text-xs">Review & Beri Nilai</button>
+              </td>
+              <td class="p-3 border-b text-center">
+                <button onclick="cetakRaporIndividu('Budi Raharjo', '88%', 'B')" class="bg-slate-800 text-white px-3 py-1 rounded font-bold text-xs">Rapor PDF</button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -130,65 +161,74 @@
 
   </div>
 
-  <!-- Hidden Template Surat Resmi untuk PDF -->
-  <div id="pdf-surat-template" class="hidden p-10 bg-white text-black w-[800px] mx-auto font-serif">
-    <div class="text-center border-b-2 border-black pb-4 mb-6">
-      <h1 class="text-2xl font-bold uppercase">SATU SISTEM PASTRYFITY</h1>
-      <p class="text-sm">Laporan Evaluasi Kinerja Karyawan (KPI) - Periode Berjalan</p>
-    </div>
-    <div class="mb-6 space-y-2 text-sm">
-      <p><strong>Diberikan Kepada:</strong> Budi Raharjo</p>
-      <p><strong>Posisi / Divisi:</strong> Admin Toko</p>
-      <p><strong>Tanggal Dokumen:</strong> <span id="tgl-cetak"></span></p>
-    </div>
-    <p class="text-sm text-justify mb-4">Berdasarkan hasil evaluasi laporan harian dan metrik operasional yang telah dicapai selama periode bulan ini, manajemen memberikan penilaian kinerja sebagai berikut:</p>
-    <table class="w-full border-collapse border border-black text-sm mb-6">
-      <tr class="bg-gray-100"><th class="border border-black p-2">Kriteria Penilaian</th><th class="border border-black p-2 text-center">Hasil</th></tr>
-      <tr><td class="border border-black p-2">Total Kehadiran (Input Laporan)</td><td class="border border-black p-2 text-center">20 Hari</td></tr>
-      <tr><td class="border border-black p-2">Rata-rata Skor Kualitas & Metrik</td><td class="border border-black p-2 text-center">88%</td></tr>
-      <tr><td class="border border-black p-2 font-bold">Grade Akhir</td><td class="border border-black p-2 text-center font-bold text-lg">B</td></tr>
-    </table>
-    <p class="text-sm text-justify mb-16">Status kelanjutan kontrak dan pencairan insentif disesuaikan dengan aturan perusahaan yang berlaku. Keputusan ini dibuat secara sistematis oleh sistem.</p>
-    <div class="flex justify-between items-center px-10">
-      <div class="text-center"><p class="text-sm mb-16">Mengetahui,</p><p class="text-sm font-bold underline">Manager Operasional</p></div>
-      <div class="text-center"><p class="text-sm mb-16">Disetujui,</p><p class="text-sm font-bold underline">Executive Owner</p></div>
+  <!-- Modal/Alert Simulasi Review Harian -->
+  <div id="modal-review" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div class="bg-white p-6 rounded-xl w-96">
+      <h3 class="font-bold text-lg mb-2">Laporan Harian - <span id="rev-nama"></span></h3>
+      <p class="text-xs text-slate-500 mb-4">Inisiatif: Merapikan showcase depan.<br>Kendala: Mesin kasir sempat error 5 menit.</p>
+      <label class="block text-sm font-semibold mb-1">Berikan Nilai Manager (1-100) <span class="text-red-500">*Bobot 40%</span></label>
+      <input type="number" id="skor-manager" placeholder="Contoh: 85" class="w-full p-2 border rounded mb-4">
+      <div class="flex space-x-2">
+        <button onclick="document.getElementById('modal-review').classList.add('hidden')" class="flex-1 bg-slate-200 py-2 rounded font-bold text-sm">Batal</button>
+        <button onclick="simpanNilai()" class="flex-1 bg-[#2A6B9C] text-white py-2 rounded font-bold text-sm">Simpan Nilai</button>
+      </div>
     </div>
   </div>
 
+  <!-- Hidden Template: Surat Pengajuan Cuti (Format Resmi) -->
+  <div id="pdf-surat-cuti" class="hidden p-10 bg-white text-black w-[800px] mx-auto font-serif">
+    <div class="text-center border-b-2 border-black pb-4 mb-6">
+      <h1 class="text-2xl font-bold uppercase">SATU SISTEM PASTRYFITY</h1>
+      <p class="text-sm">Formulir Persetujuan Pengajuan Karyawan</p>
+    </div>
+    <p class="text-sm mb-4">Yang bertanda tangan di bawah ini, mengajukan permohonan:</p>
+    <table class="w-full text-sm mb-6">
+      <tr><td class="w-1/3 py-1">Nama</td><td class="w-2/3 font-bold">: <span id="sc-nama"></span></td></tr>
+      <tr><td class="w-1/3 py-1">Divisi</td><td class="w-2/3 font-bold">: <span id="sc-divisi"></span></td></tr>
+      <tr><td class="w-1/3 py-1">Jenis Pengajuan</td><td class="w-2/3 font-bold">: <span id="sc-jenis"></span></td></tr>
+      <tr><td class="w-1/3 py-1">Tanggal Berlaku</td><td class="w-2/3 font-bold">: <span id="sc-tgl"></span></td></tr>
+      <tr><td class="w-1/3 py-1 align-top">Alasan Lengkap</td><td class="w-2/3 font-bold">: <span id="sc-alasan"></span></td></tr>
+    </table>
+    <div class="mb-10 p-4 border border-dashed border-gray-400 text-center text-sm text-gray-500">
+      <p>[Area Lampiran Dokumen/Foto Medis dari Sistem]</p>
+      <p class="italic mt-2">Lampiran divalidasi oleh sistem: Ada.</p>
+    </div>
+    <div class="flex justify-between items-center px-10">
+      <div class="text-center"><p class="text-sm mb-16">Pemohon,</p><p class="text-sm font-bold underline" id="sc-nama2"></p></div>
+      <div class="text-center"><p class="text-sm mb-16">Disetujui Oleh,</p><p class="text-sm font-bold underline">Manager Operasional</p></div>
+    </div>
+  </div>
+
+  <!-- Hidden Template: Rapor KPI Individu -->
+  <div id="pdf-rapor-individu" class="hidden p-10 bg-white text-black w-[800px] mx-auto font-serif">
+    <div class="text-center border-b-2 border-black pb-4 mb-6">
+      <h1 class="text-2xl font-bold uppercase">SATU SISTEM PASTRYFITY</h1>
+      <p class="text-sm">Rapor Evaluasi Kinerja Key Performance Indicator (KPI)</p>
+    </div>
+    <div class="mb-6 space-y-2 text-sm">
+      <p><strong>Nama Karyawan:</strong> <span id="ri-nama"></span></p>
+      <p><strong>Bulan Penilaian:</strong> Agustus 2026</p>
+    </div>
+    <table class="w-full border-collapse border border-black text-sm mb-6">
+      <tr class="bg-gray-100"><th class="border border-black p-2 text-left">Komponen Penilaian (Bobot Profesional)</th><th class="border border-black p-2 text-center">Skor / Hasil</th></tr>
+      <tr><td class="border border-black p-2">1. Tingkat Kehadiran Harian (20%)</td><td class="border border-black p-2 text-center">100 / 100</td></tr>
+      <tr><td class="border border-black p-2">2. Capaian Metrik Sistem (40%)</td><td class="border border-black p-2 text-center">85 / 100</td></tr>
+      <tr><td class="border border-black p-2">3. Evaluasi Kualitas by Manager (40%)</td><td class="border border-black p-2 text-center">87 / 100</td></tr>
+      <tr><td class="border border-black p-2 font-bold text-right">TOTAL SKOR AKHIR</td><td class="border border-black p-2 text-center font-bold text-lg"><span id="ri-skor"></span></td></tr>
+      <tr><td class="border border-black p-2 font-bold text-right">GRADE</td><td class="border border-black p-2 text-center font-bold text-xl"><span id="ri-grade"></span></td></tr>
+    </table>
+  </div>
+
   <script>
-    document.getElementById('tgl-cetak').innerText = new Date().toLocaleDateString('id-ID');
+    // Inisialisasi Data Dummy (karena tidak pakai database backend)
+    let users = [
+      { id: "U003", name: "Budi Raharjo", division: "Admin Toko", join_date: "2023-02-15", pin: "123456", status: "Aktif", dob: "1998-05-12" },
+      { id: "U004", name: "Siti Aminah", division: "Bakery", join_date: "2024-01-10", pin: "654321", status: "Aktif", dob: "2000-11-20" }
+    ];
 
-    async function loadUsersForManager() {
-      try {
-        const res = await fetch('data/users.json');
-        const users = await res.json();
-        const tbody = document.getElementById('user-table-body');
-        tbody.innerHTML = '';
-        users.forEach(u => {
-          if(u.role === 'employee') {
-            const statusBadge = u.status === 'ACTIVE' 
-              ? '<span class="bg-green-100 text-green-700 px-2 py-1 rounded-md text-xs font-semibold">Aktif</span>'
-              : '<span class="bg-red-100 text-red-700 px-2 py-1 rounded-md text-xs font-semibold">Terkunci</span>';
-            tbody.innerHTML += `
-              <tr class="border-b border-slate-100 hover:bg-slate-50">
-                <td class="p-3 font-medium text-slate-800">${u.name}</td>
-                <td class="p-3 text-slate-600">${u.division}</td>
-                <td class="p-3 text-slate-600">${u.join_date}</td>
-                <td class="p-3"><span class="bg-slate-200 px-2 py-1 rounded font-mono tracking-widest text-xs">${u.pin}</span></td>
-                <td class="p-3">${statusBadge}</td>
-                <td class="p-3 text-center"><button class="text-blue-600 hover:text-blue-800 font-semibold text-xs border border-blue-200 px-2 py-1 rounded">Edit</button></td>
-              </tr>
-            `;
-          }
-        });
-      } catch(e) {
-        document.getElementById('user-table-body').innerHTML = '<tr><td colspan="6" class="p-4 text-center text-red-500">Gagal memuat JSON.</td></tr>';
-      }
-    }
-    loadUsersForManager();
-
+    // FUNGSI 1: Navigasi Menu
     function switchMenu(targetId) {
-      ['menu-users', 'menu-approval', 'menu-kpi'].forEach(id => {
+      ['menu-users', 'menu-form', 'menu-approval', 'menu-kpi'].forEach(id => {
         document.getElementById(id).classList.add('hidden');
       });
       document.getElementById(targetId).classList.remove('hidden');
@@ -202,22 +242,112 @@
       event.target.classList.remove('inactive-nav');
     }
 
-    function downloadSuratPDF() {
-      const element = document.getElementById('pdf-surat-template');
-      element.classList.remove('hidden'); 
-      
-      const opt = {
-        margin:       0.5,
-        filename:     'Surat_Resmi_KPI_Budi.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
+    // FUNGSI 2: Render & Edit User Interaktif
+    function renderTable() {
+      const tbody = document.getElementById('user-table-body');
+      tbody.innerHTML = '';
+      users.forEach((u, index) => {
+        tbody.innerHTML += `
+          <tr class="border-b hover:bg-slate-50">
+            <td class="p-3 font-medium">${u.name}</td>
+            <td class="p-3">${u.division}</td>
+            <td class="p-3">${u.join_date}</td>
+            <td class="p-3"><span class="bg-slate-200 px-2 py-1 rounded font-mono text-xs">${u.pin}</span></td>
+            <td class="p-3"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-semibold">${u.status}</span></td>
+            <td class="p-3 text-center">
+              <button onclick="editUser(${index})" class="text-blue-600 border border-blue-300 px-3 py-1 rounded text-xs font-bold hover:bg-blue-50">Edit</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
 
-      html2pdf().set(opt).from(element).save().then(() => {
+    function editUser(index) {
+      const u = users[index];
+      document.getElementById('form-user-title').innerText = "Edit Data: " + u.name;
+      document.getElementById('edit-id').value = index;
+      document.getElementById('edit-nama').value = u.name;
+      document.getElementById('edit-dob').value = u.dob;
+      document.getElementById('edit-join').value = u.join_date;
+      document.getElementById('edit-posisi').value = u.division;
+      document.getElementById('edit-pin').value = u.pin;
+    }
+
+    function saveUser() {
+      const idx = document.getElementById('edit-id').value;
+      const nama = document.getElementById('edit-nama').value;
+      if(!nama) { alert("Nama harus diisi!"); return; }
+
+      if(idx === "") { // Tambah baru
+        users.push({
+          id: "U" + Date.now(), name: nama, division: document.getElementById('edit-posisi').value,
+          join_date: document.getElementById('edit-join').value, pin: document.getElementById('edit-pin').value, status: "Aktif", dob: document.getElementById('edit-dob').value
+        });
+      } else { // Edit
+        users[idx].name = nama;
+        users[idx].division = document.getElementById('edit-posisi').value;
+        users[idx].join_date = document.getElementById('edit-join').value;
+        users[idx].dob = document.getElementById('edit-dob').value;
+        users[idx].pin = document.getElementById('edit-pin').value;
+      }
+      
+      // Bersihkan form
+      document.getElementById('form-user-title').innerText = "Tambah / Edit User";
+      document.getElementById('edit-id').value = "";
+      document.getElementById('edit-nama').value = "";
+      document.getElementById('edit-pin').value = "";
+      
+      renderTable();
+      alert("Data berhasil disimpan di memori browser!");
+    }
+
+    // FUNGSI 3: Generate Surat Pengajuan Cuti/Izin
+    function generateSuratCuti(nama, divisi, jenis, tgl, alasan) {
+      document.getElementById('sc-nama').innerText = nama;
+      document.getElementById('sc-nama2').innerText = nama;
+      document.getElementById('sc-divisi').innerText = divisi;
+      document.getElementById('sc-jenis').innerText = jenis;
+      document.getElementById('sc-tgl').innerText = tgl;
+      document.getElementById('sc-alasan').innerText = alasan;
+
+      const element = document.getElementById('pdf-surat-cuti');
+      element.classList.remove('hidden');
+      
+      html2pdf().set({ margin: 0.5, filename: `Surat_${jenis}_${nama}.pdf` }).from(element).save().then(() => {
         element.classList.add('hidden');
       });
     }
+
+    // FUNGSI 4: Penilaian Manager untuk Laporan Harian (Skoring)
+    function reviewHarian(nama) {
+      document.getElementById('rev-nama').innerText = nama;
+      document.getElementById('modal-review').classList.remove('hidden');
+    }
+
+    function simpanNilai() {
+      const skor = document.getElementById('skor-manager').value;
+      if(!skor) return alert("Masukkan nilai!");
+      alert("Nilai Manager " + skor + " berhasil dimasukkan ke pembobotan KPI " + document.getElementById('rev-nama').innerText);
+      document.getElementById('modal-review').classList.add('hidden');
+      document.getElementById('skor-manager').value = "";
+    }
+
+    // FUNGSI 5: Cetak Rapor KPI Perorangan
+    function cetakRaporIndividu(nama, skor, grade) {
+      document.getElementById('ri-nama').innerText = nama;
+      document.getElementById('ri-skor').innerText = skor;
+      document.getElementById('ri-grade').innerText = grade;
+
+      const element = document.getElementById('pdf-rapor-individu');
+      element.classList.remove('hidden');
+      
+      html2pdf().set({ margin: 0.5, filename: `Rapor_KPI_${nama}.pdf` }).from(element).save().then(() => {
+        element.classList.add('hidden');
+      });
+    }
+
+    // Inisialisasi awal
+    renderTable();
   </script>
 </body>
 </html>
