@@ -5,30 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manager - SATU SISTEM PASTRYFITY</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; background-color: #EBF3FA; padding: 24px; }
     .glass { background: rgba(255, 255, 255, 0.9); border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-    .nav-btn { padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; text-align: center; font-size: 14px; }
+    .nav-btn { padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: center; font-size: 14px; }
     .active-nav { background: #2A6B9C; color: white; }
     .inactive-nav { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
-    /* Loading overlay */
-    #loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 9999; display: flex; flex-direction: column; justify-content: center; items-center; }
+    #loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
   </style>
 </head>
 <body>
   
-  <div id="loading-overlay" class="items-center">
+  <div id="loading-overlay" style="display: none;">
     <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#2A6B9C] mb-4"></div>
-    <h2 class="text-xl font-bold text-[#2A6B9C]" id="loading-text">Menyinkronkan Database dari GitHub...</h2>
+    <h2 class="text-xl font-bold text-[#2A6B9C]" id="loading-text">Menyinkronkan...</h2>
   </div>
 
   <div class="max-w-7xl mx-auto space-y-6">
     <div class="glass flex justify-between items-center mb-4">
       <div>
         <h1 class="text-2xl font-bold text-[#2A6B9C]">Manager Dashboard</h1>
-        <p class="text-sm text-slate-600 mt-1 font-semibold">Semua data terhubung langsung ke Server GitHub</p>
       </div>
       <div class="flex space-x-2">
         <button onclick="loadAllData()" class="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-bold text-sm">🔄 Refresh Data</button>
@@ -36,269 +33,137 @@
       </div>
     </div>
 
-    <!-- Navigasi -->
     <div class="flex space-x-3 mb-6 overflow-x-auto pb-2">
       <div class="nav-btn active-nav whitespace-nowrap" onclick="switchMenu('menu-users')">Manajemen Karyawan</div>
-      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-form')">Atur Form Laporan</div>
-      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-approval')">Approval Pengajuan</div>
-      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-kpi')">Review Laporan Harian</div>
     </div>
 
-    <!-- 1. MANAJEMEN KARYAWAN -->
     <div id="menu-users" class="glass block grid grid-cols-1 xl:grid-cols-3 gap-8">
       <div class="xl:col-span-2 overflow-x-auto">
         <h2 class="text-lg font-bold mb-4">Database Master Karyawan</h2>
         <table class="w-full text-left text-sm border-collapse min-w-[700px]">
-          <thead><tr class="bg-slate-100"><th class="p-3">Nama</th><th class="p-3">Posisi</th><th class="p-3">Tgl Masuk</th><th class="p-3">PIN</th><th class="p-3 text-center">Aksi</th></tr></thead>
+          <thead><tr class="bg-slate-100"><th class="p-3">Nama</th><th class="p-3">Posisi</th><th class="p-3">Tgl Masuk</th><th class="p-3 text-center">Aksi</th></tr></thead>
           <tbody id="user-table-body"></tbody>
         </table>
       </div>
       <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
-        <h3 class="font-bold text-[#2A6B9C] mb-4" id="form-user-title">Tambah / Edit User</h3>
+        <h3 class="font-bold text-[#2A6B9C] mb-4">Tambah / Edit User</h3>
         <input type="hidden" id="edit-index" value="">
-        <input type="text" id="edit-nama" placeholder="Nama Lengkap" class="w-full p-2 mb-3 rounded border text-sm outline-none">
-        <label class="text-xs text-slate-500">Tgl Lahir</label><input type="date" id="edit-dob" class="w-full p-2 mb-3 rounded border text-sm outline-none">
-        <label class="text-xs text-slate-500">Tgl Masuk</label><input type="date" id="edit-join" class="w-full p-2 mb-3 rounded border text-sm outline-none">
-        <label class="text-xs text-slate-500">Posisi (Divisi)</label><select id="edit-posisi" class="w-full p-2 mb-3 rounded border text-sm outline-none"></select>
+        <input type="text" id="edit-nama" placeholder="Nama Lengkap" class="w-full p-2 mb-3 rounded border text-sm">
+        <label class="text-xs text-slate-500">Tgl Masuk</label><input type="date" id="edit-join" class="w-full p-2 mb-3 rounded border text-sm">
+        <label class="text-xs text-slate-500">Posisi</label>
+        <select id="edit-posisi" class="w-full p-2 mb-3 rounded border text-sm">
+           <option value="Admin Toko">Admin Toko</option>
+           <option value="Bakery">Bakery</option>
+        </select>
         <input type="text" id="edit-pin" placeholder="PIN 6 Digit" maxlength="6" class="w-full p-2 mb-6 rounded border text-sm font-mono">
-        <button id="btn-save-user" onclick="saveUser()" class="w-full bg-[#2A6B9C] text-white py-2 rounded font-bold shadow">Simpan Data Karyawan</button>
+        <button onclick="saveUser()" class="w-full bg-[#2A6B9C] text-white py-2 rounded font-bold shadow">Simpan Data Karyawan</button>
       </div>
-    </div>
-
-    <!-- 2. ATUR FORM -->
-    <div id="menu-form" class="glass hidden">
-      <h2 class="text-lg font-bold mb-2">Pengaturan Form Pekerjaan Karyawan</h2>
-      <div class="flex space-x-4 mb-6">
-        <select id="select-div-form" onchange="renderFormEditor()" class="p-2 border rounded-lg text-sm w-1/3 outline-none"></select>
-        <button onclick="tambahDivisi()" class="bg-[#2A6B9C] text-white px-4 py-2 rounded-lg font-bold text-sm shadow">+ Tambah Posisi Baru</button>
-      </div>
-      <div class="border p-5 rounded-xl bg-slate-50">
-        <div id="fields-container" class="space-y-2 mb-6"></div>
-        <div class="flex space-x-2 p-4 border rounded-lg bg-white">
-          <input type="text" id="new-field-label" placeholder="Nama Tugas Baru..." class="flex-1 p-2 border rounded text-sm outline-none">
-          <select id="new-field-type" class="p-2 border rounded text-sm outline-none">
-            <option value="number">Angka</option><option value="text">Teks</option><option value="checkbox">Checklist</option>
-          </select>
-          <button id="btn-add-field" onclick="addField()" class="bg-green-500 text-white px-4 py-2 rounded text-sm font-bold shadow">+ Tambah Field</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. APPROVAL PENGAJUAN -->
-    <div id="menu-approval" class="glass hidden">
-      <h2 class="text-lg font-bold mb-4">Antrean Pengajuan</h2>
-      <div id="approval-list-container" class="space-y-4"></div>
-    </div>
-
-    <!-- 4. REVIEW LAPORAN HARIAN (BARU SINKRON) -->
-    <div id="menu-kpi" class="glass hidden">
-      <h2 class="text-lg font-bold mb-4">Review Laporan Harian Karyawan</h2>
-      <div id="report-list-container" class="space-y-4"></div>
     </div>
   </div>
 
   <script>
     // =====================================================================
-    // ⚙️ UNIVERSAL GITHUB API ENGINE
+    // ⚙️ KONFIGURASI GITHUB API
     // =====================================================================
-    const TOKEN_PART_1 = 'github_pat_11CLESV4Q0cyPSEywtVxNk_';
-    const TOKEN_PART_2 = 'eD5YHV5D9FheRBe1YCfaJ0iqv1jOe18RLOYVnyODDtSGWESJ4XNuO0zTjEJ';
+    const TOKEN_PART_1 = 'MASUKKAN_POTONGAN_1_DISINI'; 
+    const TOKEN_PART_2 = 'MASUKKAN_POTONGAN_2_DISINI'; 
     const GITHUB_TOKEN = TOKEN_PART_1 + TOKEN_PART_2; 
     const REPO_OWNER = 'kerjaan203-source';         
     const REPO_NAME = 'SISTEM-SATU-DATA-PASTRYFITY-';       
+    // =====================================================================
 
-    // Database Master Objek
-    let DB = { users: [], schema: {}, requests: [], reports: [] };
-
-    // Tampilkan / Sembunyikan Loading
+    let DB = { users: [] };
     const showLoading = (text) => { document.getElementById('loading-text').innerText = text; document.getElementById('loading-overlay').style.display = 'flex'; };
     const hideLoading = () => { document.getElementById('loading-overlay').style.display = 'none'; };
 
-    // FUNGSI TARIK DATA (GET)
     async function fetchFromGitHub(fileName) {
       const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/${fileName}.json`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }, cache: 'no-store' });
       if(!res.ok) {
-        if(res.status === 404) return { data: (fileName==='schema'?{}:[]), sha: null }; // Jika file belum ada
+        if(res.status === 404) return { data: [], sha: null };
         throw new Error(`Gagal akses ${fileName}`);
       }
       const data = await res.json();
       return { data: JSON.parse(decodeURIComponent(escape(atob(data.content)))), sha: data.sha };
     }
 
-    // FUNGSI SIMPAN DATA (PUT)
+    // 🔥 FUNGSI INI AKAN MELACAK ALASAN ERROR DARI GITHUB
     async function pushToGitHub(fileName, dataObj, commitMsg) {
       showLoading(`Menyimpan ${fileName} ke Server...`);
       try {
-        const current = await fetchFromGitHub(fileName); // Ambil SHA terbaru agar tidak konflik
+        const current = await fetchFromGitHub(fileName); 
         const updatedContent = btoa(unescape(encodeURIComponent(JSON.stringify(dataObj, null, 2))));
         
         const bodyData = { message: commitMsg, content: updatedContent };
         if(current.sha) bodyData.sha = current.sha;
 
         const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/${fileName}.json`, {
-          method: 'PUT', headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+          method: 'PUT', 
+          headers: { 
+            'Authorization': `token ${GITHUB_TOKEN}`, 
+            'Accept': 'application/vnd.github.v3+json', 
+            'Content-Type': 'application/json' 
+          },
           body: JSON.stringify(bodyData)
         });
-        if(!res.ok) throw new Error('Gagal Push API');
-      } catch (err) {
-        alert(`Error Sinkronisasi ${fileName}: ` + err.message);
-      }
-      hideLoading();
-    }
-
-    // ---------------------------------------------------------------------------
-    // LOAD SEMUA DATA SAAT AWAL BUKA
-    // ---------------------------------------------------------------------------
-    async function loadAllData() {
-      showLoading("Menarik seluruh data dari GitHub...");
-      try {
-        const [u, s, req, rep] = await Promise.all([
-          fetchFromGitHub('users'), fetchFromGitHub('kpi-schema'), fetchFromGitHub('requests'), fetchFromGitHub('reports')
-        ]);
-        DB.users = u.data; DB.schema = s.data; DB.requests = req.data; DB.reports = rep.data;
         
-        syncDropdown(); renderUserTable(); renderFormEditor(); renderApprovalQueue(); renderReportsQueue();
-      } catch (e) {
-        alert("Gagal koneksi ke GitHub. Pastikan Token valid.");
+        // JIKA GAGAL, BONGKAR PESAN ERROR DARI GITHUB
+        if(!res.ok) {
+           const errDetail = await res.json();
+           throw new Error(`\nALASAN GITHUB: ${errDetail.message}\n(Kode Error: ${res.status})`);
+        }
+      } catch (err) {
+        alert(`❌ GAGAL MENYIMPAN KE GITHUB!\n` + err.message + `\n\nJika Kode Error 404: Pastikan folder "data" sudah ada di repo.\nJika Kode Error 403/401: Izin Token Anda masih Read-Only atau Token kedaluwarsa.`);
       }
       hideLoading();
     }
 
-    function switchMenu(targetId) {
-      ['menu-users', 'menu-form', 'menu-approval', 'menu-kpi'].forEach(id => document.getElementById(id).classList.add('hidden'));
-      document.getElementById(targetId).classList.remove('hidden');
-      document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('active-nav'); btn.classList.add('inactive-nav'); });
-      event.target.classList.add('active-nav'); event.target.classList.remove('inactive-nav');
-    }
-
-    // ---------------------------------------------------------------------------
-    // 1. MANAJEMEN KARYAWAN (Tersinkronisasi)
-    // ---------------------------------------------------------------------------
-    function syncDropdown() {
-      const opts = Object.keys(DB.schema).map(div => `<option value="${div}">${div}</option>`).join('');
-      document.getElementById('edit-posisi').innerHTML = opts; document.getElementById('select-div-form').innerHTML = opts;
+    async function loadAllData() {
+      showLoading("Menarik data dari GitHub...");
+      try {
+        const u = await fetchFromGitHub('users');
+        DB.users = u.data;
+        renderUserTable(); 
+      } catch (e) {
+        console.error(e);
+      }
+      hideLoading();
     }
 
     function renderUserTable() {
       const tbody = document.getElementById('user-table-body'); tbody.innerHTML = '';
       DB.users.forEach((u, i) => {
         if(u.role === 'manager' || u.role === 'owner') return; 
-        tbody.innerHTML += `<tr class="border-b"><td class="p-3">${u.name}</td><td class="p-3">${u.division}</td><td class="p-3">${u.join_date||'-'}</td><td class="p-3"><span class="bg-slate-200 px-2 py-1 rounded font-mono text-xs">${u.pin}</span></td><td class="p-3 space-x-1 text-center"><button onclick="editUser(${i})" class="text-blue-600 font-bold text-xs border px-2 py-1 rounded">Edit</button> <button onclick="hapusUser(${i})" class="text-red-600 font-bold text-xs border px-2 py-1 rounded">Hapus</button></td></tr>`;
+        tbody.innerHTML += `<tr class="border-b"><td class="p-3">${u.name}</td><td class="p-3">${u.division}</td><td class="p-3">${u.join_date||'-'}</td><td class="p-3 space-x-1 text-center"><button onclick="hapusUser(${i})" class="text-red-600 font-bold text-xs border px-2 py-1 rounded">Hapus</button></td></tr>`;
       });
-    }
-
-    function editUser(i) {
-      const u = DB.users[i];
-      document.getElementById('edit-index').value = i; document.getElementById('edit-nama').value = u.name; document.getElementById('edit-dob').value = u.dob||''; document.getElementById('edit-join').value = u.join_date||''; document.getElementById('edit-posisi').value = u.division; document.getElementById('edit-pin').value = u.pin;
     }
 
     async function saveUser() {
-      const idx = document.getElementById('edit-index').value;
-      const data = { id: idx===""?"U"+Date.now():DB.users[idx].id, name: document.getElementById('edit-nama').value, division: document.getElementById('edit-posisi').value, dob: document.getElementById('edit-dob').value, join_date: document.getElementById('edit-join').value, pin: document.getElementById('edit-pin').value, status: "Aktif", role: "employee" };
-      if(idx==="") DB.users.push(data); else DB.users[idx] = data;
+      const nama = document.getElementById('edit-nama').value;
+      if(!nama) return alert('Nama tidak boleh kosong');
       
+      const data = { 
+        id: "U"+Date.now(), name: nama, 
+        division: document.getElementById('edit-posisi').value, 
+        join_date: document.getElementById('edit-join').value, 
+        pin: document.getElementById('edit-pin').value, 
+        status: "Aktif", role: "employee" 
+      };
+      
+      DB.users.push(data);
       await pushToGitHub('users', DB.users, `Manager update user ${data.name}`);
-      renderUserTable(); document.getElementById('edit-index').value = ""; document.getElementById('edit-nama').value = ""; document.getElementById('edit-pin').value = "";
+      renderUserTable(); 
     }
 
     async function hapusUser(i) {
-      if(confirm("Yakin hapus?")) { DB.users.splice(i, 1); await pushToGitHub('users', DB.users, `Manager hapus user`); renderUserTable(); }
-    }
-
-    // ---------------------------------------------------------------------------
-    // 2. ATUR FORM (Tersinkronisasi)
-    // ---------------------------------------------------------------------------
-    function renderFormEditor() {
-      const div = document.getElementById('select-div-form').value;
-      const c = document.getElementById('fields-container'); c.innerHTML = '';
-      (DB.schema[div]||[]).forEach((f, i) => c.innerHTML += `<div class="flex justify-between bg-white p-2 border mb-1 rounded"><span class="text-sm">${i+1}. ${f.label} (${f.type})</span><button onclick="hapusField(${i})" class="text-red-500 text-xs font-bold">Hapus</button></div>`);
-    }
-
-    async function tambahDivisi() {
-      const n = prompt("Posisi Baru:");
-      if(n && !DB.schema[n]) { DB.schema[n] = []; await pushToGitHub('kpi-schema', DB.schema, `Tambah divisi ${n}`); syncDropdown(); document.getElementById('select-div-form').value = n; renderFormEditor(); }
-    }
-
-    async function addField() {
-      const div = document.getElementById('select-div-form').value; const l = document.getElementById('new-field-label').value;
-      if(!l) return; DB.schema[div].push({ name: "f_"+Date.now(), label: l, type: document.getElementById('new-field-type').value });
-      await pushToGitHub('kpi-schema', DB.schema, `Update form ${div}`); renderFormEditor(); document.getElementById('new-field-label').value = '';
-    }
-
-    async function hapusField(i) { DB.schema[document.getElementById('select-div-form').value].splice(i, 1); await pushToGitHub('kpi-schema', DB.schema, `Hapus field`); renderFormEditor(); }
-
-    // ---------------------------------------------------------------------------
-    // 3. APPROVAL PENGAJUAN (Tersinkronisasi)
-    // ---------------------------------------------------------------------------
-    function renderApprovalQueue() {
-      const c = document.getElementById('approval-list-container'); c.innerHTML = '';
-      if(!DB.requests || DB.requests.length === 0) { c.innerHTML = '<div class="p-5 text-center text-slate-500 bg-white border border-dashed rounded-xl">Kosong.</div>'; return; }
-
-      DB.requests.slice().reverse().forEach(req => {
-        const isPending = req.status === 'Pending';
-        c.innerHTML += `
-          <div class="border p-4 rounded-xl flex justify-between bg-white shadow-sm mb-3">
-            <div class="w-2/3">
-              <h4 class="font-bold">${req.nama} <span class="text-sm font-normal text-slate-500">(${req.divisi})</span></h4>
-              <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded font-bold">${req.jenis}</span>
-              <span class="text-xs ml-2">${req.tgl_mulai} - ${req.tgl_selesai}</span>
-              <p class="text-sm mt-2">${req.alasan}</p>
-            </div>
-            <div class="w-1/3 flex flex-col space-y-2">
-              ${isPending ? `<input type="text" id="note-${req.id}" placeholder="Catatan" class="p-2 border rounded text-xs"><div class="flex space-x-2"><button onclick="prosesPengajuan('${req.id}','Approved')" class="flex-1 bg-green-500 text-white rounded text-sm py-1 font-bold">Approve</button><button onclick="prosesPengajuan('${req.id}','Ditolak')" class="flex-1 bg-red-500 text-white rounded text-sm py-1 font-bold">Tolak</button></div>` : `<div class="bg-slate-50 p-2 rounded border text-center text-xs"><b>${req.status}</b><br>${req.catatan_manager}</div>`}
-            </div>
-          </div>`;
-      });
-    }
-
-    async function prosesPengajuan(id, action) {
-      const idx = DB.requests.findIndex(r => r.id === id);
-      if(idx !== -1) {
-        DB.requests[idx].status = action; DB.requests[idx].catatan_manager = document.getElementById(`note-${id}`).value || action;
-        await pushToGitHub('requests', DB.requests, `Manager ${action} pengajuan`); renderApprovalQueue();
-      }
-    }
-
-    // ---------------------------------------------------------------------------
-    // 4. REVIEW LAPORAN HARIAN (Tersinkronisasi)
-    // ---------------------------------------------------------------------------
-    function renderReportsQueue() {
-      const c = document.getElementById('report-list-container'); c.innerHTML = '';
-      if(!DB.reports || DB.reports.length === 0) { c.innerHTML = '<div class="p-5 text-center text-slate-500 bg-white border border-dashed rounded-xl">Belum ada laporan harian.</div>'; return; }
-
-      DB.reports.slice().reverse().forEach(rep => {
-        let detailsHtml = '';
-        for(let key in rep.data_dinamis) { detailsHtml += `<li class="text-xs"><b>${key}:</b> ${rep.data_dinamis[key]}</li>`; }
-
-        c.innerHTML += `
-          <div class="border p-4 rounded-xl bg-white shadow-sm mb-3">
-            <div class="flex justify-between border-b pb-2 mb-2">
-              <h4 class="font-bold">${rep.nama} <span class="text-sm font-normal text-slate-500">(${rep.tanggal})</span></h4>
-              <span class="text-xs bg-slate-100 px-2 py-1 rounded">Skor Manager: ${rep.skor_manager || 'Belum Dinilai'}</span>
-            </div>
-            <p class="text-sm"><b>Inisiatif:</b> ${rep.inisiatif}</p>
-            <p class="text-sm mb-2"><b>Kendala:</b> ${rep.kendala}</p>
-            <ul class="bg-slate-50 p-2 rounded mb-3">${detailsHtml}</ul>
-            
-            ${!rep.skor_manager ? `
-            <div class="flex space-x-2">
-              <input type="number" id="skor-${rep.id}" placeholder="Beri Nilai 1-100" class="border p-1 rounded text-sm w-1/3 outline-none">
-              <button onclick="nilaiLaporan('${rep.id}')" class="bg-[#2A6B9C] text-white px-3 rounded text-sm font-bold">Simpan Nilai</button>
-            </div>` : ''}
-          </div>`;
-      });
-    }
-
-    async function nilaiLaporan(id) {
-      const val = document.getElementById(`skor-${id}`).value; if(!val) return alert("Masukkan nilai!");
-      const idx = DB.reports.findIndex(r => r.id === id);
-      if(idx !== -1) {
-        DB.reports[idx].skor_manager = val;
-        await pushToGitHub('reports', DB.reports, `Manager nilai laporan harian`); renderReportsQueue();
+      if(confirm("Yakin hapus?")) { 
+        DB.users.splice(i, 1); 
+        await pushToGitHub('users', DB.users, `Manager hapus user`); 
+        renderUserTable(); 
       }
     }
 
     window.onload = loadAllData;
+    function switchMenu(x) {}
   </script>
 </body>
 </html>
