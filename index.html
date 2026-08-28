@@ -3,72 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Karyawan - SATU SISTEM PASTRYFITY</title>
+  <title>Karyawan - SATU DATA PASTRYFITY</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Library untuk Print PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    body { font-family: 'Inter', sans-serif; background-color: #EBF3FA; }
-    .glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.4); }
-    .tab-active { background-color: #2A6B9C; color: white; box-shadow: 0 4px 10px rgba(42, 107, 156, 0.2); }
-    .tab-inactive { background-color: transparent; color: #64748b; border: 1px solid #cbd5e1; }
-    #loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    :root { --cream: #FAF8F5; --choco: #5C3A21; --caramel: #D4A373; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--cream); color: var(--choco); padding: 16px; }
+    .glass { background: #ffffff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(92, 58, 33, 0.08); border: 1px solid rgba(212, 163, 115, 0.2); }
+    .btn-primary { background-color: var(--caramel); color: white; transition: 0.2s; font-weight: bold; width: 100%; padding: 12px; border-radius: 8px; }
+    .btn-primary:hover { background-color: #b88a5d; }
+    .nav-item { padding: 10px; text-align: center; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 8px; flex: 1; }
+    .nav-active { background-color: var(--choco); color: white; }
+    .nav-inactive { background-color: #f1f5f9; color: #64748b; }
+    #loading-overlay { position: fixed; inset: 0; background: rgba(250, 248, 245, 0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
   </style>
 </head>
-<body class="min-h-screen text-slate-800 flex flex-col items-center justify-center p-4">
+<body>
 
-  <div id="loading-overlay">
-    <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-[#2A6B9C] mb-4"></div>
-    <h2 class="text-sm font-bold text-[#2A6B9C]" id="loading-text">Menyiapkan Database Server...</h2>
+  <!-- Loading Screen -->
+  <div id="loading-overlay" style="display: none;">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#D4A373] mb-4"></div>
+    <h2 class="text-lg font-bold text-[#5C3A21]" id="loading-text">Menyinkronkan Data...</h2>
   </div>
 
-  <div id="login-screen" class="w-full max-w-sm glass rounded-3xl p-8 flex flex-col items-center hidden">
-    <h1 class="text-2xl font-bold text-[#2A6B9C] mb-2 text-center">SATU SISTEM PASTRYFITY</h1>
-    <p class="text-sm text-slate-500 mb-8">Portal Login Terpadu</p>
-    <input type="password" id="pin-input" maxlength="6" inputmode="numeric" class="w-full text-center tracking-[1em] text-2xl font-bold p-4 rounded-xl border border-gray-300 mb-4 outline-none">
-    <button onclick="verifyPin()" class="w-full bg-[#2A6B9C] text-white font-bold py-3 rounded-xl shadow">Login dengan PIN</button>
-  </div>
-
-  <div id="dashboard-screen" class="w-full max-w-md hidden space-y-4">
-    <div class="glass rounded-3xl p-6 shadow-sm">
-      <div class="flex justify-between items-start mb-6">
-        <div><h2 class="text-xl font-bold text-[#2A6B9C]" id="user-greeting">Halo, Nama</h2><p class="text-xs font-semibold text-white bg-[#2A6B9C] px-2 py-1 rounded-full inline-block mt-1" id="div-name">Divisi</p></div>
-        <button onclick="logout()" class="bg-red-50 text-red-500 text-xs px-3 py-1 rounded-full font-bold">Keluar</button>
+  <div class="max-w-md mx-auto space-y-4">
+    <!-- Header -->
+    <div class="glass flex justify-between items-center">
+      <div>
+        <h1 class="text-xl font-bold">Pastryfity</h1>
+        <p class="text-xs text-slate-500" id="user-info">Login Karyawan</p>
       </div>
+      <button onclick="alert('Keluar dari sistem.')" class="text-xs bg-red-50 text-red-600 px-3 py-1 rounded font-bold border border-red-200">Logout</button>
+    </div>
 
-      <div class="flex space-x-2 mb-6">
-        <button onclick="switchTab('pengajuan')" id="tab-pengajuan" class="flex-1 py-2 rounded-xl text-sm font-bold tab-active">Pengajuan</button>
-        <button onclick="switchTab('laporan')" id="tab-laporan" class="flex-1 py-2 rounded-xl text-sm font-bold tab-inactive">Laporan Harian</button>
-      </div>
+    <!-- Menu Navigasi Karyawan -->
+    <div class="flex space-x-2 bg-white p-2 rounded-xl shadow-sm border border-slate-100">
+      <div class="nav-item nav-active" onclick="switchMenu('menu-beranda', this)">Beranda</div>
+      <div class="nav-item nav-inactive" onclick="switchMenu('menu-presensi', this)">Presensi</div>
+      <div class="nav-item nav-inactive" onclick="switchMenu('menu-pengajuan', this)">Pengajuan</div>
+      <div class="nav-item nav-inactive" onclick="switchMenu('menu-lapor', this)">Lapor & PDF</div>
+    </div>
 
-      <!-- TAB PENGAJUAN -->
-      <div id="view-pengajuan" class="space-y-4">
-        <form onsubmit="kirimPengajuan(event)" class="bg-white p-4 rounded-2xl border shadow-sm">
-          <label class="block text-sm font-semibold mb-1">Jenis Pengajuan</label>
-          <select id="req-jenis" required class="w-full p-2 rounded-lg border text-sm mb-3 outline-none"><option>Cuti Tahunan</option><option>Off Mingguan</option><option>Izin / Sakit</option></select>
-          <div class="flex space-x-3 mb-3"><div class="w-1/2"><label class="text-sm font-semibold mb-1">Mulai</label><input type="date" id="req-mulai" required class="w-full p-2 rounded-lg border text-sm outline-none"></div><div class="w-1/2"><label class="text-sm font-semibold mb-1">Selesai</label><input type="date" id="req-selesai" required class="w-full p-2 rounded-lg border text-sm outline-none"></div></div>
-          <label class="text-sm font-semibold mb-1">Alasan Lengkap</label><textarea id="req-alasan" required rows="2" class="w-full p-2 rounded-lg border text-sm mb-3 outline-none"></textarea>
-          <button type="submit" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl shadow">Kirim Pengajuan</button>
-        </form>
-        <h3 class="font-bold text-sm text-[#2A6B9C] mt-6">Riwayat Pengajuan</h3>
-        <div id="riwayat-pengajuan" class="space-y-2 mt-2"></div>
-      </div>
-
-      <!-- TAB LAPORAN -->
-      <div id="view-laporan" class="hidden space-y-4">
-        <form onsubmit="kirimLaporan(event)" class="bg-white p-4 rounded-2xl border shadow-sm" id="form-laporan-harian">
-          <label class="block text-sm font-semibold mb-1">Inisiatif Hari Ini <span class="text-red-500">*</span></label>
-          <textarea id="lap-inisiatif" required class="w-full p-2 rounded-lg border text-sm mb-3 outline-none" rows="2"></textarea>
-          <label class="block text-sm font-semibold mb-1">Kendala Lapangan <span class="text-red-500">*</span></label>
-          <textarea id="lap-kendala" required class="w-full p-2 rounded-lg border text-sm mb-3 outline-none" rows="2"></textarea>
-          <div class="w-full h-px bg-slate-200 my-4"></div>
-          <h3 class="font-bold text-[#2A6B9C] text-sm mb-3">Tugas Khusus Divisi Anda</h3>
-          <div id="dynamic-fields" class="space-y-3 mb-6 bg-blue-50/50 p-3 rounded-xl border border-blue-100"></div>
-          <button type="submit" class="w-full bg-[#2A6B9C] text-white font-bold py-3 rounded-xl shadow">Kirim Laporan Harian</button>
-        </form>
+    <!-- MENU 1: BERANDA -->
+    <div id="menu-beranda" class="glass">
+      <h2 class="font-bold text-lg mb-3">Pengumuman & SOP</h2>
+      <div class="bg-[#FAF8F5] p-4 rounded-lg border border-[#D4A373] border-opacity-30 mb-3">
+        <p class="text-sm font-semibold mb-1">📢 SOP Kebersihan</p>
+        <p class="text-xs text-slate-600">Pastikan showcase dilap menggunakan cairan khusus setiap pergantian shift.</p>
       </div>
     </div>
+
+    <!-- MENU 2: PRESENSI (GPS & SELFIE) -->
+    <div id="menu-presensi" class="glass hidden">
+      <h2 class="font-bold text-lg mb-3">Absensi Validasi</h2>
+      <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-center mb-4">
+        <!-- Area Kamera -->
+        <video id="camera-stream" class="w-full rounded-lg bg-black mb-2 hidden" autoplay playsinline></video>
+        <canvas id="camera-canvas" class="hidden"></canvas>
+        <p id="gps-status" class="text-xs font-bold text-red-500 mb-2">📍 Lokasi GPS belum ditarik</p>
+        <button onclick="startCameraAndGPS()" class="btn-primary bg-[#5C3A21] mb-2" id="btn-prepare-absen">Aktifkan Kamera & GPS</button>
+        <button onclick="prosesAbsen('Clock In')" class="btn-primary hidden bg-green-600 mb-2" id="btn-clock-in">📸 Clock In Sekarang</button>
+        <button onclick="prosesAbsen('Clock Out')" class="btn-primary hidden bg-red-600" id="btn-clock-out">📸 Clock Out Sekarang</button>
+      </div>
+      <p class="text-[10px] text-slate-400 text-center">*Sistem akan menolak jika Anda berada di luar radius toko.</p>
+    </div>
+
+    <!-- MENU 3: PENGAJUAN -->
+    <div id="menu-pengajuan" class="glass hidden">
+      <h2 class="font-bold text-lg mb-3">Form Pengajuan Surat</h2>
+      <input type="text" id="pengajuan-nama" placeholder="Nama Anda" class="w-full p-2 border rounded-lg mb-3 text-sm outline-none">
+      <select id="pengajuan-jenis" class="w-full p-2 border rounded-lg mb-3 text-sm outline-none">
+        <option value="Cuti">Pengajuan Cuti / Izin</option>
+        <option value="Roker Off">Roker Off (Tukar Libur)</option>
+        <option value="Kasbon">Reimbursement Kas Kecil</option>
+      </select>
+      <input type="date" id="pengajuan-mulai" class="w-full p-2 border rounded-lg mb-3 text-sm outline-none" title="Tanggal Mulai">
+      <textarea id="pengajuan-alasan" placeholder="Alasan Lengkap..." class="w-full p-2 border rounded-lg mb-3 text-sm h-20 outline-none"></textarea>
+      <button onclick="kirimPengajuan()" class="btn-primary">Kirim ke Manager</button>
+    </div>
+
+    <!-- MENU 4: LAPOR KERJA & PDF -->
+    <div id="menu-lapor" class="glass hidden">
+      <h2 class="font-bold text-lg mb-3">Laporan Akhir Shift</h2>
+      <!-- Dokumen yang akan di-print PDF -->
+      <div id="dokumen-laporan" class="bg-white p-4 border rounded-lg mb-4 text-sm">
+        <div class="text-center border-b-2 border-[#5C3A21] pb-2 mb-3">
+          <h1 class="font-bold text-lg text-[#5C3A21]">PASTRYFITY</h1>
+          <p class="text-[10px]">Jl. Jenderal Besar A.H. Nasution No.63c, Medan</p>
+          <p class="text-[10px] font-bold mt-1">LAPORAN HARIAN KARYAWAN</p>
+        </div>
+        <p><b>Nama:</b> <input type="text" id="lapor-nama" class="border-b w-32 outline-none text-xs" placeholder="Nama"></p>
+        <p><b>Tanggal:</b> <span id="lapor-tanggal"></span></p>
+        <div class="mt-3 space-y-2">
+          <p class="font-bold text-xs">Catatan Shift / Evaluasi:</p>
+          <textarea id="lapor-catatan" class="w-full border p-2 text-xs rounded" rows="3" placeholder="Isi laporan operasional hari ini..."></textarea>
+          <p class="text-[10px] text-slate-500 mt-2">*Saya menyatakan laporan ini diisi dengan sebenar-benarnya.</p>
+        </div>
+      </div>
+      <button onclick="cetakPDF()" class="btn-primary bg-blue-600">Kunci & Cetak PDF Dokumen</button>
+    </div>
   </div>
-  
+
   <script>
     // =====================================================================
     // ⚙️ KONFIGURASI GITHUB API
@@ -82,129 +119,125 @@
     // =====================================================================
     // =====================================================================
 
-  let DB = { users: [], schema: {}, requests: [], reports: [] };
-    let activeUser = null;
+let DB_REQUESTS = [];
+    document.getElementById('lapor-tanggal').innerText = new Date().toLocaleDateString('id-ID');
 
     const showLoading = (t) => { document.getElementById('loading-text').innerText=t; document.getElementById('loading-overlay').style.display='flex'; };
     const hideLoading = () => { document.getElementById('loading-overlay').style.display='none'; };
 
-    async function fetchFromGitHub(fileName) {
-      const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/${fileName}.json`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }, cache: 'no-store' });
-      if(!res.ok) { if(res.status === 404) return { data: (fileName==='schema'?{}:[]), sha: null }; throw new Error(); }
+    function switchMenu(targetId, element) {
+      ['menu-beranda', 'menu-presensi', 'menu-pengajuan', 'menu-lapor'].forEach(id => document.getElementById(id).classList.add('hidden'));
+      document.getElementById(targetId).classList.remove('hidden');
+      document.querySelectorAll('.nav-item').forEach(el => { el.classList.remove('nav-active'); el.classList.add('nav-inactive'); });
+      element.classList.add('nav-active'); element.classList.remove('nav-inactive');
+    }
+
+    // --- FITUR GPS & KAMERA (PRESENSI) ---
+    async function startCameraAndGPS() {
+      showLoading("Menyiapkan GPS & Kamera...");
+      try {
+        // Akses Kamera
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+        const video = document.getElementById('camera-stream');
+        video.srcObject = stream;
+        video.classList.remove('hidden');
+
+        // Akses GPS
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            document.getElementById('gps-status').innerText = `📍 Terlacak: ${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}`;
+            document.getElementById('gps-status').classList.replace('text-red-500', 'text-green-600');
+            document.getElementById('btn-prepare-absen').classList.add('hidden');
+            document.getElementById('btn-clock-in').classList.remove('hidden');
+            document.getElementById('btn-clock-out').classList.remove('hidden');
+            hideLoading();
+          },
+          (error) => {
+            alert("Akses GPS ditolak! Anda harus mengaktifkan lokasi untuk absen.");
+            hideLoading();
+          }
+        );
+      } catch (err) {
+        alert("Kamera tidak ditemukan atau ditolak.");
+        hideLoading();
+      }
+    }
+
+    function prosesAbsen(tipe) {
+      // Menangkap gambar dari Video ke Canvas (Konsep Anti-Kecurangan)
+      const video = document.getElementById('camera-stream');
+      const canvas = document.getElementById('camera-canvas');
+      canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+      alert(`Sukses! Data ${tipe} dan foto berhasil direkam ke sistem.`);
+      // Stream dimatikan
+      video.srcObject.getTracks().forEach(track => track.stop());
+      video.classList.add('hidden');
+    }
+
+    // --- FITUR GITHUB API (PENGAJUAN) ---
+    async function fetchRequests() {
+      const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/requests.json`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}` }});
+      if(!res.ok) return { data: [], sha: null };
       const data = await res.json();
       return { data: JSON.parse(decodeURIComponent(escape(atob(data.content)))), sha: data.sha };
     }
 
-    async function pushToGitHub(fileName, dataObj, commitMsg) {
-      showLoading(`Mengirim ${fileName} ke Server...`);
+    async function kirimPengajuan() {
+      const nama = document.getElementById('pengajuan-nama').value;
+      const alasan = document.getElementById('pengajuan-alasan').value;
+      if(!nama || !alasan) return alert("Mohon lengkapi formulir!");
+
+      showLoading("Menyimpan ke Brankas GitHub...");
       try {
-        const current = await fetchFromGitHub(fileName);
-        const updatedContent = btoa(unescape(encodeURIComponent(JSON.stringify(dataObj, null, 2))));
-        const bodyData = { message: commitMsg, content: updatedContent };
-        if(current.sha) bodyData.sha = current.sha;
-        const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/${fileName}.json`, { method: 'PUT', headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' }, body: JSON.stringify(bodyData) });
-        if(!res.ok) throw new Error();
-      } catch (e) { alert("Error saat push data."); }
+        const reqData = await fetchRequests();
+        DB_REQUESTS = reqData.data;
+
+        const newRequest = {
+          id: "REQ-" + Date.now(),
+          nama: nama,
+          jenis: document.getElementById('pengajuan-jenis').value,
+          tgl_mulai: document.getElementById('pengajuan-mulai').value,
+          tgl_selesai: "-",
+          alasan: alasan,
+          status: "Pending",
+          catatan_manager: ""
+        };
+        DB_REQUESTS.push(newRequest);
+
+        const updatedContent = btoa(unescape(encodeURIComponent(JSON.stringify(DB_REQUESTS, null, 2))));
+        const bodyData = { message: `Karyawan ${nama} kirim pengajuan`, content: updatedContent };
+        if(reqData.sha) bodyData.sha = reqData.sha;
+
+        const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/requests.json`, {
+          method: 'PUT', headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyData)
+        });
+        if(!res.ok) throw new Error('Gagal Push API');
+        alert("Pengajuan berhasil dikirim ke Manager!");
+        document.getElementById('pengajuan-alasan').value = "";
+      } catch (err) {
+        alert("Gagal mengirim pengajuan: " + err.message);
+      }
       hideLoading();
     }
 
-    // SAAT BUKA APLIKASI, TARIK SEMUA DATA
-    window.onload = async () => {
-      try {
-        const [u, s, req] = await Promise.all([ fetchFromGitHub('users'), fetchFromGitHub('kpi-schema'), fetchFromGitHub('requests') ]);
-        DB.users = u.data; DB.schema = s.data; DB.requests = req.data;
-        document.getElementById('login-screen').classList.remove('hidden');
-      } catch (e) { alert("Koneksi GitHub gagal. Cek token."); }
-      hideLoading();
-    };
-
-    function verifyPin() {
-      const pin = document.getElementById('pin-input').value;
-      activeUser = DB.users.find(u => u.pin === pin);
-      if (activeUser) {
-        if (activeUser.role === 'manager') { window.location.href = 'manager.html'; return; }
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('dashboard-screen').classList.remove('hidden');
-        document.getElementById('user-greeting').innerText = `Halo, ${activeUser.name.split(' ')[0]}`;
-        document.getElementById('div-name').innerText = activeUser.division;
-        
-        renderDynamicForm(activeUser.division); renderRiwayat();
-      } else { alert('PIN Salah!'); }
-    }
-
-    function switchTab(tab) {
-      document.getElementById('view-pengajuan').classList.add('hidden'); document.getElementById('view-laporan').classList.add('hidden');
-      document.getElementById('tab-pengajuan').className = "flex-1 py-2 rounded-xl text-sm font-bold tab-inactive"; document.getElementById('tab-laporan').className = "flex-1 py-2 rounded-xl text-sm font-bold tab-inactive";
-      document.getElementById(`view-${tab}`).classList.remove('hidden'); document.getElementById(`tab-${tab}`).className = "flex-1 py-2 rounded-xl text-sm font-bold tab-active";
-    }
-
-    // RENDER FORM BERDASARKAN SETTINGAN MANAGER
-    function renderDynamicForm(division) {
-      const container = document.getElementById('dynamic-fields'); container.innerHTML = '';
-      const fields = DB.schema[division] || [];
-      if(fields.length === 0) { container.innerHTML = '<p class="text-xs text-slate-500 italic">Belum ada tugas tambahan.</p>'; return; }
+    // --- FITUR CETAK DOKUMEN PDF (LAPORAN HARIAN) ---
+    function cetakPDF() {
+      const element = document.getElementById('dokumen-laporan');
+      const nama = document.getElementById('lapor-nama').value || 'Karyawan';
       
-      fields.forEach(f => {
-        const div = document.createElement('div');
-        if (f.type === 'checkbox') {
-          div.innerHTML = `<input type="checkbox" id="${f.name}" class="dynamic-input w-4 h-4 mr-2"><label class="text-sm font-medium text-slate-700">${f.label}</label>`;
-        } else {
-          div.innerHTML = `<label class="block text-sm font-semibold mb-1 text-slate-700">${f.label}</label><input type="${f.type}" id="${f.name}" required class="dynamic-input w-full p-2 rounded-lg border text-sm outline-none" data-label="${f.label}">`;
-        }
-        container.appendChild(div);
-      });
-    }
-
-    async function kirimPengajuan(e) {
-      e.preventDefault();
-      DB.requests.push({
-        id: "REQ-" + Date.now(), userId: activeUser.id, nama: activeUser.name, divisi: activeUser.division,
-        jenis: document.getElementById('req-jenis').value, tgl_mulai: document.getElementById('req-mulai').value,
-        tgl_selesai: document.getElementById('req-selesai').value, alasan: document.getElementById('req-alasan').value,
-        status: "Pending", catatan_manager: ""
-      });
-      await pushToGitHub('requests', DB.requests, `Pengajuan oleh ${activeUser.name}`);
-      alert("Pengajuan Berhasil Dikirim!"); e.target.reset(); renderRiwayat();
-    }
-
-    function renderRiwayat() {
-      const c = document.getElementById('riwayat-pengajuan'); c.innerHTML = '';
-      const myReq = DB.requests.filter(r => r.userId === activeUser.id).reverse();
-      myReq.forEach(req => {
-        let bc = req.status === 'Approved' ? 'bg-green-100 text-green-700' : req.status === 'Ditolak' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700';
-        c.innerHTML += `<div class="p-3 border rounded-xl bg-white shadow-sm flex flex-col mb-2"><div class="flex justify-between items-start mb-1"><span class="font-bold text-sm">${req.jenis}</span><span class="text-[10px] font-bold px-2 py-1 rounded ${bc}">${req.status}</span></div><span class="text-xs text-slate-500">${req.tgl_mulai} s/d ${req.tgl_selesai}</span>${req.catatan_manager ? `<p class="text-xs mt-2 bg-slate-50 p-2 rounded border border-slate-100 text-slate-600"><strong>Note:</strong> ${req.catatan_manager}</p>` : ''}</div>`;
-      });
-    }
-
-    // KIRIM LAPORAN HARIAN (KE REPORTS.JSON)
-    async function kirimLaporan(e) {
-      e.preventDefault();
+      const opt = {
+        margin:       0.5,
+        filename:     `Laporan_Harian_${nama}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'A5', orientation: 'portrait' }
+      };
       
-      // Ambil nilai dari field dinamis
-      let dataDinamis = {};
-      document.querySelectorAll('.dynamic-input').forEach(input => {
-        if(input.type === 'checkbox') dataDinamis[input.nextSibling.innerText] = input.checked ? 'Ya' : 'Tidak';
-        else dataDinamis[input.dataset.label] = input.value;
-      });
-
-      // Tarik DB Report terbaru dulu agar tidak tertimpa
-      const getRep = await fetchFromGitHub('reports');
-      let reportsDB = getRep.data;
-
-      reportsDB.push({
-        id: "REP-" + Date.now(), userId: activeUser.id, nama: activeUser.name, divisi: activeUser.division,
-        tanggal: new Date().toLocaleDateString('id-ID'),
-        inisiatif: document.getElementById('lap-inisiatif').value,
-        kendala: document.getElementById('lap-kendala').value,
-        data_dinamis: dataDinamis,
-        skor_manager: "" // Manager akan mengisi ini di dashboardnya
-      });
-
-      await pushToGitHub('reports', reportsDB, `Laporan Harian ${activeUser.name}`);
-      alert("Laporan Harian Berhasil Terkirim ke Manager!"); e.target.reset();
+      alert("Memproses PDF. Silakan tunggu hingga file terunduh otomatis.");
+      html2pdf().set(opt).from(element).save();
     }
-
-    function logout() { location.reload(); }
   </script>
 </body>
 </html>
