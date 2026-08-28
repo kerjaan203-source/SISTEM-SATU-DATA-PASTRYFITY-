@@ -21,12 +21,13 @@
 </head>
 <body>
 
+  <!-- Loading -->
   <div id="loading-overlay" style="display: none;">
     <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#D4A373] mb-4"></div>
     <h2 class="text-xl font-bold text-[#5C3A21]" id="loading-text">Menyinkronkan Database...</h2>
   </div>
 
-  <!-- LOGIN -->
+  <!-- LOGIN MANAGER -->
   <div id="login-screen" class="max-w-sm mx-auto mt-20 glass text-center space-y-6">
     <img src="logo.png" alt="Logo Pastryfity" class="h-24 mx-auto mb-2" onerror="this.style.display='none'">
     <div>
@@ -37,10 +38,10 @@
     <button onclick="prosesLogin()" class="btn-primary w-full text-lg py-3 rounded-xl">Buka Brankas Data</button>
   </div>
 
-  <!-- DASHBOARD -->
+  <!-- DASHBOARD MANAGER -->
   <div id="dashboard-screen" class="max-w-7xl mx-auto space-y-6 hidden">
     <!-- Header -->
-    <div class="glass flex justify-between items-center mb-4">
+    <div class="glass flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
       <div class="flex items-center space-x-4">
         <img src="logo.png" alt="Logo" class="h-12 w-12 object-contain" onerror="this.style.display='none'">
         <div>
@@ -55,102 +56,148 @@
 
     <!-- Navigasi -->
     <div class="flex space-x-3 overflow-x-auto pb-2 mb-4">
-      <div class="nav-btn active-nav whitespace-nowrap" onclick="switchMenu('menu-hr', this)">Master HR & Pengumuman</div>
-      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-approval', this)">Approval & Surat</div>
-      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-form', this)">Form Builder KPI</div>
-      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-laporan', this)">Absensi, Laporan & KPI</div>
+      <div class="nav-btn active-nav whitespace-nowrap" onclick="switchMenu('menu-hr', this)">Master HR & Info</div>
+      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-approval', this)">Approval Surat</div>
+      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-form', this)">Jobdesk & KPI</div>
+      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-absensi', this)">Data Absensi</div>
+      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-laporan', this)">Laporan Shift</div>
+      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-kpi-bulanan', this)">Rekap KPI Bulanan</div>
     </div>
 
-    <!-- 1. MASTER HR & PENGUMUMAN -->
+    <!-- 1. MASTER HR -->
     <div id="menu-hr" class="glass grid grid-cols-1 xl:grid-cols-3 gap-8 block">
       <div class="xl:col-span-2 space-y-6">
-        <!-- Pengumuman Broadcast -->
         <div class="border p-4 rounded-xl bg-[#FAF8F5] border-[#D4A373]">
-          <h3 class="font-bold text-[#5C3A21] mb-2">📢 Broadcast Pengumuman ke Dashboard Karyawan</h3>
-          <textarea id="input-pengumuman" class="w-full p-2 border rounded outline-none text-sm mb-2" rows="2" placeholder="Ketik pengumuman atau SOP baru di sini..."></textarea>
-          <button onclick="simpanPengumuman()" class="bg-[#5C3A21] text-white px-4 py-2 rounded font-bold text-sm">Update Pengumuman Karyawan</button>
+          <h3 class="font-bold text-[#5C3A21] mb-2">📢 Broadcast Pengumuman Karyawan</h3>
+          <textarea id="input-pengumuman" class="w-full p-2 border rounded outline-none text-sm mb-2" rows="2" placeholder="SOP atau Pengumuman hari ini..."></textarea>
+          <button onclick="simpanPengumuman()" class="bg-[#5C3A21] text-white px-4 py-2 rounded font-bold text-sm">Update Pengumuman</button>
         </div>
 
-        <!-- Tabel Karyawan -->
         <div class="overflow-x-auto">
-          <h2 class="text-lg font-bold mb-4">Database Karyawan & Kontak</h2>
-          <table class="w-full text-left text-sm border-collapse min-w-[700px]">
-            <thead><tr class="bg-slate-100 border-b"><th class="p-3">Nama</th><th class="p-3">Divisi</th><th class="p-3">Tgl Lahir</th><th class="p-3">PIN</th><th class="p-3 text-center">Aksi / Chat WA</th></tr></thead>
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-bold">Database Karyawan</h2>
+            <button onclick="exportKaryawanCSV()" class="text-xs bg-green-600 text-white px-3 py-1 rounded font-bold">📥 Unduh Excel/CSV</button>
+          </div>
+          <table class="w-full text-left text-sm border-collapse min-w-[800px]">
+            <thead><tr class="bg-slate-100 border-b"><th class="p-3">Nama</th><th class="p-3">Divisi</th><th class="p-3">Tgl Masuk</th><th class="p-3">Tgl Lahir</th><th class="p-3">PIN</th><th class="p-3 text-center">Aksi</th></tr></thead>
             <tbody id="user-table-body"></tbody>
           </table>
         </div>
       </div>
       
-      <!-- Form Input Karyawan -->
-      <div class="bg-[#FAF8F5] p-6 rounded-xl border border-[#D4A373]">
+      <div class="bg-[#FAF8F5] p-6 rounded-xl border border-[#D4A373] h-fit">
         <h3 class="font-bold text-[#5C3A21] mb-4">Tambah / Edit Karyawan</h3>
         <input type="hidden" id="edit-index" value="">
         <label class="text-xs text-slate-500">Nama Lengkap</label>
         <input type="text" id="edit-nama" class="w-full p-2 mb-3 rounded border text-sm outline-none">
         
         <label class="text-xs text-slate-500">Divisi</label>
-        <input type="text" id="edit-posisi" placeholder="Cth: Admin Toko" class="w-full p-2 mb-3 rounded border text-sm outline-none">
+        <select id="edit-posisi" class="w-full p-2 mb-3 rounded border text-sm outline-none bg-white"></select>
         
+        <label class="text-xs text-slate-500">Tanggal Masuk</label>
+        <input type="date" id="edit-join" class="w-full p-2 mb-3 rounded border text-sm outline-none">
+
         <label class="text-xs text-slate-500">Tanggal Lahir</label>
         <input type="date" id="edit-dob" class="w-full p-2 mb-3 rounded border text-sm outline-none">
         
-        <label class="text-xs text-slate-500">Nomor WhatsApp (Awali dgn 62)</label>
+        <label class="text-xs text-slate-500">No. WhatsApp (Awali dgn 62)</label>
         <input type="text" id="edit-wa" placeholder="62812..." class="w-full p-2 mb-3 rounded border text-sm outline-none">
         
-        <label class="text-xs text-slate-500">PIN Login Karyawan</label>
+        <label class="text-xs text-slate-500">PIN Login</label>
         <input type="text" id="edit-pin" placeholder="6 Digit" maxlength="6" class="w-full p-2 mb-6 rounded border text-sm font-mono">
         
-        <button onclick="saveUser()" class="w-full py-2 rounded btn-primary shadow">Simpan Data Karyawan</button>
+        <button onclick="saveUser()" class="w-full py-2 rounded btn-primary shadow">Simpan Data</button>
       </div>
     </div>
 
-    <!-- 2. APPROVAL CENTER -->
+    <!-- 2. APPROVAL SURAT -->
     <div id="menu-approval" class="glass hidden">
-      <h2 class="text-lg font-bold mb-4">Antrean Pengajuan</h2>
+      <h2 class="text-lg font-bold mb-4">Antrean Pengajuan Surat</h2>
       <div id="approval-list-container" class="space-y-4"></div>
     </div>
 
-    <!-- 3. FORM BUILDER -->
+    <!-- 3. FORM BUILDER JOBDESK -->
     <div id="menu-form" class="glass hidden">
-      <h2 class="text-lg font-bold mb-2">Desain Form Laporan Harian</h2>
-      <div class="flex space-x-4 mb-6">
-        <select id="select-div-form" onchange="renderFormEditor()" class="p-2 border rounded-lg text-sm w-1/3 outline-none"></select>
-        <button onclick="tambahDivisi()" class="bg-[#5C3A21] text-white px-4 py-2 rounded-lg font-bold text-sm shadow">+ Tambah Divisi</button>
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-lg font-bold">Desain Form KPI & Jobdesk (Per Divisi)</h2>
+        <button onclick="tambahDivisi()" class="bg-[#5C3A21] text-white px-4 py-2 rounded-lg font-bold text-sm shadow">+ Tambah Divisi Baru</button>
       </div>
-      <div class="border p-5 rounded-xl bg-slate-50">
-        <div id="fields-container" class="space-y-2 mb-6"></div>
-        <div class="flex space-x-2 p-4 border rounded-lg bg-white">
-          <input type="text" id="new-field-label" placeholder="Nama Tugas..." class="flex-1 p-2 border rounded text-sm outline-none">
-          <select id="new-field-type" class="p-2 border rounded text-sm outline-none"><option value="number">Angka</option><option value="text">Teks</option><option value="checkbox">Checklist</option></select>
-          <button onclick="addField()" class="bg-green-600 text-white px-4 py-2 rounded text-sm font-bold">+ Tambah</button>
-        </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="divisi-cards-container">
+        <!-- Cards divisi akan di-render di sini -->
       </div>
     </div>
 
-    <!-- 4. ABSENSI, LAPORAN & KPI -->
+    <!-- 4. DATA ABSENSI -->
+    <div id="menu-absensi" class="glass hidden">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold">Log Absensi Karyawan</h2>
+        <button onclick="exportAbsensiPDF()" class="text-xs bg-red-600 text-white px-3 py-1 rounded font-bold">🖨️ Cetak PDF</button>
+      </div>
+      <div class="overflow-x-auto bg-white border rounded-lg" id="tabel-absensi-cetak">
+        <div class="hidden p-4 text-center border-b-2 border-black" id="kop-absensi-pdf">
+          <h2 class="font-bold text-xl uppercase">Rekapitulasi Absensi Karyawan</h2>
+          <p class="text-sm">Sistem HRIS Pastryfity</p>
+        </div>
+        <table class="w-full text-left text-sm border-collapse min-w-[700px]">
+          <thead><tr class="bg-slate-100 border-b"><th class="p-3">Tgl</th><th class="p-3">Nama (Divisi)</th><th class="p-3">Jam Masuk</th><th class="p-3">Jam Keluar</th><th class="p-3 text-center aksi-col">Aksi</th></tr></thead>
+          <tbody id="absensi-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 5. LAPORAN SHIFT HARIAN -->
     <div id="menu-laporan" class="glass hidden">
       <div class="flex justify-between items-center mb-6">
-        <h2 class="text-lg font-bold">Review & Penilaian KPI</h2>
-        <select id="filter-karyawan" onchange="renderLaporanDanAbsensi()" class="p-2 border border-[#D4A373] rounded-lg text-sm outline-none bg-slate-50 font-bold min-w-[200px]">
-          <option value="Semua">Tampilkan Semua Karyawan</option>
+        <h2 class="text-lg font-bold">Review & Penilaian Laporan Shift</h2>
+        <select id="filter-laporan" onchange="renderLaporan()" class="p-2 border border-[#D4A373] rounded-lg text-sm outline-none bg-slate-50 font-bold min-w-[200px]">
+          <option value="Semua">Semua Karyawan</option>
         </select>
       </div>
+      <div id="laporan-container" class="space-y-6 max-h-[70vh] overflow-y-auto pr-2"></div>
+    </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Kolom Absensi -->
-        <div>
-          <h3 class="font-bold text-[#5C3A21] mb-3 border-b pb-2">Data Kehadiran (Clock In/Out)</h3>
-          <div id="absensi-container" class="space-y-3 max-h-96 overflow-y-auto pr-2"></div>
-        </div>
-        
-        <!-- Kolom Laporan & Penilaian -->
-        <div>
-          <div class="flex justify-between items-center border-b pb-2 mb-3">
-            <h3 class="font-bold text-[#5C3A21]">Laporan Shift & Penilaian KPI</h3>
-            <span class="text-xs bg-[#FAF8F5] px-2 py-1 rounded font-bold" id="kpi-rata-rata">Rata-rata: -</span>
-          </div>
-          <div id="laporan-container" class="space-y-4 max-h-96 overflow-y-auto pr-2"></div>
-        </div>
+    <!-- 6. REKAP KPI BULANAN -->
+    <div id="menu-kpi-bulanan" class="glass hidden">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-lg font-bold">Rekapitulasi KPI Karyawan Bulanan</h2>
+        <input type="month" id="filter-bulan-kpi" onchange="renderKPIBulanan()" class="p-2 border rounded-lg text-sm outline-none font-bold">
+      </div>
+      <div class="overflow-x-auto bg-white border rounded-lg" id="tabel-kpi-cetak">
+        <table class="w-full text-left text-sm border-collapse min-w-[700px]">
+          <thead><tr class="bg-[#5C3A21] text-white"><th class="p-3">Nama Karyawan</th><th class="p-3">Divisi</th><th class="p-3 text-center">Total Hadir (Hari)</th><th class="p-3 text-center">Rata-rata Skor Laporan</th><th class="p-3 text-center">Nilai Akhir / Grade</th></tr></thead>
+          <tbody id="kpi-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEMPLATE CETAK SURAT KEPUTUSAN -->
+  <div id="print-surat-container" class="hidden bg-white p-8 text-black" style="width: 210mm; min-height: 297mm; padding: 20mm;">
+    <div class="border-b-4 border-[#5C3A21] pb-4 mb-6 flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-[#5C3A21]">PASTRYFITY</h1>
+        <p class="text-sm">Jl. Jenderal Besar A.H. Nasution No.63c</p>
+      </div>
+      <img src="logo.png" alt="Logo" class="h-16 object-contain" onerror="this.style.display='none'">
+    </div>
+    <h2 class="text-center font-bold text-xl mb-6 uppercase underline">SURAT KEPUTUSAN PENGAJUAN</h2>
+    <table class="w-full text-left text-sm mb-6">
+      <tr><td class="w-1/3 py-1">Nama Karyawan</td><td class="w-2/3 font-bold">: <span id="pdf-nama"></span></td></tr>
+      <tr><td class="py-1">Divisi</td><td class="font-bold">: <span id="pdf-divisi"></span></td></tr>
+      <tr><td class="py-1">Jenis Pengajuan</td><td class="font-bold">: <span id="pdf-jenis"></span></td></tr>
+      <tr><td class="py-1">Periode</td><td class="font-bold">: <span id="pdf-periode"></span></td></tr>
+      <tr><td class="py-1 align-top">Alasan</td><td class="font-bold">: <span id="pdf-alasan"></span></td></tr>
+    </table>
+    <div class="text-center py-4 my-4 border-2 border-dashed border-gray-400">
+      <h3 class="text-2xl font-bold" id="pdf-status"></h3>
+      <p class="mt-2 text-sm">Catatan: <span id="pdf-catatan" class="font-bold italic"></span></p>
+    </div>
+    <div class="mt-16 flex justify-end text-sm">
+      <div class="text-center">
+        <p>Medan, <span id="pdf-tgl-cetak"></span></p>
+        <p class="mb-16 font-bold">Manajemen Pastryfity</p>
+        <p class="border-t border-black pt-1">( Ditandatangani elektronik )</p>
       </div>
     </div>
   </div>
@@ -171,8 +218,7 @@
     const MASTER_PIN = "999888"; 
     // =====================================================================
 
-    // Tambahan DB Absensi & Pengumuman
-    let DB = { users: [], schema: {}, requests: [], reports: [], absensi: [], pengumuman: { teks: "" } };
+let DB = { users: [], schema: {}, requests: [], reports: [], absensi: [], pengumuman: { teks: "" } };
 
     const showLoading = (t) => { document.getElementById('loading-text').innerText = t; document.getElementById('loading-overlay').style.display = 'flex'; };
     const hideLoading = () => { document.getElementById('loading-overlay').style.display = 'none'; };
@@ -181,12 +227,17 @@
       if(document.getElementById('manager-pin').value === MASTER_PIN) {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('dashboard-screen').classList.remove('hidden');
+        
+        const today = new Date();
+        const monthStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
+        document.getElementById('filter-bulan-kpi').value = monthStr;
+        
         loadAllData();
       } else alert("PIN Salah!");
     }
 
     function switchMenu(targetId, el) {
-      ['menu-hr', 'menu-approval', 'menu-form', 'menu-laporan'].forEach(id => document.getElementById(id).classList.add('hidden'));
+      ['menu-hr', 'menu-approval', 'menu-form', 'menu-absensi', 'menu-laporan', 'menu-kpi-bulanan'].forEach(id => document.getElementById(id).classList.add('hidden'));
       document.getElementById(targetId).classList.remove('hidden');
       document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('active-nav'); btn.classList.add('inactive-nav'); });
       el.classList.add('active-nav'); el.classList.remove('inactive-nav');
@@ -229,11 +280,11 @@
         ]);
         DB.users = u.data; DB.schema = s.data; DB.requests = req.data; 
         DB.reports = rep.data; DB.absensi = abs.data; 
-        DB.pengumuman = peng.data.teks ? peng.data : { teks: "Belum ada pengumuman." };
+        DB.pengumuman = peng.data.teks ? peng.data : { teks: "" };
         
         document.getElementById('input-pengumuman').value = DB.pengumuman.teks;
-        syncDropdowns(); renderUserTable(); renderFormEditor(); renderApprovalQueue(); 
-      } catch (e) { alert("Gagal narik data dari GitHub."); }
+        syncDropdowns(); renderUserTable(); renderDivisiCards(); renderApprovalQueue(); renderAbsensi(); renderLaporan(); renderKPIBulanan();
+      } catch (e) { alert("Gagal koneksi ke GitHub. Cek Token."); }
       hideLoading();
     }
 
@@ -241,36 +292,39 @@
     async function simpanPengumuman() {
       DB.pengumuman.teks = document.getElementById('input-pengumuman').value;
       await pushToGitHub('pengumuman', DB.pengumuman, 'Update Pengumuman');
-      alert("Pengumuman berhasil di-broadcast ke seluruh karyawan!");
+      alert("Pengumuman berhasil di-broadcast!");
     }
 
     function renderUserTable() {
       const tbody = document.getElementById('user-table-body'); tbody.innerHTML = '';
-      const filter = document.getElementById('filter-karyawan'); filter.innerHTML = '<option value="Semua">Semua Karyawan</option>';
+      const filterLaporan = document.getElementById('filter-laporan'); 
+      filterLaporan.innerHTML = '<option value="Semua">Semua Karyawan</option>';
 
       DB.users.forEach((u, i) => {
-        filter.innerHTML += `<option value="${u.name}">${u.name}</option>`;
-        const waLink = u.whatsapp ? `https://wa.me/${u.whatsapp}?text=Halo%20${u.name},%20ini%20dari%20Manajemen%20Pastryfity.` : '#';
+        filterLaporan.innerHTML += `<option value="${u.name}">${u.name}</option>`;
+        const waLink = u.whatsapp ? `https://wa.me/${u.whatsapp.replace(/^0+/, '62')}?text=Halo%20${u.name},%20ini%20dari%20Manajemen.` : '#';
         
         tbody.innerHTML += `
           <tr class="border-b hover:bg-slate-50">
             <td class="p-3 font-semibold">${u.name}</td>
             <td class="p-3">${u.division}</td>
+            <td class="p-3">${u.join_date || '-'}</td>
             <td class="p-3">${u.dob || '-'}</td>
             <td class="p-3 font-mono text-xs">${u.pin}</td>
-            <td class="p-3 text-center space-x-1">
-              <button onclick="editUser(${i})" class="text-blue-600 border px-2 py-1 rounded text-xs bg-white">Edit</button>
+            <td class="p-3 text-center space-x-1 whitespace-nowrap">
               ${u.whatsapp ? `<a href="${waLink}" target="_blank" class="text-green-600 border border-green-200 px-2 py-1 rounded text-xs bg-green-50 font-bold">💬 WA</a>` : ''}
+              <button onclick="editUser(${i})" class="text-blue-600 border px-2 py-1 rounded text-xs">Edit</button>
+              <button onclick="hapusUser(${i})" class="text-red-600 border px-2 py-1 rounded text-xs">Hapus</button>
             </td>
           </tr>`;
       });
-      renderLaporanDanAbsensi();
     }
 
     function editUser(i) {
       document.getElementById('edit-index').value = i;
       document.getElementById('edit-nama').value = DB.users[i].name;
       document.getElementById('edit-posisi').value = DB.users[i].division;
+      document.getElementById('edit-join').value = DB.users[i].join_date || '';
       document.getElementById('edit-dob').value = DB.users[i].dob || '';
       document.getElementById('edit-wa').value = DB.users[i].whatsapp || '';
       document.getElementById('edit-pin').value = DB.users[i].pin;
@@ -282,6 +336,7 @@
         id: idx === "" ? "U" + Date.now() : DB.users[idx].id, 
         name: document.getElementById('edit-nama').value, 
         division: document.getElementById('edit-posisi').value, 
+        join_date: document.getElementById('edit-join').value, 
         dob: document.getElementById('edit-dob').value, 
         whatsapp: document.getElementById('edit-wa').value, 
         pin: document.getElementById('edit-pin').value 
@@ -290,98 +345,270 @@
       if(idx === "") DB.users.push(data); else DB.users[idx] = data;
       await pushToGitHub('users', DB.users, `Update user ${data.name}`);
       renderUserTable();
-      ['edit-index', 'edit-nama', 'edit-posisi', 'edit-dob', 'edit-wa', 'edit-pin'].forEach(id => document.getElementById(id).value = '');
+      ['edit-index', 'edit-nama', 'edit-join', 'edit-dob', 'edit-wa', 'edit-pin'].forEach(id => document.getElementById(id).value = '');
     }
 
-    // --- 3. FORM BUILDER ---
-    function syncDropdowns() {
-      let divs = Object.keys(DB.schema);
-      if(divs.length === 0) divs = ["Admin Toko"];
-      document.getElementById('select-div-form').innerHTML = divs.map(d => `<option value="${d}">${d}</option>`).join('');
+    async function hapusUser(i) {
+      if(confirm("Hapus karyawan ini?")) { DB.users.splice(i, 1); await pushToGitHub('users', DB.users, 'Hapus user'); renderUserTable(); }
     }
-    function renderFormEditor() {
-      const div = document.getElementById('select-div-form').value;
-      const c = document.getElementById('fields-container'); c.innerHTML = '';
-      (DB.schema[div] || []).forEach((f, i) => c.innerHTML += `<div class="flex justify-between bg-white p-2 border mb-1 rounded"><span class="text-sm">${f.label} (${f.type})</span><button onclick="hapusField(${i})" class="text-red-500 text-xs">Hapus</button></div>`);
+
+    function exportKaryawanCSV() {
+      let csv = "data:text/csv;charset=utf-8,Nama,Divisi,Tgl Masuk,Tgl Lahir,WhatsApp,PIN\n";
+      DB.users.forEach(u => csv += `"${u.name}","${u.division}","${u.join_date||''}","${u.dob||''}","${u.whatsapp||''}","${u.pin}"\n`);
+      const link = document.createElement("a"); link.href = encodeURI(csv); link.download = "Data_Karyawan.csv";
+      document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
-    async function tambahDivisi() {
-      const n = prompt("Nama Divisi:");
-      if(n) { DB.schema[n] = []; await pushToGitHub('kpi-schema', DB.schema, 'Tambah div'); syncDropdowns(); renderFormEditor(); }
-    }
-    async function addField() {
-      const div = document.getElementById('select-div-form').value; const l = document.getElementById('new-field-label').value;
-      if(l) { if(!DB.schema[div]) DB.schema[div]=[]; DB.schema[div].push({ label: l, type: document.getElementById('new-field-type').value }); await pushToGitHub('kpi-schema', DB.schema, 'Update form'); renderFormEditor(); }
-    }
-    async function hapusField(i) { DB.schema[document.getElementById('select-div-form').value].splice(i, 1); await pushToGitHub('kpi-schema', DB.schema, 'Hapus field'); renderFormEditor(); }
 
+    // --- 2. APPROVAL SURAT ---
+    function renderApprovalQueue() {
+      const c = document.getElementById('approval-list-container'); c.innerHTML = '';
+      if(!DB.requests || DB.requests.length === 0) { c.innerHTML = '<p class="text-sm text-slate-500">Kosong.</p>'; return; }
 
-    // --- 4. ABSENSI, LAPORAN & KPI (FILTER) ---
-    function renderLaporanDanAbsensi() {
-      const filter = document.getElementById('filter-karyawan').value;
-      const cAbsen = document.getElementById('absensi-container'); cAbsen.innerHTML = '';
-      const cLapor = document.getElementById('laporan-container'); cLapor.innerHTML = '';
-      
-      // Filter Data
-      let absData = DB.absensi.slice().reverse();
-      let repData = DB.reports.slice().reverse();
-      if(filter !== 'Semua') {
-        absData = absData.filter(a => a.nama === filter);
-        repData = repData.filter(r => r.nama === filter);
-      }
-
-      // Render Absensi
-      if(absData.length === 0) cAbsen.innerHTML = '<p class="text-xs text-slate-500">Tidak ada data absensi.</p>';
-      absData.forEach(abs => {
-        const isMsk = abs.tipe === 'Clock In';
-        cAbsen.innerHTML += `
-          <div class="p-3 border rounded bg-white text-sm flex justify-between items-center border-l-4 ${isMsk ? 'border-l-green-500' : 'border-l-red-500'}">
-            <div>
-              <p class="font-bold">${abs.nama} <span class="text-xs font-normal text-slate-500">(${abs.tanggal})</span></p>
-              <p class="text-xs ${isMsk ? 'text-green-600' : 'text-red-600'} font-bold">${abs.tipe} - ${abs.jam}</p>
-              <a href="https://maps.google.com/?q=${abs.lokasi}" target="_blank" class="text-[10px] text-blue-500 underline">Cek Lokasi GPS</a>
-            </div>
-          </div>`;
-      });
-
-      // Render Laporan & KPI
-      if(repData.length === 0) cLapor.innerHTML = '<p class="text-xs text-slate-500">Tidak ada laporan shift.</p>';
-      let totalSkor = 0, countSkor = 0;
-      repData.forEach(rep => {
-        if(rep.skor) { totalSkor += parseInt(rep.skor); countSkor++; }
+      DB.requests.slice().reverse().forEach(req => {
+        const isPending = req.status === 'Pending';
+        const lampiranHtml = req.lampiran ? `<div class="mt-2"><a href="${req.lampiran}" target="_blank" class="text-blue-500 text-xs underline">Lihat Lampiran Foto</a></div>` : '';
         
-        let det = ''; for(let k in rep.data_dinamis) det += `<li class="text-[10px]"><b>${k}:</b> ${rep.data_dinamis[k]}</li>`;
-        cLapor.innerHTML += `
-          <div class="border p-4 rounded bg-white mb-3">
-            <div class="flex justify-between items-center border-b pb-2 mb-2">
-              <span class="font-bold text-sm">${rep.nama} <span class="text-xs font-normal">(${rep.tanggal})</span></span>
-              ${rep.skor ? 
-                `<span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-bold">Skor: ${rep.skor}/100</span>` : 
-                `<div class="flex"><input type="number" id="skor-${rep.id}" class="w-16 p-1 text-xs border rounded-l outline-none" placeholder="1-100"><button onclick="simpanSkor('${rep.id}')" class="bg-blue-600 text-white text-xs px-2 rounded-r font-bold">Nilai</button></div>`
-              }
+        c.innerHTML += `
+          <div class="border p-4 rounded-xl flex flex-col md:flex-row justify-between bg-white mb-3 ${isPending ? 'border-l-4 border-l-yellow-400' : ''}">
+            <div class="md:w-2/3 pr-4">
+              <h4 class="font-bold text-[#5C3A21]">${req.nama} <span class="text-sm font-normal text-slate-500">(${req.divisi})</span></h4>
+              <p class="text-xs bg-[#FAF8F5] inline-block px-2 py-1 rounded font-bold border">${req.jenis}</p>
+              <p class="text-xs mt-1">Periode: ${req.tgl_mulai} s/d ${req.tgl_selesai}</p>
+              <p class="text-sm mt-2"><b>Alasan:</b> ${req.alasan}</p>
+              ${lampiranHtml}
             </div>
-            <p class="text-xs mb-1"><b>💡 Inisiatif:</b> ${rep.inisiatif}</p>
-            <p class="text-xs mb-1"><b>⚠️ Kendala:</b> ${rep.kendala}</p>
-            <p class="text-xs mb-2"><b>🎯 Planning Besok:</b> ${rep.planning}</p>
-            ${det ? `<ul class="bg-slate-50 p-2 rounded">${det}</ul>` : ''}
+            <div class="md:w-1/3 flex flex-col justify-center space-y-2 mt-4 md:mt-0 border-t md:border-t-0 md:border-l pt-4 md:pt-0 pl-0 md:pl-4">
+              ${isPending ? `
+                <input type="text" id="note-${req.id}" placeholder="Beri catatan..." class="p-2 border rounded text-xs outline-none">
+                <div class="flex space-x-2">
+                  <button onclick="prosesPengajuan('${req.id}','Approved')" class="flex-1 bg-green-600 text-white rounded text-xs py-2 font-bold">Approve</button>
+                  <button onclick="prosesPengajuan('${req.id}','Ditolak')" class="flex-1 bg-red-600 text-white rounded text-xs py-2 font-bold">Tolak</button>
+                </div>
+              ` : `
+                <p class="text-center text-xs font-bold ${req.status==='Approved'?'text-green-600':'text-red-600'}">${req.status}</p>
+                <p class="text-[10px] text-center text-slate-500 mb-2">${req.catatan_manager || '-'}</p>
+                <button onclick="cetakSurat('${req.id}')" class="bg-[#5C3A21] text-white rounded text-xs py-2 font-bold w-full">🖨️ Cetak PDF</button>
+              `}
+            </div>
           </div>`;
       });
+    }
+
+    async function prosesPengajuan(id, action) {
+      const idx = DB.requests.findIndex(r => r.id === id);
+      if(idx !== -1) {
+        DB.requests[idx].status = action; 
+        DB.requests[idx].catatan_manager = document.getElementById(`note-${id}`).value || '-';
+        await pushToGitHub('requests', DB.requests, `Manager ${action} pengajuan`); renderApprovalQueue();
+      }
+    }
+
+    function cetakSurat(id) {
+      const req = DB.requests.find(r => r.id === id);
+      document.getElementById('pdf-nama').innerText = req.nama;
+      document.getElementById('pdf-divisi').innerText = req.divisi;
+      document.getElementById('pdf-jenis').innerText = req.jenis;
+      document.getElementById('pdf-periode').innerText = `${req.tgl_mulai} s/d ${req.tgl_selesai}`;
+      document.getElementById('pdf-alasan').innerText = req.alasan;
+      document.getElementById('pdf-status').innerText = req.status.toUpperCase();
+      document.getElementById('pdf-status').className = req.status === 'Approved' ? 'text-2xl font-bold text-green-600' : 'text-2xl font-bold text-red-600';
+      document.getElementById('pdf-catatan').innerText = req.catatan_manager;
+      document.getElementById('pdf-tgl-cetak').innerText = new Date().toLocaleDateString('id-ID');
+
+      const el = document.getElementById('print-surat-container'); el.classList.remove('hidden');
+      html2pdf().set({ margin: 0, filename: `Surat_${req.nama}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(el).save().then(() => el.classList.add('hidden'));
+    }
+
+    // --- 3. FORM BUILDER (Otomatis & Cetak Jobdesk) ---
+    function syncDropdowns() {
+      const sel = document.getElementById('edit-posisi'); sel.innerHTML = '';
+      Object.keys(DB.schema).forEach(div => sel.innerHTML += `<option value="${div}">${div}</option>`);
+    }
+
+    function renderDivisiCards() {
+      const c = document.getElementById('divisi-cards-container'); c.innerHTML = '';
+      Object.keys(DB.schema).forEach(div => {
+        let list = '';
+        DB.schema[div].forEach((f, i) => list += `<li class="text-xs border-b py-1 flex justify-between"><span>- ${f.label} (${f.type})</span><button onclick="hapusField('${div}', ${i})" class="text-red-500 font-bold ml-2">X</button></li>`);
+        
+        c.innerHTML += `
+          <div class="bg-white border p-4 rounded-xl shadow-sm" id="card-${div.replace(/\s/g, '')}">
+            <h3 class="font-bold text-[#5C3A21] mb-2 border-b pb-2">${div}</h3>
+            <ul class="mb-3 min-h-[50px]">${list || '<li class="text-xs text-slate-400">Belum ada tugas.</li>'}</ul>
+            <div class="space-y-2 mt-4 border-t pt-3">
+              <input type="text" id="new-l-${div}" placeholder="Nama tugas..." class="w-full p-1 text-xs border rounded outline-none">
+              <select id="new-t-${div}" class="w-full p-1 text-xs border rounded outline-none"><option value="checkbox">Checklist Ya/Tidak</option><option value="number">Angka (Omzet/Jml)</option><option value="text">Teks Pendek</option></select>
+              <div class="flex space-x-1">
+                <button onclick="addField('${div}')" class="bg-green-600 text-white w-1/2 rounded text-[10px] py-1 font-bold">+ Tambah</button>
+                <button onclick="cetakJobdesk('${div}')" class="bg-[#5C3A21] text-white w-1/2 rounded text-[10px] py-1 font-bold">🖨️ Cetak PDF</button>
+              </div>
+            </div>
+          </div>`;
+      });
+    }
+
+    async function tambahDivisi() {
+      const n = prompt("Nama Divisi Baru:");
+      if(n && !DB.schema[n]) { DB.schema[n] = []; await pushToGitHub('kpi-schema', DB.schema, 'Tambah Divisi'); syncDropdowns(); renderDivisiCards(); }
+    }
+    
+    async function addField(div) {
+      const l = document.getElementById(`new-l-${div}`).value;
+      if(l) { DB.schema[div].push({ label: l, type: document.getElementById(`new-t-${div}`).value }); await pushToGitHub('kpi-schema', DB.schema, 'Update Tugas'); renderDivisiCards(); }
+    }
+
+    async function hapusField(div, i) {
+      DB.schema[div].splice(i, 1); await pushToGitHub('kpi-schema', DB.schema, 'Hapus Tugas'); renderDivisiCards();
+    }
+
+    function cetakJobdesk(div) {
+      const el = document.getElementById(`card-${div.replace(/\s/g, '')}`);
+      html2pdf().set({ margin: 0.5, filename: `SOP_Jobdesk_${div}.pdf`, jsPDF: { unit: 'in', format: 'A5', orientation: 'portrait' } }).from(el).save();
+    }
+
+    // --- 4. ABSENSI (Grouping & Cetak) ---
+    function renderAbsensi() {
+      const tbody = document.getElementById('absensi-table-body'); tbody.innerHTML = '';
       
-      document.getElementById('kpi-rata-rata').innerText = countSkor > 0 ? `Rata-rata KPI: ${(totalSkor/countSkor).toFixed(1)}/100` : 'Belum Ada Penilaian';
+      // Grouping Absensi by Tanggal and Nama
+      let grouped = {};
+      DB.absensi.forEach(a => {
+        let key = `${a.tanggal}_${a.nama}`;
+        if(!grouped[key]) grouped[key] = { nama: a.nama, divisi: a.divisi, tgl: a.tanggal, in: '-', out: '-', inGps: '', outGps: '' };
+        if(a.tipe === 'Clock In') { grouped[key].in = a.jam; grouped[key].inGps = a.lokasi; }
+        if(a.tipe === 'Clock Out') { grouped[key].out = a.jam; grouped[key].outGps = a.lokasi; }
+      });
+
+      Object.values(grouped).reverse().forEach((g, i) => {
+        tbody.innerHTML += `
+          <tr class="border-b">
+            <td class="p-3">${g.tgl}</td>
+            <td class="p-3 font-bold">${g.nama} <span class="text-xs font-normal text-slate-500">(${g.divisi})</span></td>
+            <td class="p-3 text-green-600 font-bold">${g.in} <br><a href="https://maps.google.com/?q=${g.inGps}" target="_blank" class="text-[10px] text-blue-500 underline font-normal ${!g.inGps?'hidden':''}">GPS</a></td>
+            <td class="p-3 text-red-600 font-bold">${g.out} <br><a href="https://maps.google.com/?q=${g.outGps}" target="_blank" class="text-[10px] text-blue-500 underline font-normal ${!g.outGps?'hidden':''}">GPS</a></td>
+            <td class="p-3 text-center aksi-col">
+              <button onclick="hapusAbsenGroup('${g.tgl}', '${g.nama}')" class="text-red-600 border px-2 py-1 rounded text-xs bg-white hover:bg-red-50">Hapus</button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    async function hapusAbsenGroup(tgl, nama) {
+      if(confirm(`Hapus data absensi ${nama} tanggal ${tgl}?`)) {
+        DB.absensi = DB.absensi.filter(a => !(a.tanggal === tgl && a.nama === nama));
+        await pushToGitHub('absensi', DB.absensi, 'Hapus Absensi'); renderAbsensi(); renderKPIBulanan();
+      }
+    }
+
+    function exportAbsensiPDF() {
+      document.getElementById('kop-absensi-pdf').classList.remove('hidden');
+      document.querySelectorAll('.aksi-col').forEach(el => el.classList.add('hidden'));
+      const el = document.getElementById('tabel-absensi-cetak');
+      html2pdf().set({ margin: 0.5, filename: `Rekap_Absensi.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' } }).from(el).save().then(() => {
+        document.getElementById('kop-absensi-pdf').classList.add('hidden');
+        document.querySelectorAll('.aksi-col').forEach(el => el.classList.remove('hidden'));
+      });
+    }
+
+    // --- 5. LAPORAN SHIFT (Tabel Format Formal) ---
+    function renderLaporan() {
+      const filter = document.getElementById('filter-laporan').value;
+      const c = document.getElementById('laporan-container'); c.innerHTML = '';
+      
+      let reps = DB.reports.slice().reverse();
+      if(filter !== 'Semua') reps = reps.filter(r => r.nama === filter);
+
+      reps.forEach(rep => {
+        let rows = ''; 
+        for(let k in rep.data_dinamis) rows += `<tr class="border-b"><td class="py-1 text-xs">${k}</td><td class="py-1 font-bold text-xs">${rep.data_dinamis[k]}</td></tr>`;
+        
+        c.innerHTML += `
+          <div class="border border-[#D4A373] p-0 rounded-xl bg-white mb-4 overflow-hidden shadow-sm">
+            <div class="bg-[#FAF8F5] p-3 flex justify-between items-center border-b border-[#D4A373]">
+              <div>
+                <h4 class="font-bold text-[#5C3A21]">${rep.nama}</h4>
+                <p class="text-xs text-slate-500">${rep.divisi} | Tanggal: ${rep.tanggal}</p>
+              </div>
+              <div class="flex items-center space-x-2">
+                <input type="number" id="skor-${rep.id}" class="w-20 p-2 text-sm border rounded outline-none font-bold text-center" placeholder="0-100" value="${rep.skor||''}">
+                <button onclick="simpanSkor('${rep.id}')" class="bg-blue-600 text-white text-sm px-3 py-2 rounded font-bold">Simpan Nilai</button>
+              </div>
+            </div>
+            <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <table class="w-full text-left">
+                  <tr class="border-b"><td class="py-2 text-xs font-bold text-green-700 align-top w-1/3">Inisiatif</td><td class="py-2 text-xs">${rep.inisiatif}</td></tr>
+                  <tr class="border-b"><td class="py-2 text-xs font-bold text-red-700 align-top">Kendala</td><td class="py-2 text-xs">${rep.kendala}</td></tr>
+                  <tr class="border-b"><td class="py-2 text-xs font-bold text-blue-700 align-top">Plan Besok</td><td class="py-2 text-xs">${rep.planning}</td></tr>
+                </table>
+              </div>
+              <div class="border-l pl-4 hidden md:block">
+                <p class="text-xs font-bold mb-2">Rekap Tugas Divisi:</p>
+                <table class="w-full text-left">${rows||'<tr><td class="text-xs text-slate-400">Tidak ada rincian tugas.</td></tr>'}</table>
+              </div>
+            </div>
+          </div>`;
+      });
     }
 
     async function simpanSkor(id) {
       const val = document.getElementById(`skor-${id}`).value;
-      if(!val || val < 1 || val > 100) return alert("Masukkan nilai 1-100!");
+      if(!val || val < 1 || val > 100) return alert("Beri nilai 1-100!");
       const idx = DB.reports.findIndex(r => r.id === id);
       if(idx !== -1) {
-        DB.reports[idx].skor = val;
-        await pushToGitHub('reports', DB.reports, `Nilai KPI laporan ${id}`);
-        renderLaporanDanAbsensi();
+        DB.reports[idx].skor = val; await pushToGitHub('reports', DB.reports, `Nilai Laporan`); renderLaporan(); renderKPIBulanan();
+        alert("Nilai tersimpan!");
       }
     }
 
-    // --- RENDER APPROVAL KOSONG (UNTUK CONTOH) ---
-    function renderApprovalQueue() { document.getElementById('approval-list-container').innerHTML = '<p class="text-sm">Fitur approval sama dengan versi sebelumnya.</p>'; }
+    // --- 6. REKAP KPI BULANAN ---
+    function renderKPIBulanan() {
+      const filterMonth = document.getElementById('filter-bulan-kpi').value; // format YYYY-MM
+      if(!filterMonth) return;
+      const [year, month] = filterMonth.split('-');
+      const targetMonth = `${parseInt(month)}/${year}`; // Compare string loosely based on locale date format
+      
+      const tbody = document.getElementById('kpi-table-body'); tbody.innerHTML = '';
+      
+      DB.users.forEach(u => {
+        if(u.role !== 'employee') return;
+        
+        // Count Attendance for the month
+        let hadir = new Set();
+        DB.absensi.forEach(a => {
+          if(a.nama === u.name && a.tanggal.includes(`/${month}/`) && a.tanggal.includes(year) && a.tipe === 'Clock In') {
+            hadir.add(a.tanggal);
+          }
+        });
+
+        // Calc Average Score for the month
+        let totalSkor = 0, count = 0;
+        DB.reports.forEach(r => {
+          if(r.nama === u.name && r.tanggal.includes(`/${month}/`) && r.tanggal.includes(year) && r.skor) {
+            totalSkor += parseInt(r.skor); count++;
+          }
+        });
+        
+        let avgSkor = count > 0 ? Math.round(totalSkor / count) : 0;
+        
+        // Grade Logic
+        let grade = '-'; let color = 'text-slate-500';
+        if(avgSkor >= 90) { grade = 'A (Sangat Baik)'; color = 'text-green-600'; }
+        else if(avgSkor >= 75) { grade = 'B (Baik)'; color = 'text-blue-600'; }
+        else if(avgSkor >= 60) { grade = 'C (Cukup)'; color = 'text-yellow-600'; }
+        else if(avgSkor > 0) { grade = 'D (Kurang)'; color = 'text-red-600'; }
+
+        tbody.innerHTML += `
+          <tr class="border-b hover:bg-slate-50">
+            <td class="p-3 font-bold">${u.name}</td>
+            <td class="p-3">${u.division}</td>
+            <td class="p-3 text-center text-lg font-bold">${hadir.size}</td>
+            <td class="p-3 text-center text-lg font-bold">${avgSkor}</td>
+            <td class="p-3 text-center font-bold ${color}">${grade}</td>
+          </tr>`;
+      });
+    }
+
   </script>
 </body>
 </html>
