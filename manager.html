@@ -12,190 +12,81 @@
     body { font-family: 'Inter', sans-serif; background-color: var(--cream); color: var(--choco); padding: 24px; }
     .glass { background: #ffffff; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(92, 58, 33, 0.05); border: 1px solid rgba(212, 163, 115, 0.3); }
     .btn-primary { background-color: var(--caramel); color: white; transition: 0.2s; font-weight: bold; }
-    .btn-primary:hover { background-color: #b88a5d; }
-    .nav-btn { padding: 12px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; text-align: center; transition: 0.2s; }
+    .nav-btn { padding: 12px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 12px; text-align: center; }
     .active-nav { background-color: var(--choco); color: white; }
     .inactive-nav { background-color: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
-    #loading-overlay { position: fixed; inset: 0; background: rgba(250, 248, 245, 0.9); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     table th { background-color: #5C3A21; color: white; }
   </style>
 </head>
 <body>
+  <div id="loading-overlay" class="fixed inset-0 bg-white/90 z-50 flex flex-col justify-center items-center" style="display:none;"><div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#D4A373] mb-4"></div><h2 class="text-xl font-bold text-[#5C3A21]" id="loading-text">Loading...</h2></div>
 
-  <!-- Loading -->
-  <div id="loading-overlay" style="display: none;">
-    <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#D4A373] mb-4"></div>
-    <h2 class="text-xl font-bold text-[#5C3A21]" id="loading-text">Menyinkronkan Database...</h2>
-  </div>
-
-  <!-- LOGIN MANAGER -->
   <div id="login-screen" class="max-w-sm mx-auto mt-20 glass text-center space-y-6">
-    <img src="logo.png" alt="Logo Pastryfity" class="h-24 mx-auto mb-2" onerror="this.style.display='none'">
-    <div>
-      <h1 class="text-2xl font-bold text-[#5C3A21]">Portal Manajemen</h1>
-      <p class="text-sm text-[#D4A373] font-semibold">Master Blueprint Serverless</p>
-    </div>
-    <input type="password" id="manager-pin" placeholder="Master PIN (Default: 123456)" class="w-full p-4 border rounded-xl text-center tracking-widest font-mono text-xl outline-none mb-4 bg-slate-50">
-    <button onclick="prosesLogin()" class="btn-primary w-full text-lg py-3 rounded-xl">Buka Brankas Data</button>
+    <img src="logo.png" class="h-24 mx-auto mb-2" onerror="this.style.display='none'">
+    <h1 class="text-2xl font-bold text-[#5C3A21]">Portal Manajemen</h1>
+    <input type="password" id="manager-pin" placeholder="PIN" class="w-full p-4 border rounded-xl text-center text-xl outline-none">
+    <button onclick="prosesLogin()" class="btn-primary w-full text-lg py-3 rounded-xl">Masuk</button>
   </div>
 
-  <!-- DASHBOARD MANAGER -->
   <div id="dashboard-screen" class="max-w-7xl mx-auto space-y-4 hidden">
-    <!-- Header -->
-    <div class="glass flex flex-col md:flex-row justify-between items-center mb-2 gap-4">
-      <div class="flex items-center space-x-4">
-        <img src="logo.png" alt="Logo" class="h-12 w-12 object-contain" onerror="this.style.display='none'">
-        <div>
-          <h1 class="text-2xl font-bold text-[#5C3A21]">Pusat Kendali Manajemen</h1>
-        </div>
-      </div>
-      <div class="flex space-x-2">
-        <button onclick="loadAllData()" class="bg-blue-50 text-blue-600 border border-blue-200 px-4 py-2 rounded-lg font-bold text-sm">🔄 Refresh Data</button>
-        <button onclick="location.reload()" class="bg-red-50 text-red-600 border border-red-200 px-4 py-2 rounded-lg font-bold text-sm">Logout</button>
-      </div>
+    <div class="glass flex justify-between items-center mb-2">
+      <div class="flex items-center space-x-4"><img src="logo.png" class="h-10 w-10 object-contain" onerror="this.style.display='none'"><div><h1 class="text-xl font-bold text-[#5C3A21]">Pusat Kendali Manajemen</h1></div></div>
+      <div class="flex space-x-2"><button onclick="loadAllData()" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg font-bold text-sm">Refresh</button><button onclick="location.reload()" class="bg-red-50 text-red-600 px-4 py-2 rounded-lg font-bold text-sm">Logout</button></div>
     </div>
 
     <!-- Navigasi -->
     <div class="flex space-x-2 overflow-x-auto pb-2">
-      <div class="nav-btn active-nav whitespace-nowrap" onclick="switchMenu('menu-hr', this)">Master HR & Info</div>
-      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-approval', this)">Approval Surat</div>
-      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-form', this)">Jobdesk & KPI (AI)</div>
-      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-absensi', this)">Data Absensi</div>
-      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-laporan', this)">Laporan Shift</div>
-      <div class="nav-btn inactive-nav whitespace-nowrap" onclick="switchMenu('menu-kpi-bulanan', this)">Rekap KPI Bulanan</div>
+      <div class="nav-btn active-nav" onclick="switchMenu('menu-hr', this)">Master HR</div>
+      <div class="nav-btn inactive-nav" onclick="switchMenu('menu-approval', this)">Approval Surat</div>
+      <div class="nav-btn inactive-nav" onclick="switchMenu('menu-form', this)">Jobdesk KPI</div>
+      <div class="nav-btn inactive-nav" onclick="switchMenu('menu-absensi', this)">Log Absensi</div>
+      <div class="nav-btn inactive-nav" onclick="switchMenu('menu-laporan', this)">Laporan Shift</div>
+      <div class="nav-btn inactive-nav" onclick="switchMenu('menu-kpi-bulanan', this)">Rekap KPI Bulanan</div>
     </div>
 
-    <!-- 1. MASTER HR -->
-    <div id="menu-hr" class="glass grid grid-cols-1 xl:grid-cols-3 gap-6 block">
-      <div class="xl:col-span-2 space-y-4">
-        <div class="border p-4 rounded-xl bg-[#FAF8F5] border-[#D4A373]">
-          <h3 class="font-bold text-[#5C3A21] mb-2">📢 Broadcast Pengumuman Karyawan</h3>
-          <textarea id="input-pengumuman" class="w-full p-2 border rounded outline-none text-sm mb-2" rows="2"></textarea>
-          <button onclick="simpanPengumuman()" class="bg-[#5C3A21] text-white px-4 py-2 rounded font-bold text-sm">Update Pengumuman</button>
-        </div>
-        <div class="overflow-x-auto">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-bold">Database Karyawan</h2>
-            <div class="space-x-2">
-              <button onclick="exportKaryawanCSV()" class="text-xs bg-green-600 text-white px-3 py-1 rounded font-bold">📥 Excel/CSV</button>
-              <button onclick="cetakPDFUmum('tabel-hr-cetak', 'Data_Karyawan')" class="text-xs bg-red-600 text-white px-3 py-1 rounded font-bold">🖨️ PDF</button>
-            </div>
-          </div>
-          <div id="tabel-hr-cetak" class="bg-white">
-            <table class="w-full text-left text-sm border-collapse min-w-[800px]">
-              <thead><tr><th class="p-3 border">Nama</th><th class="p-3 border">Divisi</th><th class="p-3 border">Tgl Masuk</th><th class="p-3 border">PIN</th><th class="p-3 text-center border aksi-col">Aksi</th></tr></thead>
-              <tbody id="user-table-body"></tbody>
-            </table>
-          </div>
-        </div>
+    <!-- 1. HR -->
+    <div id="menu-hr" class="glass grid grid-cols-1 lg:grid-cols-3 gap-6 block">
+      <div class="lg:col-span-2 space-y-4">
+        <div class="border p-4 rounded-xl bg-[#FAF8F5]"><h3 class="font-bold text-[#5C3A21] mb-2">Broadcast Pengumuman</h3><textarea id="input-pengumuman" class="w-full p-2 border rounded text-sm mb-2" rows="2"></textarea><button onclick="simpanPengumuman()" class="bg-[#5C3A21] text-white px-4 py-1 rounded text-xs font-bold">Update</button></div>
+        <div class="overflow-x-auto"><table class="w-full text-left text-sm min-w-[700px]"><thead><tr><th class="p-2 border">Nama</th><th class="p-2 border">Divisi</th><th class="p-2 border">Tgl Masuk</th><th class="p-2 border">PIN</th><th class="p-2 text-center border">Aksi</th></tr></thead><tbody id="user-table-body"></tbody></table></div>
       </div>
-      <div class="bg-[#FAF8F5] p-6 rounded-xl border border-[#D4A373] h-fit">
-        <h3 class="font-bold text-[#5C3A21] mb-4">Form Karyawan</h3>
-        <input type="hidden" id="edit-index" value="">
-        <input type="text" id="edit-nama" placeholder="Nama Lengkap" class="w-full p-2 mb-3 border rounded text-sm">
-        <select id="edit-posisi" class="w-full p-2 mb-3 border rounded text-sm"></select>
-        <label class="text-[10px]">Tanggal Masuk</label><input type="date" id="edit-join" class="w-full p-2 mb-3 border rounded text-sm">
-        <label class="text-[10px]">Tanggal Lahir</label><input type="date" id="edit-dob" class="w-full p-2 mb-3 border rounded text-sm">
-        <input type="text" id="edit-wa" placeholder="WhatsApp (628...)" class="w-full p-2 mb-3 border rounded text-sm">
-        <input type="text" id="edit-pin" placeholder="PIN 6 Digit" maxlength="6" class="w-full p-2 mb-6 border rounded text-sm font-mono">
-        <button onclick="saveUser()" class="w-full py-2 rounded btn-primary shadow">Simpan Data</button>
-      </div>
+      <div class="bg-[#FAF8F5] p-6 rounded-xl border h-fit"><h3 class="font-bold text-[#5C3A21] mb-4">Form Karyawan</h3><input type="hidden" id="edit-index" value=""><input type="text" id="edit-nama" placeholder="Nama Lengkap" class="w-full p-2 mb-3 border rounded text-sm"><select id="edit-posisi" class="w-full p-2 mb-3 border rounded text-sm"></select><input type="date" id="edit-join" class="w-full p-2 mb-3 border rounded text-sm"><input type="text" id="edit-wa" placeholder="WhatsApp" class="w-full p-2 mb-3 border rounded text-sm"><input type="text" id="edit-pin" placeholder="PIN 6 Digit" class="w-full p-2 mb-6 border rounded text-sm"><button onclick="saveUser()" class="w-full py-2 rounded btn-primary">Simpan</button></div>
     </div>
 
-    <!-- 2. APPROVAL SURAT -->
-    <div id="menu-approval" class="glass hidden">
-      <h2 class="text-lg font-bold mb-4">Antrean Pengajuan Surat</h2>
-      <div id="approval-list-container" class="space-y-4"></div>
-    </div>
+    <!-- 2. APPROVAL -->
+    <div id="menu-approval" class="glass hidden"><h2 class="font-bold mb-4">Antrean Pengajuan Surat</h2><div id="approval-list-container" class="space-y-4"></div></div>
 
-    <!-- 3. FORM BUILDER JOBDESK & KPI (AI) -->
+    <!-- 3. JOBDESK -->
     <div id="menu-form" class="glass hidden">
-      <div class="flex justify-between items-center mb-4">
-        <div>
-          <h2 class="text-lg font-bold">Desain Jobdesk & Parameter KPI</h2>
-          <p class="text-xs text-slate-500">Sistem terintegrasi AI: Otomatis memetakan KPI dasar saat divisi baru dibuat.</p>
-        </div>
-        <div class="flex space-x-2">
-          <select id="filter-jobdesk-nama" onchange="renderDivisiCards()" class="p-2 border rounded text-sm font-bold bg-slate-50 outline-none"><option value="Semua">Semua Divisi</option></select>
-          <button onclick="tambahDivisiAI()" class="bg-[#5C3A21] text-white px-4 py-2 rounded-lg font-bold text-sm shadow">✨ Generate Divisi (AI)</button>
-        </div>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="divisi-cards-container"></div>
+      <div class="flex justify-between items-center mb-4"><h2 class="font-bold">Desain Jobdesk (Tanpa Bobot/Target)</h2><button onclick="tambahDivisi()" class="bg-[#5C3A21] text-white px-4 py-2 rounded text-sm">+ Tambah Divisi</button></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="divisi-cards-container"></div>
     </div>
 
-    <!-- 4. DATA ABSENSI -->
+    <!-- 4. ABSENSI -->
     <div id="menu-absensi" class="glass hidden">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold">Log Absensi Karyawan</h2>
-        <div class="flex space-x-2">
-          <select id="filter-absensi-nama" onchange="renderAbsensi()" class="p-2 border rounded text-sm font-bold bg-slate-50 outline-none"><option value="Semua">Semua Karyawan</option></select>
-          <button onclick="cetakPDFUmum('tabel-absensi-cetak', 'Rekap_Absensi')" class="text-xs bg-red-600 text-white px-3 py-1 rounded font-bold">🖨️ PDF</button>
-        </div>
-      </div>
-      <div class="overflow-x-auto bg-white border rounded-lg p-4" id="tabel-absensi-cetak">
-        <div class="hidden mb-4 border-b-2 border-black pb-2 kop-surat text-center">
-          <h2 class="font-bold text-xl uppercase">Rekapitulasi Absensi Karyawan</h2>
-        </div>
-        <table class="w-full text-left text-sm border-collapse min-w-[800px]">
-          <thead><tr><th class="p-2 border">Tgl</th><th class="p-2 border">Nama (Divisi)</th><th class="p-2 border">Jam Masuk</th><th class="p-2 border">Jam Istirahat</th><th class="p-2 border">Jam Keluar</th><th class="p-2 text-center border aksi-col">Aksi</th></tr></thead>
-          <tbody id="absensi-table-body"></tbody>
-        </table>
-      </div>
+      <div class="flex justify-between mb-4"><div class="flex space-x-2"><input type="month" id="filter-abs-bln" onchange="renderAbsensi()" class="p-1 border rounded text-sm"><select id="filter-abs-nama" onchange="renderAbsensi()" class="p-1 border rounded text-sm"></select></div></div>
+      <div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead><tr><th class="p-2 border">Tgl</th><th class="p-2 border">Nama (Posisi)</th><th class="p-2 border text-green-300">Masuk</th><th class="p-2 border text-yellow-300">Istirahat</th><th class="p-2 border text-red-300">Keluar</th><th class="p-2 border">Lampiran (GMap & Foto)</th><th class="p-2 text-center border">Aksi</th></tr></thead><tbody id="absensi-table-body"></tbody></table></div>
     </div>
 
     <!-- 5. LAPORAN SHIFT -->
     <div id="menu-laporan" class="glass hidden">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold">Laporan Shift Harian</h2>
-        <select id="filter-laporan-nama" onchange="renderLaporan()" class="p-2 border rounded text-sm font-bold bg-slate-50 outline-none"><option value="Semua">Semua Karyawan</option></select>
-      </div>
-      <div id="laporan-container" class="space-y-4 max-h-[70vh] overflow-y-auto pr-2"></div>
+      <div class="flex space-x-2 mb-4"><input type="month" id="filter-lap-bln" onchange="renderLaporan()" class="p-1 border rounded text-sm"><select id="filter-lap-nama" onchange="renderLaporan()" class="p-1 border rounded text-sm"></select></div>
+      <div id="laporan-container" class="space-y-4"></div>
     </div>
 
-    <!-- 6. REKAP KPI BULANAN -->
+    <!-- 6. KPI BULANAN -->
     <div id="menu-kpi-bulanan" class="glass hidden">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold">Rapor Penilaian Kerja (KPI) Bulanan</h2>
-        <div class="flex space-x-2">
-          <select id="filter-kpi-nama" onchange="renderKPIBulanan()" class="p-2 border rounded text-sm font-bold bg-slate-50 outline-none"><option value="">Pilih Karyawan...</option></select>
-          <input type="month" id="filter-kpi-bulan" onchange="renderKPIBulanan()" class="p-2 border rounded text-sm font-bold bg-slate-50 outline-none">
-          <button onclick="cetakPDFUmum('tabel-kpi-cetak', 'Rapor_KPI')" class="text-xs bg-red-600 text-white px-3 py-1 rounded font-bold">🖨️ Cetak Rapor</button>
-        </div>
-      </div>
-      
-      <!-- Tabel Format Profesional -->
-      <div class="overflow-x-auto bg-white border rounded-lg p-6" id="tabel-kpi-cetak">
-        <div class="text-center border-b-2 border-black pb-4 mb-6">
-          <h2 class="font-bold text-xl uppercase">Penilaian Kerja Karyawan</h2>
-          <h3 class="font-bold text-lg">PASTRYFITY</h3>
-        </div>
-        <table class="w-full text-left text-sm mb-6 max-w-md">
-          <tr><td class="py-1 font-bold w-1/3">Nama Karyawan</td><td class="py-1">: <span id="kpi-hdr-nama">-</span></td></tr>
-          <tr><td class="py-1 font-bold">Posisi/Divisi</td><td class="py-1">: <span id="kpi-hdr-divisi">-</span></td></tr>
-          <tr><td class="py-1 font-bold">Periode</td><td class="py-1">: <span id="kpi-hdr-periode">-</span></td></tr>
-        </table>
-        
-        <table class="w-full text-left text-sm border-collapse border border-slate-400">
-          <thead><tr class="bg-blue-100"><th class="p-2 border border-slate-400 text-black text-center">KPI / Indikator Penilaian</th><th class="p-2 border border-slate-400 text-black text-center">Bobot (%)</th><th class="p-2 border border-slate-400 text-black text-center">Target</th><th class="p-2 border border-slate-400 text-black text-center">Aktual</th><th class="p-2 border border-slate-400 text-black text-center">Skor</th><th class="p-2 border border-slate-400 text-black text-center">Skor Akhir</th></tr></thead>
-          <tbody id="kpi-detail-body">
-            <tr><td colspan="6" class="p-4 text-center text-slate-500">Silakan pilih karyawan dan bulan terlebih dahulu.</td></tr>
-          </tbody>
-          <tfoot id="kpi-detail-foot" class="hidden">
-            <tr class="bg-blue-200 font-bold"><td class="p-2 border border-slate-400 text-right">TOTAL</td><td class="p-2 border border-slate-400 text-center" id="kpi-tot-bobot">100%</td><td colspan="3" class="border border-slate-400"></td><td class="p-2 border border-slate-400 text-center text-lg" id="kpi-tot-akhir">0%</td></tr>
-          </tfoot>
-        </table>
+      <div class="flex space-x-2 mb-4"><input type="month" id="filter-kpi-bln" onchange="renderKPI()" class="p-1 border rounded text-sm"><select id="filter-kpi-nama" onchange="renderKPI()" class="p-1 border rounded text-sm"></select><button onclick="simpanPengaturanKPI()" class="bg-blue-600 text-white px-3 rounded text-xs">Simpan Bobot & Target</button></div>
+      <div class="overflow-x-auto p-4 border rounded bg-white">
+        <h2 class="text-center font-bold text-lg">Penilaian Kerja Karyawan</h2><p class="text-center text-sm mb-4">PT. PASTRYFITY</p>
+        <table class="w-full text-left text-sm mb-4"><tr><td class="w-1/4 font-bold">Nama</td><td>: <span id="kpi-hdr-nama">-</span></td></tr><tr><td class="font-bold">Divisi</td><td>: <span id="kpi-hdr-divisi">-</span></td></tr></table>
+        <table class="w-full text-left text-sm border-collapse border border-slate-400"><thead><tr class="bg-blue-100"><th class="p-2 border text-black">KPI</th><th class="p-2 border text-black w-24">Bobot (%)</th><th class="p-2 border text-black w-24">Target</th><th class="p-2 border text-black w-24">Aktual</th><th class="p-2 border text-black w-24">Skor</th><th class="p-2 border text-black w-24">Akhir</th></tr></thead><tbody id="kpi-body"></tbody><tfoot id="kpi-foot"><tr class="bg-blue-200 font-bold"><td class="p-2 border text-right">TOTAL</td><td class="p-2 border" id="kpi-tot-bobot">0%</td><td colspan="3" class="border"></td><td class="p-2 border" id="kpi-tot-akhir">0%</td></tr></tfoot></table>
       </div>
     </div>
   </div>
 
-  <!-- TEMPLATE HIDDEN PRINT (SURAT & JOBDESK) -->
-  <div id="print-surat-formal" class="hidden bg-white text-black" style="width: 210mm; min-height: 297mm; padding: 20mm;">
-    <div class="border-b-4 border-[#5C3A21] pb-4 mb-6 flex justify-between">
-      <div><h1 class="text-3xl font-bold text-[#5C3A21]">PASTRYFITY</h1><p class="text-sm">Jl. J.B. A.H. Nasution No.63c</p></div>
-      <img src="logo.png" class="h-16 object-contain" onerror="this.style.display='none'">
-    </div>
-    <div id="print-surat-content" class="text-sm"></div>
-  </div>
+  <!-- PRINT TEMPLATE -->
+  <div id="print-container" class="hidden bg-white text-black text-sm p-8" style="width: 210mm; min-height: 297mm;"></div>
   
   <script>
    // =====================================================================
@@ -213,248 +104,178 @@
     const MASTER_PIN = "999888"; 
     // =====================================================================
 
-let DB = { users: [], schema: {}, requests: [], reports: [], absensi: [], pengumuman: { teks: "" } };
+let DB = { users: [], schema: {}, requests: [], reports: [], absensi: [], pengumuman: {}, kpi_settings: {} };
 
-    const showLoading = (t) => { document.getElementById('loading-text').innerText = t; document.getElementById('loading-overlay').style.display = 'flex'; };
-    const hideLoading = () => { document.getElementById('loading-overlay').style.display = 'none'; };
+    const showLoading = (t) => { document.getElementById('loading-text').innerText=t; document.getElementById('loading-overlay').style.display='flex'; };
+    const hideLoading = () => { document.getElementById('loading-overlay').style.display='none'; };
+    const currMonth = new Date().toISOString().slice(0,7); 
+    ['filter-abs-bln','filter-lap-bln','filter-kpi-bln'].forEach(id=>document.getElementById(id).value = currMonth);
 
-    function prosesLogin() {
-      if(document.getElementById('manager-pin').value === MASTER_PIN) {
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('dashboard-screen').classList.remove('hidden');
-        const today = new Date(); document.getElementById('filter-kpi-bulan').value = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
-        loadAllData();
-      } else alert("PIN Salah!");
+    async function fetchGitHub(file) {
+      const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/${file}.json`, { headers: {'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json'}, cache: 'no-store' });
+      if(!res.ok) return { data: (file==='schema'||file==='kpi_settings'?{}:[]), sha: null };
+      const d = await res.json(); return { data: JSON.parse(decodeURIComponent(escape(atob(d.content)))), sha: d.sha };
     }
-
-    function switchMenu(targetId, el) {
-      ['menu-hr', 'menu-approval', 'menu-form', 'menu-absensi', 'menu-laporan', 'menu-kpi-bulanan'].forEach(id => document.getElementById(id).classList.add('hidden'));
-      document.getElementById(targetId).classList.remove('hidden');
-      document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('active-nav'); btn.classList.add('inactive-nav'); });
-      el.classList.add('active-nav'); el.classList.remove('inactive-nav');
-    }
-
-    async function fetchFromGitHub(fileName) {
-      const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/${fileName}.json`, { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }, cache: 'no-store' });
-      if(!res.ok) return { data: (fileName==='schema'||fileName==='pengumuman'?{}:[]), sha: null };
-      const data = await res.json(); return { data: JSON.parse(decodeURIComponent(escape(atob(data.content)))), sha: data.sha };
-    }
-
-    async function pushToGitHub(fileName, dataObj, commitMsg) {
-      showLoading(`Menyimpan ${fileName}...`);
-      try {
-        const current = await fetchFromGitHub(fileName);
-        const bodyData = { message: commitMsg, content: btoa(unescape(encodeURIComponent(JSON.stringify(dataObj, null, 2)))) };
-        if(current.sha) bodyData.sha = current.sha;
-        await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/${fileName}.json`, { method: 'PUT', headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' }, body: JSON.stringify(bodyData) });
-      } catch (err) { alert(`Error: ` + err.message); }
+    async function pushGitHub(file, obj) {
+      showLoading(`Simpan ${file}...`);
+      const curr = await fetchGitHub(file);
+      const body = { message: `Update`, content: btoa(unescape(encodeURIComponent(JSON.stringify(obj, null, 2)))) };
+      if(curr.sha) body.sha = curr.sha;
+      await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/${file}.json`, { method: 'PUT', headers: {'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json'}, body: JSON.stringify(body) });
       hideLoading();
     }
+
+    function prosesLogin() { if(document.getElementById('manager-pin').value===MASTER_PIN) { document.getElementById('login-screen').classList.add('hidden'); document.getElementById('dashboard-screen').classList.remove('hidden'); loadAllData(); } else alert("PIN Salah!"); }
+    function switchMenu(t, el) { ['menu-hr','menu-approval','menu-form','menu-absensi','menu-laporan','menu-kpi-bulanan'].forEach(id=>document.getElementById(id).classList.add('hidden')); document.getElementById(t).classList.remove('hidden'); document.querySelectorAll('.nav-btn').forEach(b=>b.className='nav-btn inactive-nav'); el.className='nav-btn active-nav whitespace-nowrap'; }
 
     async function loadAllData() {
-      showLoading("Menarik data...");
+      showLoading("Narik Data...");
       try {
-        const [u, s, req, rep, abs, peng] = await Promise.all([fetchFromGitHub('users'), fetchFromGitHub('kpi-schema'), fetchFromGitHub('requests'), fetchFromGitHub('reports'), fetchFromGitHub('absensi'), fetchFromGitHub('pengumuman')]);
-        DB.users = u.data; DB.schema = s.data; DB.requests = req.data; DB.reports = rep.data; DB.absensi = abs.data; DB.pengumuman = peng.data.teks ? peng.data : { teks: "" };
+        const [u, s, req, rep, abs, p, k] = await Promise.all(['users','kpi-schema','requests','reports','absensi','pengumuman','kpi_settings'].map(fetchGitHub));
+        DB.users=u.data; DB.schema=s.data; DB.requests=req.data; DB.reports=rep.data; DB.absensi=abs.data; DB.pengumuman=p.data.teks?p.data:{teks:""}; DB.kpi_settings=k.data;
         document.getElementById('input-pengumuman').value = DB.pengumuman.teks;
-        syncFilterNames(); renderUserTable(); renderDivisiCards(); renderApprovalQueue(); renderAbsensi(); renderLaporan();
-      } catch (e) { alert("Gagal koneksi GitHub."); }
+        syncUI();
+      } catch(e) { alert("Gagal koneksi"); }
       hideLoading();
     }
 
-    function syncFilterNames() {
-      const sels = ['filter-absensi-nama', 'filter-laporan-nama', 'filter-kpi-nama'];
-      let opts = '<option value="Semua">Semua Karyawan</option>';
-      let optsKpi = '<option value="">Pilih Karyawan...</option>';
-      DB.users.forEach(u => { if(u.role === 'employee') { opts += `<option value="${u.name}">${u.name}</option>`; optsKpi += `<option value="${u.name}">${u.name}</option>`; }});
-      document.getElementById('filter-absensi-nama').innerHTML = opts; document.getElementById('filter-laporan-nama').innerHTML = opts; document.getElementById('filter-kpi-nama').innerHTML = optsKpi;
+    function syncUI() {
+      let opts = '<option value="Semua">Semua</option>'; let optsKpi = '<option value="">Pilih Karyawan</option>';
+      DB.users.forEach(u=>{ if(u.role==='employee'){ opts+=`<option value="${u.name}">${u.name}</option>`; optsKpi+=`<option value="${u.name}">${u.name}</option>`; } });
+      ['filter-abs-nama','filter-lap-nama'].forEach(id=>document.getElementById(id).innerHTML=opts); document.getElementById('filter-kpi-nama').innerHTML=optsKpi;
       
-      const divSel = document.getElementById('filter-jobdesk-nama');
-      divSel.innerHTML = '<option value="Semua">Semua Divisi</option>';
-      Object.keys(DB.schema).forEach(d => divSel.innerHTML += `<option value="${d}">${d}</option>`);
-      
-      const posSel = document.getElementById('edit-posisi'); posSel.innerHTML = '';
-      Object.keys(DB.schema).forEach(d => posSel.innerHTML += `<option value="${d}">${d}</option>`);
+      const posSel = document.getElementById('edit-posisi'); posSel.innerHTML=''; Object.keys(DB.schema).forEach(d=>posSel.innerHTML+=`<option value="${d}">${d}</option>`);
+      renderUserTable(); renderJobdesk(); renderApproval(); renderAbsensi(); renderLaporan();
     }
 
-    // --- 1. HR ---
-    async function simpanPengumuman() { DB.pengumuman.teks = document.getElementById('input-pengumuman').value; await pushToGitHub('pengumuman', DB.pengumuman, 'Update Pengumuman'); alert("Pengumuman di-broadcast!"); }
+    // 1. HR
+    async function simpanPengumuman() { DB.pengumuman.teks = document.getElementById('input-pengumuman').value; await pushGitHub('pengumuman', DB.pengumuman); }
     function renderUserTable() {
-      const tbody = document.getElementById('user-table-body'); tbody.innerHTML = '';
-      DB.users.forEach((u, i) => {
-        const waLink = u.whatsapp ? `https://wa.me/${u.whatsapp.replace(/^0+/, '62')}?text=Halo%20${u.name},%20ini%20dari%20Manajemen.` : '#';
-        tbody.innerHTML += `<tr class="border-b hover:bg-slate-50"><td class="p-2 border">${u.name}</td><td class="p-2 border">${u.division}</td><td class="p-2 border">${u.join_date||'-'}</td><td class="p-2 border font-mono">${u.pin}</td><td class="p-2 border text-center aksi-col whitespace-nowrap"><button onclick="editUser(${i})" class="text-blue-600 border px-2 py-1 rounded text-xs bg-white">Edit</button> <button onclick="hapusUser(${i})" class="text-red-600 border px-2 py-1 rounded text-xs bg-white">Hapus</button> ${u.whatsapp ? `<a href="${waLink}" target="_blank" class="text-green-600 border border-green-200 px-2 py-1 rounded text-xs bg-green-50 font-bold">💬 WA</a>` : ''}</td></tr>`;
+      const tb = document.getElementById('user-table-body'); tb.innerHTML='';
+      DB.users.forEach((u,i) => {
+        let wa = u.whatsapp?`<a href="https://wa.me/${u.whatsapp.replace(/^0+/,'62')}" target="_blank" class="text-green-600 border px-2 py-1 rounded text-xs">WA</a>`:'';
+        tb.innerHTML+=`<tr class="border-b"><td class="p-2 border">${u.name}</td><td class="p-2 border">${u.division}</td><td class="p-2 border">${u.join_date||'-'}</td><td class="p-2 border">${u.pin}</td><td class="p-2 border space-x-1">${wa}<button onclick="editUser(${i})" class="text-blue-600 border px-2 py-1 rounded text-xs">Edit</button><button onclick="hapusUser(${i})" class="text-red-600 border px-2 py-1 rounded text-xs">Hapus</button></td></tr>`;
       });
     }
-    function editUser(i) { const u = DB.users[i]; document.getElementById('edit-index').value = i; document.getElementById('edit-nama').value = u.name; document.getElementById('edit-posisi').value = u.division; document.getElementById('edit-join').value = u.join_date||''; document.getElementById('edit-dob').value = u.dob||''; document.getElementById('edit-wa').value = u.whatsapp||''; document.getElementById('edit-pin').value = u.pin; }
-    async function saveUser() {
-      const idx = document.getElementById('edit-index').value; const data = { id: idx===""?"U"+Date.now():DB.users[idx].id, name: document.getElementById('edit-nama').value, division: document.getElementById('edit-posisi').value, join_date: document.getElementById('edit-join').value, dob: document.getElementById('edit-dob').value, whatsapp: document.getElementById('edit-wa').value, pin: document.getElementById('edit-pin').value, role: 'employee' };
-      if(!data.name || !data.pin) return alert("Nama dan PIN wajib!");
-      if(idx === "") DB.users.push(data); else DB.users[idx] = data;
-      await pushToGitHub('users', DB.users, `Update user`); renderUserTable(); syncFilterNames();
-    }
-    async function hapusUser(i) { if(confirm("Hapus?")) { DB.users.splice(i, 1); await pushToGitHub('users', DB.users, 'Hapus user'); renderUserTable(); syncFilterNames(); } }
-    function exportKaryawanCSV() { let csv = "data:text/csv;charset=utf-8,Nama,Divisi,Tgl Masuk,Tgl Lahir,WhatsApp,PIN\n"; DB.users.forEach(u => csv += `"${u.name}","${u.division}","${u.join_date||''}","${u.dob||''}","${u.whatsapp||''}","${u.pin}"\n`); const link = document.createElement("a"); link.href = encodeURI(csv); link.download = "Data_Karyawan.csv"; document.body.appendChild(link); link.click(); document.body.removeChild(link); }
-    function cetakPDFUmum(elId, namaFile) {
-      document.querySelectorAll(`#${elId} .aksi-col`).forEach(e => e.classList.add('hidden')); document.querySelectorAll(`#${elId} .kop-surat`).forEach(e => e.classList.remove('hidden'));
-      html2pdf().set({ margin: 0.5, filename: `${namaFile}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' } }).from(document.getElementById(elId)).save().then(() => { document.querySelectorAll(`#${elId} .aksi-col`).forEach(e => e.classList.remove('hidden')); document.querySelectorAll(`#${elId} .kop-surat`).forEach(e => e.classList.add('hidden')); });
-    }
+    function editUser(i) { const u=DB.users[i]; document.getElementById('edit-index').value=i; document.getElementById('edit-nama').value=u.name; document.getElementById('edit-posisi').value=u.division; document.getElementById('edit-join').value=u.join_date||''; document.getElementById('edit-wa').value=u.whatsapp||''; document.getElementById('edit-pin').value=u.pin; }
+    async function saveUser() { const idx = document.getElementById('edit-index').value; const data={ id:idx===""?"U"+Date.now():DB.users[idx].id, name:document.getElementById('edit-nama').value, division:document.getElementById('edit-posisi').value, join_date:document.getElementById('edit-join').value, whatsapp:document.getElementById('edit-wa').value, pin:document.getElementById('edit-pin').value, role:'employee' }; if(idx==="") DB.users.push(data); else DB.users[idx]=data; await pushGitHub('users', DB.users); syncUI(); }
+    async function hapusUser(i) { if(confirm("Hapus?")){ DB.users.splice(i,1); await pushGitHub('users', DB.users); syncUI(); } }
 
-    // --- 2. APPROVAL SURAT ---
-    function renderApprovalQueue() {
-      const c = document.getElementById('approval-list-container'); c.innerHTML = '';
-      DB.requests.slice().reverse().forEach(req => {
-        c.innerHTML += `<div class="border p-4 rounded-xl flex justify-between bg-white mb-3 shadow-sm"><div class="w-2/3 pr-4"><h4 class="font-bold text-[#5C3A21]">${req.nama} <span class="text-xs font-normal">(${req.divisi})</span></h4><p class="text-xs font-bold">${req.jenis} | ${req.tgl_mulai} s/d ${req.tgl_selesai}</p><p class="text-sm mt-1">Alasan: ${req.alasan}</p>${req.lampiran?`<a href="${req.lampiran}" target="_blank" class="text-blue-500 text-xs underline">Lihat Lampiran</a>`:''}</div><div class="w-1/3 border-l pl-4 flex flex-col justify-center space-y-2">${req.status==='Pending'?`<input type="text" id="note-${req.id}" placeholder="Catatan..." class="p-2 border rounded text-xs outline-none"><div class="flex space-x-2"><button onclick="prosesPengajuan('${req.id}','Approved')" class="flex-1 bg-green-600 text-white rounded text-xs py-1 font-bold">Approve</button><button onclick="prosesPengajuan('${req.id}','Ditolak')" class="flex-1 bg-red-600 text-white rounded text-xs py-1 font-bold">Tolak</button></div>`:`<p class="text-center font-bold text-xs ${req.status==='Approved'?'text-green-600':'text-red-600'}">${req.status}</p><p class="text-[10px] text-center">${req.catatan_manager||'-'}</p><button onclick="cetakSuratFormal('${req.id}')" class="bg-[#5C3A21] text-white rounded text-xs py-1 font-bold w-full">Cetak PDF</button>`}</div></div>`;
+    // 2. APPROVAL
+    function renderApproval() {
+      const c = document.getElementById('approval-list-container'); c.innerHTML='';
+      DB.requests.slice().reverse().forEach(r => {
+        let lmp = r.lampiran?`<div class="mt-2 text-xs"><p>Lampiran:</p><img src="${r.lampiran}" class="h-20 border mt-1"></div>`:'';
+        let act = r.status==='Pending'?`<input type="text" id="note-${r.id}" placeholder="Catatan" class="p-1 border text-xs w-full mb-1"><div class="flex space-x-1"><button onclick="prosesApprove('${r.id}','Approved')" class="bg-green-600 text-white px-2 py-1 text-xs rounded w-1/2">Approve</button><button onclick="prosesApprove('${r.id}','Ditolak')" class="bg-red-600 text-white px-2 py-1 text-xs rounded w-1/2">Tolak</button></div>`:`<p class="text-xs font-bold ${r.status==='Approved'?'text-green-600':'text-red-600'}">${r.status}</p><p class="text-[10px] text-slate-500 mb-1">${r.catatan_manager||''}</p><button onclick="cetakPDFSurat('${r.id}')" class="bg-[#5C3A21] text-white w-full text-xs py-1 rounded">Cetak PDF</button>`;
+        c.innerHTML+=`<div class="border p-4 bg-white rounded shadow-sm flex mb-3"><div class="w-2/3 pr-2"><b>${r.nama}</b> (${r.divisi})<br><span class="text-xs">${r.jenis} | ${r.tgl_mulai} s/d ${r.tgl_selesai}</span><p class="text-xs mt-1">Alasan: ${r.alasan}</p>${lmp}</div><div class="w-1/3 border-l pl-2">${act}</div></div>`;
       });
     }
-    async function prosesPengajuan(id, action) { const idx = DB.requests.findIndex(r => r.id === id); if(idx !== -1) { DB.requests[idx].status = action; DB.requests[idx].catatan_manager = document.getElementById(`note-${id}`).value || '-'; await pushToGitHub('requests', DB.requests, `Approval`); renderApprovalQueue(); } }
+    async function prosesApprove(id, st) { const i=DB.requests.findIndex(x=>x.id===id); DB.requests[i].status=st; DB.requests[i].catatan_manager=document.getElementById(`note-${id}`).value; await pushGitHub('requests', DB.requests); renderApproval(); }
+    function cetakPDFSurat(id) {
+      const r = DB.requests.find(x=>x.id===id);
+      document.getElementById('print-container').innerHTML=`<div class="border-b-2 pb-2 mb-4"><h1 class="text-2xl font-bold">PASTRYFITY</h1></div><h2 class="text-center font-bold mb-4">SURAT KEPUTUSAN</h2><table class="text-sm mb-4"><tr><td class="w-24">Nama</td><td>: ${r.nama}</td></tr><tr><td>Jenis</td><td>: ${r.jenis}</td></tr><tr><td>Periode</td><td>: ${r.tgl_mulai} s/d ${r.tgl_selesai}</td></tr><tr><td class="align-top">Alasan</td><td>: ${r.alasan}</td></tr></table>${r.lampiran?`<img src="${r.lampiran}" class="h-32 mb-4 border">`:''}<div class="text-center border border-dashed p-4 mb-8"><h3 class="font-bold text-lg">${r.status.toUpperCase()}</h3><p class="text-xs">Catatan: ${r.catatan_manager||'-'}</p></div>`;
+      const el = document.getElementById('print-container'); el.classList.remove('hidden');
+      html2pdf().set({filename: `Surat_${r.nama}.pdf`}).from(el).save().then(()=>el.classList.add('hidden'));
+    }
 
-    // --- 3. FORM BUILDER & AI SIMULATION ---
-    function generateAIKPI(divisi) {
-      let div = divisi.toLowerCase(); let kpis = [];
-      if(div.includes('admin') || div.includes('toko')) kpis = [{label: 'Pencapaian Omset Harian', type: 'number'}, {label: 'Total Chat Masuk & Dibalas', type: 'number'}, {label: 'Kebersihan Area & Showcase', type: 'checkbox'}];
-      else if (div.includes('konten') || div.includes('sosial')) kpis = [{label: 'Peningkatan Followers (Harian)', type: 'number'}, {label: 'Upload Konten / Reels', type: 'number'}, {label: 'Engagement (Likes/Komen)', type: 'number'}];
-      else if (div.includes('chef') || div.includes('bakery') || div.includes('r&d')) kpis = [{label: 'Produksi Sesuai Target', type: 'number'}, {label: 'Zero Waste (Sisa Bahan)', type: 'checkbox'}, {label: 'Kebersihan Dapur (SOP)', type: 'checkbox'}];
-      else kpis = [{label: 'Penyelesaian Tugas Utama', type: 'number'}];
-      return kpis;
-    }
-    async function tambahDivisiAI() {
-      const n = prompt("Masukkan Nama Divisi (Contoh: Admin Toko, Head Chef):");
-      if(n && !DB.schema[n]) { 
-        showLoading("AI sedang menyusun KPI...");
-        setTimeout(async () => { DB.schema[n] = generateAIKPI(n); await pushToGitHub('kpi-schema', DB.schema, 'AI Generate KPI'); syncFilterNames(); renderDivisiCards(); }, 1000);
-      }
-    }
-    function renderDivisiCards() {
-      const filter = document.getElementById('filter-jobdesk-nama').value;
-      const c = document.getElementById('divisi-cards-container'); c.innerHTML = '';
+    // 3. JOBDESK
+    function renderJobdesk() {
+      const c = document.getElementById('divisi-cards-container'); c.innerHTML='';
       Object.keys(DB.schema).forEach(div => {
-        if(filter !== 'Semua' && filter !== div) return;
-        let list = '';
-        DB.schema[div].forEach((f, i) => list += `<tr class="border-b"><td class="text-xs py-1">${f.label}</td><td class="text-right"><button onclick="hapusField('${div}', ${i})" class="text-red-500 font-bold ml-2">X</button></td></tr>`);
-        c.innerHTML += `<div class="bg-white border p-4 rounded-xl shadow-sm"><div class="flex justify-between border-b pb-2 mb-2"><h3 class="font-bold text-[#5C3A21]">${div}</h3><button onclick="cetakJobdeskFormal('${div}')" class="text-xs bg-[#5C3A21] text-white px-2 py-1 rounded">🖨️ Cetak SOP</button></div><table class="w-full mb-3"><thead><tr class="text-[10px] text-slate-500 border-b"><th class="text-left">Indikator (KPI)</th><th></th></tr></thead><tbody>${list||'<tr><td colspan="2" class="text-xs text-center py-2 text-slate-400">Belum ada tugas.</td></tr>'}</tbody></table><div class="flex space-x-1 mt-2 border-t pt-2"><input type="text" id="new-l-${div}" placeholder="Tugas baru" class="w-1/2 p-1 text-[10px] border rounded"><select id="new-y-${div}" class="w-1/4 p-1 text-[10px] border rounded"><option value="number">Num</option><option value="checkbox">Cek</option></select><button onclick="addField('${div}')" class="bg-green-600 text-white w-1/4 rounded text-[10px] font-bold">+</button></div></div>`;
+        let list=''; DB.schema[div].forEach((f,i)=>list+=`<tr class="border-b"><td class="text-xs py-1">${f.label}</td><td class="text-right"><button onclick="hapusJob('${div}',${i})" class="text-red-500 text-xs">X</button></td></tr>`);
+        c.innerHTML+=`<div class="border bg-white p-4 rounded"><h3 class="font-bold border-b pb-2 mb-2">${div}</h3><table class="w-full mb-2"><tbody>${list}</tbody></table><div class="flex space-x-1"><input type="text" id="new-l-${div}" placeholder="Tugas..." class="w-2/3 p-1 text-xs border rounded"><button onclick="tambahJob('${div}')" class="bg-green-600 text-white text-xs w-1/3 rounded">Tambah</button></div></div>`;
       });
     }
-    async function addField(div) { const l = document.getElementById(`new-l-${div}`).value; if(l) { DB.schema[div].push({ label: l, type: document.getElementById(`new-y-${div}`).value }); await pushToGitHub('kpi-schema', DB.schema, 'Update KPI'); renderDivisiCards(); } else alert("Lengkapi Form!"); }
-    async function hapusField(div, i) { DB.schema[div].splice(i, 1); await pushToGitHub('kpi-schema', DB.schema, 'Hapus KPI'); renderDivisiCards(); }
+    async function tambahDivisi() { const n = prompt("Nama Divisi:"); if(n) { DB.schema[n]=[]; await pushGitHub('kpi-schema', DB.schema); syncUI(); } }
+    async function tambahJob(div) { const l = document.getElementById(`new-l-${div}`).value; if(l){ DB.schema[div].push({label:l, type:'number'}); await pushGitHub('kpi-schema', DB.schema); renderJobdesk(); } }
+    async function hapusJob(div, i) { DB.schema[div].splice(i,1); await pushGitHub('kpi-schema', DB.schema); renderJobdesk(); }
 
-    // --- 4. ABSENSI (Edit/Delete & Filter) ---
+    // 4. ABSENSI (Filter & Edit)
     function renderAbsensi() {
-      const filter = document.getElementById('filter-absensi-nama').value;
-      const tbody = document.getElementById('absensi-table-body'); tbody.innerHTML = '';
-      let grouped = {};
+      const b = document.getElementById('filter-abs-bln').value; const nm = document.getElementById('filter-abs-nama').value;
+      const tb = document.getElementById('absensi-table-body'); tb.innerHTML='';
+      let grp = {};
       DB.absensi.forEach(a => {
-        if(filter !== 'Semua' && a.nama !== filter) return;
-        let key = `${a.tanggal}_${a.nama}`;
-        if(!grouped[key]) grouped[key] = { nama: a.nama, divisi: a.divisi, tgl: a.tanggal, in: '-', ist: '-', out: '-'};
-        if(a.tipe === 'Clock In') { grouped[key].in = a.jam; }
-        else if(a.tipe === 'Clock Out') { grouped[key].out = a.jam; }
-        else if(a.tipe.includes('Istirahat')) { grouped[key].ist = a.jam; }
+        if(nm!=='Semua' && a.nama!==nm) return;
+        if(b && !a.tanggal.includes(`/${b.split('-')[1]}/`)) return;
+        let k = `${a.tanggal}_${a.nama}`;
+        if(!grp[k]) grp[k]={id:a.id, nama:a.nama, pos:a.divisi, tgl:a.tanggal, in:'-', ist:'-', out:'-', gmap:[], img:[]};
+        if(a.tipe==='Masuk') grp[k].in=a.jam; else if(a.tipe==='Istirahat') grp[k].ist=a.jam; else if(a.tipe==='Keluar') grp[k].out=a.jam;
+        if(a.lokasi) grp[k].gmap.push(`<a href="${a.lokasi}" target="_blank" class="text-blue-500 underline">GMap ${a.tipe}</a>`);
+        if(a.foto) grp[k].img.push(`<a href="${a.foto}" target="_blank" class="text-blue-500 underline">Foto ${a.tipe}</a>`);
       });
-      Object.values(grouped).reverse().forEach((g) => {
-        tbody.innerHTML += `<tr class="border-b"><td class="p-2 border">${g.tgl}</td><td class="p-2 border font-bold">${g.nama} <span class="font-normal text-[10px]">(${g.divisi})</span></td><td class="p-2 border text-green-600">${g.in}</td><td class="p-2 border text-yellow-600">${g.ist}</td><td class="p-2 border text-red-600">${g.out}</td><td class="p-2 border text-center aksi-col whitespace-nowrap"><button onclick="hapusAbsen('${g.tgl}', '${g.nama}')" class="text-red-600 border px-2 py-1 rounded text-xs bg-white">Hapus</button></td></tr>`;
-      });
-    }
-    async function hapusAbsen(tgl, nama) { if(confirm("Hapus absen?")) { DB.absensi = DB.absensi.filter(a => !(a.tanggal === tgl && a.nama === nama)); await pushToGitHub('absensi', DB.absensi, 'Hapus'); renderAbsensi(); } }
-
-    // --- 5. LAPORAN SHIFT ---
-    function renderLaporan() {
-      const filter = document.getElementById('filter-laporan-nama').value;
-      const c = document.getElementById('laporan-container'); c.innerHTML = '';
-      let reps = DB.reports.slice().reverse(); if(filter !== 'Semua') reps = reps.filter(r => r.nama === filter);
-      reps.forEach(rep => {
-        c.innerHTML += `<div class="border border-[#D4A373] p-4 rounded-xl bg-white mb-4 shadow-sm" id="rep-card-${rep.id}"><div class="flex justify-between items-center border-b border-[#D4A373] pb-2 mb-3"><div><h4 class="font-bold text-[#5C3A21]">${rep.nama}</h4><p class="text-xs text-slate-500">Tgl: ${rep.tanggal}</p></div><div class="space-x-2"><input type="number" id="skor-${rep.id}" class="w-20 p-2 text-sm border rounded outline-none font-bold text-center" placeholder="0-100" value="${rep.skor||''}"><button onclick="simpanSkor('${rep.id}')" class="bg-blue-600 text-white text-sm px-3 py-2 rounded font-bold">Simpan Nilai</button><button onclick="cetakLaporanPDF('${rep.id}')" class="bg-[#5C3A21] text-white text-xs px-3 py-2 rounded font-bold">🖨️ PDF Laporan</button></div></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><table class="w-full text-left text-sm"><tr class="border-b"><td class="py-1 font-bold">Inisiatif</td><td class="py-1">: ${rep.inisiatif}</td></tr><tr class="border-b"><td class="py-1 font-bold">Kendala</td><td class="py-1">: ${rep.kendala}</td></tr><tr class="border-b"><td class="py-1 font-bold">Plan Besok</td><td class="py-1">: ${rep.planning}</td></tr></table><div class="border-l pl-4"><p class="text-xs font-bold mb-1">Data Input:</p><table class="w-full text-left text-xs">${Object.keys(rep.data_dinamis).map(k=>`<tr><td>${k}</td><td class="font-bold text-right">${rep.data_dinamis[k]}</td></tr>`).join('')}</table></div></div></div>`;
+      Object.values(grp).reverse().forEach(g => {
+        tb.innerHTML+=`<tr class="border-b"><td class="p-2 border">${g.tgl}</td><td class="p-2 border"><b>${g.nama}</b><br><span class="text-[10px]">${g.pos}</span></td><td class="p-2 border text-green-600">${g.in}</td><td class="p-2 border text-yellow-600">${g.ist}</td><td class="p-2 border text-red-600">${g.out}</td><td class="p-2 border text-[10px]">${g.gmap.join('<br>')}<br>${g.img.join('<br>')}</td><td class="p-2 border space-x-1"><button onclick="editAbsenPrompt('${g.tgl}','${g.nama}')" class="text-blue-600 border px-2 py-1 rounded text-xs">Edit</button><button onclick="hapusAbsenGrup('${g.tgl}','${g.nama}')" class="text-red-600 border px-2 py-1 rounded text-xs">Hapus</button></td></tr>`;
       });
     }
-    
-    async function simpanSkor(id) {
-      const val = document.getElementById(`skor-${id}`).value;
-      if(!val || val < 1 || val > 100) return alert("Beri nilai 1-100!");
-      const idx = DB.reports.findIndex(r => r.id === id);
-      if(idx !== -1) {
-        DB.reports[idx].skor = val; await pushToGitHub('reports', DB.reports, `Nilai Laporan`); renderLaporan(); renderKPIBulanan();
-        alert("Nilai tersimpan!");
+    async function hapusAbsenGrup(tgl, nama) { if(confirm("Hapus absen hari ini?")){ DB.absensi = DB.absensi.filter(a => !(a.tanggal===tgl && a.nama===nama)); await pushGitHub('absensi', DB.absensi); renderAbsensi(); } }
+    async function editAbsenPrompt(tgl, nama) {
+      let m = prompt("Set Jam Masuk (HH.MM.SS) atau kosongkan:"); let i = prompt("Set Jam Istirahat (HH.MM.SS) atau kosongkan:"); let k = prompt("Set Jam Keluar (HH.MM.SS) atau kosongkan:");
+      if(m!==null || i!==null || k!==null) {
+        // Hapus yang lama, insert yang baru (manual)
+        DB.absensi = DB.absensi.filter(a => !(a.tanggal===tgl && a.nama===nama));
+        const u = DB.users.find(x=>x.name===nama); const p = u?u.division:'';
+        if(m) DB.absensi.push({id:"ABS-"+Date.now()+"M", nama:nama, divisi:p, tipe:'Masuk', tanggal:tgl, jam:m});
+        if(i) DB.absensi.push({id:"ABS-"+Date.now()+"I", nama:nama, divisi:p, tipe:'Istirahat', tanggal:tgl, jam:i});
+        if(k) DB.absensi.push({id:"ABS-"+Date.now()+"K", nama:nama, divisi:p, tipe:'Keluar', tanggal:tgl, jam:k});
+        await pushGitHub('absensi', DB.absensi); renderAbsensi();
       }
     }
 
-    // --- 6. REKAP KPI BULANAN ---
-    function renderKPIBulanan() {
-      const nama = document.getElementById('filter-kpi-nama').value;
-      const monthStr = document.getElementById('filter-kpi-bulan').value; // YYYY-MM
-      if(!nama || !monthStr) return;
-      const [year, month] = monthStr.split('-');
+    // 5. LAPORAN SHIFT (Feedback/Chat)
+    function renderLaporan() {
+      const b = document.getElementById('filter-lap-bln').value; const nm = document.getElementById('filter-lap-nama').value;
+      const c = document.getElementById('laporan-container'); c.innerHTML='';
+      let rps = DB.reports.slice().reverse();
+      if(nm!=='Semua') rps=rps.filter(x=>x.nama===nm);
+      if(b) rps=rps.filter(x=>x.tanggal.includes(`/${b.split('-')[1]}/`));
       
-      const u = DB.users.find(x => x.name === nama); if(!u) return;
-      document.getElementById('kpi-hdr-nama').innerText = u.name;
-      document.getElementById('kpi-hdr-divisi').innerText = u.division;
-      document.getElementById('kpi-hdr-periode').innerText = `${month}/${year}`;
+      rps.forEach(r => {
+        let dyn=''; for(let k in r.data_dinamis) dyn+=`<tr class="border-b"><td>${k}</td><td class="font-bold text-right">${r.data_dinamis[k]}</td></tr>`;
+        c.innerHTML+=`<div class="border p-4 bg-white rounded shadow-sm"><div class="flex justify-between border-b pb-2 mb-2"><b>${r.nama} (${r.tanggal})</b></div><div class="grid grid-cols-2 gap-4"><div class="text-xs"><b>Inisiatif:</b> ${r.inisiatif}<br><b>Kendala:</b> ${r.kendala}<br><b>Plan Besok:</b> ${r.planning}</div><div class="text-[10px] border-l pl-2"><table class="w-full">${dyn}</table></div></div><div class="mt-2 pt-2 border-t flex space-x-2"><input type="text" id="fb-${r.id}" placeholder="Balasan/Catatan untuk laporan ini..." value="${r.catatan_manager||''}" class="w-full p-1 text-xs border rounded"><button onclick="simpanFeedback('${r.id}')" class="bg-blue-600 text-white text-xs px-3 rounded">Kirim Note</button></div></div>`;
+      });
+    }
+    async function simpanFeedback(id) { const idx=DB.reports.findIndex(x=>x.id===id); if(idx!==-1){ DB.reports[idx].catatan_manager = document.getElementById(`fb-${id}`).value; await pushGitHub('reports', DB.reports); alert("Terkirim ke Beranda Karyawan!"); renderLaporan(); } }
+
+    // 6. KPI BULANAN (Manual Bobot & Target)
+    function renderKPI() {
+      const b = document.getElementById('filter-kpi-bln').value; const nm = document.getElementById('filter-kpi-nama').value;
+      if(!b || !nm) return; const u = DB.users.find(x=>x.name===nm); if(!u) return;
+      document.getElementById('kpi-hdr-nama').innerText=u.name; document.getElementById('kpi-hdr-divisi').innerText=u.division;
       
-      const schema = DB.schema[u.division] || [];
-      const tbody = document.getElementById('kpi-detail-body'); tbody.innerHTML = '';
+      const tb = document.getElementById('kpi-body'); tb.innerHTML='';
+      const schema = DB.schema[u.division]||[];
+      if(!DB.kpi_settings[u.division]) DB.kpi_settings[u.division] = {};
       
-      let totBobot = 0; let totAkhir = 0;
-      
-      schema.forEach(s => {
-        totBobot += parseInt(s.bobot || 0);
-        let totalAktual = 0; let count = 0;
+      let totBobot=0, totAkhir=0;
+      schema.forEach((s,i) => {
+        // Ambil setting bobot & target atau set default 0
+        let set = DB.kpi_settings[u.division][s.label] || { bobot: 0, target: 0 };
+        totBobot+=parseInt(set.bobot);
         
-        // Cek data laporan relevan
+        let act=0;
         DB.reports.forEach(r => {
-          if(r.nama === u.name && r.tanggal.includes(`/${parseInt(month)}/`) && r.tanggal.includes(year) && r.data_dinamis[s.label]) {
-            let val = r.data_dinamis[s.label];
-            if(s.type === 'checkbox') totalAktual += (val === 'Ya' ? 1 : 0);
-            else totalAktual += parseFloat(val);
-            count++;
+          if(r.nama===u.name && r.tanggal.includes(`/${b.split('-')[1]}/`) && r.data_dinamis[s.label]) {
+            let val=r.data_dinamis[s.label]; act+=(val==='Ya'?1:parseFloat(val));
           }
         });
         
-        // Logika Nilai Khusus Absensi
-        if(s.label.toLowerCase().includes('absen')) {
-          let hadir = new Set();
-          DB.absensi.forEach(a => { if(a.nama === u.name && a.tanggal.includes(`/${parseInt(month)}/`) && a.tanggal.includes(year)) hadir.add(a.tanggal); });
-          totalAktual = hadir.size;
-        }
-
-        let skor = 0;
-        if((s.target||0) > 0) skor = Math.round((totalAktual / (s.target||0)) * 100);
-        if(skor > 100) skor = 100;
+        let skor=0; if(set.target>0) skor=Math.round((act/set.target)*100); if(skor>100) skor=100;
+        let skorAkhir = (skor*set.bobot)/100; totAkhir+=skorAkhir;
         
-        let skorAkhir = (skor * (s.bobot||0)) / 100;
-        totAkhir += skorAkhir;
-        
-        tbody.innerHTML += `<tr><td class="p-2 border border-slate-400">${s.label}</td><td class="p-2 border border-slate-400 text-center">${s.bobot||0}%</td><td class="p-2 border border-slate-400 text-center">${s.target||0}</td><td class="p-2 border border-slate-400 text-center">${totalAktual}</td><td class="p-2 border border-slate-400 text-center">${skor}</td><td class="p-2 border border-slate-400 text-center font-bold">${skorAkhir.toFixed(1)}%</td></tr>`;
+        tb.innerHTML+=`<tr><td class="p-2 border">${s.label}</td><td class="p-2 border"><input type="number" id="bbt-${i}" value="${set.bobot}" class="w-full text-center border p-1 text-xs bg-white"></td><td class="p-2 border"><input type="number" id="trg-${i}" value="${set.target}" class="w-full text-center border p-1 text-xs bg-white"></td><td class="p-2 border text-center font-bold">${act}</td><td class="p-2 border text-center">${skor}</td><td class="p-2 border text-center font-bold">${skorAkhir.toFixed(1)}%</td></tr>`;
       });
-      
-      document.getElementById('kpi-detail-foot').classList.remove('hidden');
-      document.getElementById('kpi-tot-bobot').innerText = `${totBobot}%`;
-      document.getElementById('kpi-tot-akhir').innerText = `${totAkhir.toFixed(1)}%`;
-      
-      if(totAkhir >= 90) document.getElementById('kpi-tot-akhir').className = "p-2 border border-slate-400 text-center text-lg text-green-600 font-bold";
-      else if(totAkhir >= 75) document.getElementById('kpi-tot-akhir').className = "p-2 border border-slate-400 text-center text-lg text-blue-600 font-bold";
-      else document.getElementById('kpi-tot-akhir').className = "p-2 border border-slate-400 text-center text-lg text-red-600 font-bold";
+      document.getElementById('kpi-tot-bobot').innerText=`${totBobot}%`; document.getElementById('kpi-tot-akhir').innerText=`${totAkhir.toFixed(1)}%`;
     }
-
-    // --- FORMAL PDF GENERATORS ---
-    function cetakSuratFormal(id) {
-      const req = DB.requests.find(r => r.id === id);
-      const lampiranPdf = req.lampiran ? `<div class="mt-4"><p class="font-bold">Lampiran:</p><img src="${req.lampiran}" class="max-h-48 mt-2 border"></div>` : '';
-      document.getElementById('print-surat-content').innerHTML = `<h2 class="text-center font-bold text-xl mb-6 uppercase underline">SURAT KEPUTUSAN PENGAJUAN</h2><table class="w-full text-left mb-6"><tr><td class="w-1/3 py-1">Nama Karyawan</td><td class="font-bold">: ${req.nama}</td></tr><tr><td class="py-1">Divisi</td><td class="font-bold">: ${req.divisi}</td></tr><tr><td class="py-1">Jenis Pengajuan</td><td class="font-bold">: ${req.jenis}</td></tr><tr><td class="py-1">Periode</td><td class="font-bold">: ${req.tgl_mulai} s/d ${req.tgl_selesai}</td></tr><tr><td class="py-1 align-top">Alasan</td><td class="font-bold">: ${req.alasan}</td></tr></table>${lampiranPdf}<div class="text-center py-4 my-4 border-2 border-dashed border-gray-400"><h3 class="text-2xl font-bold ${req.status==='Approved'?'text-green-600':'text-red-600'}">${req.status.toUpperCase()}</h3><p class="mt-2 text-sm">Catatan: ${req.catatan_manager||'-'}</p></div><div class="mt-16 text-right"><p>Medan, ${new Date().toLocaleDateString('id-ID')}</p><p class="mb-16 font-bold">Manajemen Pastryfity</p><p>( Ditandatangani elektronik )</p></div>`;
-      const el = document.getElementById('print-surat-formal'); el.classList.remove('hidden');
-      html2pdf().set({ margin: 0, filename: `Surat_${req.nama}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(el).save().then(() => el.classList.add('hidden'));
-    }
-
-    function cetakJobdeskFormal(divisi) {
-      let list = ''; DB.schema[divisi].forEach((f, i) => list += `<tr><td class="border p-2">${i+1}</td><td class="border p-2">${f.label}</td></tr>`);
-      document.getElementById('print-surat-content').innerHTML = `<h2 class="text-center font-bold text-xl mb-6 uppercase underline">STANDAR OPERASIONAL & KPI</h2><p class="mb-4">Dokumen ini menetapkan tanggung jawab dan Key Performance Indicator untuk:</p><table class="w-full text-left mb-6 text-lg"><tr><td class="w-1/4 font-bold">Posisi / Divisi</td><td class="font-bold">: ${divisi.toUpperCase()}</td></tr></table><table class="w-full text-left border-collapse border border-slate-400 mb-8"><tr class="bg-blue-100"><th class="border p-2">No</th><th class="border p-2">Indikator Kinerja Utama (KPI)</th></tr>${list}</table><p class="text-sm italic">Dokumen ini digenerate otomatis oleh sistem AI Pastryfity.</p>`;
-      const el = document.getElementById('print-surat-formal'); el.classList.remove('hidden');
-      html2pdf().set({ margin: 0, filename: `SOP_${divisi}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(el).save().then(() => el.classList.add('hidden'));
-    }
-
-    function cetakLaporanPDF(id) {
-      const rep = DB.reports.find(r => r.id === id);
-      document.getElementById('print-surat-content').innerHTML = `<h2 class="text-center font-bold text-xl mb-6 uppercase underline">LAPORAN SHIFT OPERASIONAL</h2><table class="w-full text-left mb-6"><tr><td class="w-1/4 py-1">Nama Karyawan</td><td class="font-bold">: ${rep.nama}</td></tr><tr><td class="py-1">Divisi</td><td class="font-bold">: ${rep.divisi}</td></tr><tr><td class="py-1">Tanggal</td><td class="font-bold">: ${rep.tanggal}</td></tr></table><div class="mb-6"><h3 class="font-bold bg-slate-200 p-2 border">Evaluasi Kualitatif</h3><table class="w-full border-collapse border text-sm"><tr><td class="p-2 border font-bold w-1/4">Inisiatif</td><td class="p-2 border">${rep.inisiatif}</td></tr><tr><td class="p-2 border font-bold">Kendala</td><td class="p-2 border">${rep.kendala}</td></tr><tr><td class="p-2 border font-bold">Planning Besok</td><td class="p-2 border">${rep.planning}</td></tr></table></div><div><h3 class="font-bold bg-slate-200 p-2 border">Data Kuantitatif Divisi</h3><table class="w-full border-collapse border text-sm">${Object.keys(rep.data_dinamis).map(k=>`<tr><td class="p-2 border">${k}</td><td class="p-2 border font-bold text-right">${rep.data_dinamis[k]}</td></tr>`).join('')}</table></div><div class="mt-16 text-right"><p>Dilaporkan secara elektronik pada ${rep.tanggal}</p></div>`;
-      const el = document.getElementById('print-surat-formal'); el.classList.remove('hidden');
-      html2pdf().set({ margin: 0, filename: `Laporan_${rep.nama}_${rep.tanggal.replace(/\//g,'-')}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(el).save().then(() => el.classList.add('hidden'));
+    
+    async function simpanPengaturanKPI() {
+      const nm = document.getElementById('filter-kpi-nama').value; if(!nm) return;
+      const u = DB.users.find(x=>x.name===nm); const schema = DB.schema[u.division]||[];
+      if(!DB.kpi_settings[u.division]) DB.kpi_settings[u.division]={};
+      schema.forEach((s,i) => {
+        DB.kpi_settings[u.division][s.label] = { bobot: parseInt(document.getElementById(`bbt-${i}`).value||0), target: parseInt(document.getElementById(`trg-${i}`).value||0) };
+      });
+      await pushGitHub('kpi_settings', DB.kpi_settings); renderKPI();
     }
   </script>
 </body>
