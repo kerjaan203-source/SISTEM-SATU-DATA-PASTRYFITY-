@@ -22,19 +22,23 @@
 <body>
   <div id="loading-overlay" style="display: none;"><div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#D4A373] mb-4"></div><h2 class="text-lg font-bold text-[#5C3A21]" id="loading-text">Memproses...</h2></div>
 
+  <!-- HALAMAN LOGIN KARYAWAN -->
   <div id="login-screen" class="max-w-sm mx-auto mt-16 glass text-center space-y-6">
-    <img src="logo.png" class="h-20 mx-auto mb-4" onerror="this.style.display='none'">
+    <img src="logo.jpg" class="w-32 h-32 object-cover mx-auto rounded-xl shadow-sm border border-[#D4A373]" onerror="this.style.display='none'">
     <div><h1 class="text-2xl font-bold text-[#5C3A21] mb-1">Selamat Datang</h1><p class="text-sm text-[#D4A373] font-semibold">Login Karyawan Pastryfity</p></div>
-    <input type="password" id="login-pin" placeholder="PIN 6 Digit" maxlength="6" class="w-full p-4 border rounded-xl text-center tracking-widest font-mono text-xl outline-none mb-4 bg-slate-50">
+    <input type="password" id="login-pin" placeholder="PIN 6 Digit" maxlength="6" class="w-full p-4 border rounded-xl text-center tracking-widest font-mono text-xl outline-none mb-4 bg-slate-50 focus:border-[#D4A373]">
     <button onclick="prosesLogin()" class="btn-primary text-lg py-3">Masuk</button>
   </div>
 
+  <!-- DASHBOARD KARYAWAN -->
   <div id="dashboard-screen" class="max-w-md mx-auto space-y-4 hidden">
+    <!-- Header -->
     <div class="glass flex justify-between items-start">
-      <div class="flex items-center space-x-3"><img src="logo.png" class="h-10 w-10 object-contain" onerror="this.style.display='none'"><div><h1 class="text-lg font-bold">Selamat Datang,</h1><p class="text-xs text-slate-500 font-bold" id="user-info">-</p></div></div>
-      <button onclick="location.reload()" class="text-xs bg-red-50 text-red-600 px-3 py-1 rounded font-bold border">Logout</button>
+      <div class="flex items-center space-x-3"><img src="logo.jpg" class="h-10 w-10 object-cover rounded shadow-sm" onerror="this.style.display='none'"><div><h1 class="text-lg font-bold">Selamat Datang,</h1><p class="text-xs text-slate-500 font-bold" id="user-info">-</p></div></div>
+      <button onclick="location.reload()" class="text-xs bg-red-50 text-red-600 px-3 py-1 rounded font-bold border border-red-200">Logout</button>
     </div>
 
+    <!-- Menu -->
     <div class="flex space-x-2 bg-white p-2 rounded-xl shadow-sm border border-slate-100">
       <div class="nav-item nav-active" onclick="switchMenu('menu-beranda', this)">Beranda</div>
       <div class="nav-item nav-inactive" onclick="switchMenu('menu-presensi', this)">Presensi</div>
@@ -42,6 +46,7 @@
       <div class="nav-item nav-inactive" onclick="switchMenu('menu-lapor', this)">Lapor</div>
     </div>
 
+    <!-- 1. BERANDA -->
     <div id="menu-beranda" class="glass">
       <h2 class="font-bold text-lg mb-3">Info & Catatan Hari Ini</h2>
       <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-3"><p class="text-sm font-bold text-blue-800 mb-1">📢 Pengumuman Manager</p><p class="text-xs text-blue-900" id="broadcast-pengumuman">-</p></div>
@@ -49,6 +54,7 @@
       <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200"><p class="text-sm font-bold text-yellow-800 mb-1">💬 Feedback Manager (Laporan Terakhir)</p><p class="text-xs text-yellow-900" id="feedback-manager">Belum ada catatan.</p></div>
     </div>
 
+    <!-- 2. PRESENSI -->
     <div id="menu-presensi" class="glass hidden">
       <h2 class="font-bold text-lg mb-3">Absensi Validasi</h2>
       <div class="bg-slate-50 p-4 rounded-lg border text-center mb-4">
@@ -65,6 +71,7 @@
       </div>
     </div>
 
+    <!-- 3. PENGAJUAN -->
     <div id="menu-pengajuan" class="glass hidden">
       <h2 class="font-bold text-lg mb-3">Form Pengajuan</h2>
       <select id="pengajuan-jenis" class="w-full p-2 border rounded-lg mb-3 text-sm"><option value="Cuti">Cuti</option><option value="Izin">Izin</option><option value="Sakit">Sakit</option><option value="Roker Off">Roker Off</option></select>
@@ -75,6 +82,7 @@
       <h3 class="font-bold text-sm mb-2 border-t pt-4">Status Pengajuan</h3><div id="riwayat-pengajuan" class="space-y-2 max-h-40 overflow-y-auto"></div>
     </div>
 
+    <!-- 4. LAPORAN SHIFT -->
     <div id="menu-lapor" class="glass hidden">
       <div class="flex justify-between items-center mb-3">
         <h2 class="font-bold text-lg">Laporan Harian</h2>
@@ -107,7 +115,7 @@
     // 🛑 👆👆👆 BAGIAN KONFIGURASI GITHUB API (ISI TOKEN DI SINI) 👆👆👆 🛑
     // =====================================================================
 
-    let activeUser = null; let DB = { requests: [], reports: [], schema: {}, absensi: [] };
+  let activeUser = null; let DB = { requests: [], reports: [], schema: {}, absensi: [] };
     let currentGps = null; let mapLink = null; let lampiranBase64 = "";
 
     const showLoading = (t) => { document.getElementById('loading-text').innerText=t; document.getElementById('loading-overlay').style.display='flex'; };
@@ -149,7 +157,7 @@
           if(myReps.length>0) {
             let lastRep = myReps[myReps.length-1];
             document.getElementById('planning-hari-ini').innerText = lastRep.planning || "-";
-            document.getElementById('feedback-manager').innerText = lastRep.catatan_manager || "Tidak ada catatan.";
+            document.getElementById('feedback-manager').innerText = lastRep.catatan_manager || "Belum ada catatan.";
           }
           renderRiwayatPengajuan(); renderDynamicFields();
           document.getElementById('login-screen').classList.add('hidden'); document.getElementById('dashboard-screen').classList.remove('hidden');
@@ -177,9 +185,9 @@
             document.getElementById('gps-status').innerHTML = `📍 <a href="${mapLink}" target="_blank" class="underline text-blue-600">Lokasi Terlacak</a>`;
             document.getElementById('btn-prepare-absen').classList.add('hidden'); document.getElementById('absen-actions').classList.remove('hidden');
             hideLoading();
-          }, (err) => { alert("Wajib GPS!"); hideLoading(); }
+          }, (err) => { alert("Wajib Izinkan Akses GPS!"); hideLoading(); }
         );
-      } catch(e) { alert("Wajib Kamera!"); hideLoading(); }
+      } catch(e) { alert("Wajib Izinkan Akses Kamera!"); hideLoading(); }
     }
 
     async function prosesAbsen(tipe) {
@@ -205,7 +213,7 @@
       try {
         DB.requests.push({ id: "REQ-"+Date.now(), nama: activeUser.name, divisi: activeUser.division, jenis: document.getElementById('pengajuan-jenis').value, tgl_mulai: document.getElementById('pengajuan-mulai').value, tgl_selesai: document.getElementById('pengajuan-akhir').value, alasan: a, lampiran: lampiranBase64, status: "Pending", catatan_manager: "" });
         await pushToGitHub('requests', DB.requests, `Pengajuan ${activeUser.name}`);
-        alert("Sukses!"); document.getElementById('pengajuan-alasan').value=''; lampiranBase64=''; renderRiwayatPengajuan();
+        alert("Sukses!"); document.getElementById('pengajuan-alasan').value=''; document.getElementById('pengajuan-foto').value=''; lampiranBase64=''; renderRiwayatPengajuan();
       } catch(e) { alert("Gagal."); }
       hideLoading();
     }
@@ -224,14 +232,20 @@
     }
 
     async function kirimLaporan() {
-      const t = document.getElementById('lapor-tanggal').value; const i = document.getElementById('lapor-inisiatif').value; const k = document.getElementById('lapor-kendala').value; const p = document.getElementById('lapor-planning').value;
-      if(!t||!i||!k||!p) return alert("Lengkapi data!");
+      const inputDate = document.getElementById('lapor-tanggal').value; // format YYYY-MM-DD
+      const i = document.getElementById('lapor-inisiatif').value; const k = document.getElementById('lapor-kendala').value; const p = document.getElementById('lapor-planning').value;
+      if(!inputDate||!i||!k||!p) return alert("Lengkapi semua data!");
+      
+      // Ubah YYYY-MM-DD ke format DD/MM/YYYY agar seragam dengan fungsi pencarian Manager
+      const [yy, mm, dd] = inputDate.split('-');
+      const formattedDate = `${parseInt(dd)}/${parseInt(mm)}/${yy}`;
+
       showLoading("Simpan Laporan...");
       try {
         let dyn = {}; document.querySelectorAll('.dyn-in').forEach(e => dyn[e.getAttribute('data-l')] = e.type==='checkbox'?(e.checked?'Ya':'Tidak'):e.value);
-        DB.reports.push({ id: "REP-"+Date.now(), nama: activeUser.name, divisi: activeUser.division, tanggal: t, inisiatif: i, kendala: k, planning: p, data_dinamis: dyn, skor: 0, catatan_manager: "" });
-        await pushToGitHub('reports', DB.reports, `Laporan ${activeUser.name}`); alert("Terkirim!");
-      } catch(e) { alert("Gagal."); }
+        DB.reports.push({ id: "REP-"+Date.now(), nama: activeUser.name, divisi: activeUser.division, tanggal: formattedDate, inisiatif: i, kendala: k, planning: p, data_dinamis: dyn, skor: 0, catatan_manager: "" });
+        await pushToGitHub('reports', DB.reports, `Laporan ${activeUser.name}`); alert("Laporan Terkirim!");
+      } catch(e) { alert("Gagal mengirim laporan."); }
       hideLoading();
     }
   </script>
