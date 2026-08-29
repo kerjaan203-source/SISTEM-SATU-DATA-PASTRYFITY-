@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Karyawan - SATU DATA PASTRYFITY</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Library untuk Print PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -21,41 +20,21 @@
   </style>
 </head>
 <body>
+  <div id="loading-overlay" style="display: none;"><div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#D4A373] mb-4"></div><h2 class="text-lg font-bold text-[#5C3A21]" id="loading-text">Memproses...</h2></div>
 
-  <!-- Loading Screen -->
-  <div id="loading-overlay" style="display: none;">
-    <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#D4A373] mb-4"></div>
-    <h2 class="text-lg font-bold text-[#5C3A21]" id="loading-text">Memproses...</h2>
-  </div>
-
-  <!-- HALAMAN LOGIN -->
   <div id="login-screen" class="max-w-sm mx-auto mt-16 glass text-center space-y-6">
-    <div>
-      <img src="logo.png" alt="Logo Pastryfity" class="h-20 mx-auto mb-4" onerror="this.style.display='none'">
-      <h1 class="text-2xl font-bold text-[#5C3A21] mb-1">Selamat Datang di Sistem</h1>
-      <p class="text-sm text-[#D4A373] font-semibold">Login Karyawan Pastryfity</p>
-    </div>
-    <div>
-      <input type="password" id="login-pin" placeholder="Masukkan PIN 6 Digit" maxlength="6" class="w-full p-4 border rounded-xl text-center tracking-widest font-mono text-xl outline-none mb-4 bg-slate-50 focus:border-[#D4A373]">
-      <button onclick="prosesLogin()" class="btn-primary text-lg py-3">Masuk</button>
-    </div>
+    <img src="logo.png" class="h-20 mx-auto mb-4" onerror="this.style.display='none'">
+    <div><h1 class="text-2xl font-bold text-[#5C3A21] mb-1">Selamat Datang</h1><p class="text-sm text-[#D4A373] font-semibold">Login Karyawan Pastryfity</p></div>
+    <input type="password" id="login-pin" placeholder="PIN 6 Digit" maxlength="6" class="w-full p-4 border rounded-xl text-center tracking-widest font-mono text-xl outline-none mb-4 bg-slate-50">
+    <button onclick="prosesLogin()" class="btn-primary text-lg py-3">Masuk</button>
   </div>
 
-  <!-- DASHBOARD KARYAWAN -->
   <div id="dashboard-screen" class="max-w-md mx-auto space-y-4 hidden">
-    <!-- Header -->
     <div class="glass flex justify-between items-start">
-      <div class="flex items-center space-x-3">
-        <img src="logo.png" alt="Logo" class="h-10 w-10 object-contain" onerror="this.style.display='none'">
-        <div>
-          <h1 class="text-lg font-bold">Selamat Datang,</h1>
-          <p class="text-xs text-slate-500 font-bold" id="user-info">Nama Karyawan</p>
-        </div>
-      </div>
-      <button onclick="logout()" class="text-xs bg-red-50 text-red-600 px-3 py-1 rounded font-bold border border-red-200">Logout</button>
+      <div class="flex items-center space-x-3"><img src="logo.png" class="h-10 w-10 object-contain" onerror="this.style.display='none'"><div><h1 class="text-lg font-bold">Selamat Datang,</h1><p class="text-xs text-slate-500 font-bold" id="user-info">-</p></div></div>
+      <button onclick="location.reload()" class="text-xs bg-red-50 text-red-600 px-3 py-1 rounded font-bold border">Logout</button>
     </div>
 
-    <!-- Navigasi -->
     <div class="flex space-x-2 bg-white p-2 rounded-xl shadow-sm border border-slate-100">
       <div class="nav-item nav-active" onclick="switchMenu('menu-beranda', this)">Beranda</div>
       <div class="nav-item nav-inactive" onclick="switchMenu('menu-presensi', this)">Presensi</div>
@@ -63,99 +42,51 @@
       <div class="nav-item nav-inactive" onclick="switchMenu('menu-lapor', this)">Lapor</div>
     </div>
 
-    <!-- MENU 1: BERANDA -->
     <div id="menu-beranda" class="glass">
-      <h2 class="font-bold text-lg mb-3">Tugas & Info Hari Ini</h2>
-      
-      <!-- Pengumuman Dinamis dari Manager -->
-      <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-3">
-        <p class="text-sm font-bold text-blue-800 mb-1">📢 Pengumuman & SOP</p>
-        <p class="text-xs text-blue-900" id="broadcast-pengumuman">Memuat pengumuman...</p>
-      </div>
-
-      <div class="bg-[#FAF8F5] p-4 rounded-lg border border-[#D4A373] border-opacity-30">
-        <p class="text-sm font-semibold mb-1">📝 Planning Kerja Hari Ini</p>
-        <p class="text-xs text-slate-600" id="planning-hari-ini">Memuat planning dari laporan kemarin...</p>
-      </div>
+      <h2 class="font-bold text-lg mb-3">Info & Catatan Hari Ini</h2>
+      <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-3"><p class="text-sm font-bold text-blue-800 mb-1">📢 Pengumuman Manager</p><p class="text-xs text-blue-900" id="broadcast-pengumuman">-</p></div>
+      <div class="bg-[#FAF8F5] p-4 rounded-lg border border-[#D4A373] mb-3"><p class="text-sm font-bold mb-1">📝 Planning Hari Ini</p><p class="text-xs text-slate-600" id="planning-hari-ini">-</p></div>
+      <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200"><p class="text-sm font-bold text-yellow-800 mb-1">💬 Feedback Manager (Laporan Terakhir)</p><p class="text-xs text-yellow-900" id="feedback-manager">Belum ada catatan.</p></div>
     </div>
 
-    <!-- MENU 2: PRESENSI -->
     <div id="menu-presensi" class="glass hidden">
       <h2 class="font-bold text-lg mb-3">Absensi Validasi</h2>
-      <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-center mb-4">
+      <div class="bg-slate-50 p-4 rounded-lg border text-center mb-4">
         <video id="camera-stream" class="w-full rounded-lg bg-black mb-2 hidden" autoplay playsinline></video>
         <canvas id="camera-canvas" class="hidden"></canvas>
-        <p id="gps-status" class="text-xs font-bold text-red-500 mb-2">📍 Lokasi GPS belum ditarik</p>
+        <p id="gps-status" class="text-xs font-bold text-red-500 mb-2">📍 GPS belum ditarik</p>
         <p id="absen-info" class="text-xs font-bold text-[#5C3A21] mb-2 hidden"></p>
-        
         <button onclick="startCameraAndGPS()" class="btn-primary bg-[#5C3A21] mb-2" id="btn-prepare-absen">Aktifkan Kamera & GPS</button>
-        <div class="flex space-x-2 hidden" id="absen-actions">
-          <button onclick="prosesAbsen('Clock In')" class="btn-primary bg-green-600">📸 Clock In</button>
-          <button onclick="prosesAbsen('Clock Out')" class="btn-primary bg-red-600">📸 Clock Out</button>
+        <div class="grid grid-cols-3 gap-2 hidden" id="absen-actions">
+          <button onclick="prosesAbsen('Masuk')" class="btn-primary bg-green-600 text-[10px] p-2">Masuk</button>
+          <button onclick="prosesAbsen('Istirahat')" class="btn-primary bg-yellow-600 text-[10px] p-2">Istirahat</button>
+          <button onclick="prosesAbsen('Keluar')" class="btn-primary bg-red-600 text-[10px] p-2">Keluar</button>
         </div>
       </div>
     </div>
 
-    <!-- MENU 3: PENGAJUAN -->
     <div id="menu-pengajuan" class="glass hidden">
       <h2 class="font-bold text-lg mb-3">Form Pengajuan</h2>
-      <select id="pengajuan-jenis" class="w-full p-2 border rounded-lg mb-3 text-sm outline-none">
-        <option value="Cuti">Cuti</option>
-        <option value="Izin">Izin</option>
-        <option value="Sakit">Sakit</option>
-        <option value="Libur">Libur</option>
-        <option value="Roker Off">Roker Off (Tukar Libur)</option>
-        <option value="Reimbursement Kas Kecil">Reimbursement Kas Kecil</option>
-        <option value="Lainnya">Lainnya...</option>
-      </select>
-      
-      <div class="flex space-x-2 mb-3">
-        <div class="w-1/2">
-          <label class="text-[10px] text-slate-500">Tgl Mulai</label>
-          <input type="date" id="pengajuan-mulai" class="w-full p-2 border rounded-lg text-sm outline-none">
-        </div>
-        <div class="w-1/2">
-          <label class="text-[10px] text-slate-500">Tgl Akhir</label>
-          <input type="date" id="pengajuan-akhir" class="w-full p-2 border rounded-lg text-sm outline-none">
-        </div>
-      </div>
-      
-      <textarea id="pengajuan-alasan" placeholder="Alasan Lengkap..." class="w-full p-2 border rounded-lg mb-3 text-sm h-20 outline-none"></textarea>
-      
-      <label class="text-[10px] text-slate-500">Lampiran Foto (Maks 2MB)</label>
-      <input type="file" id="pengajuan-foto" accept="image/*" class="w-full p-2 border rounded-lg mb-4 text-sm bg-slate-50">
-      
-      <button onclick="kirimPengajuan()" class="btn-primary mb-6">Kirim Pengajuan</button>
-
-      <h3 class="font-bold text-sm mb-2 border-t pt-4">Status Pengajuan Anda</h3>
-      <div id="riwayat-pengajuan" class="space-y-2 max-h-40 overflow-y-auto"></div>
+      <select id="pengajuan-jenis" class="w-full p-2 border rounded-lg mb-3 text-sm"><option value="Cuti">Cuti</option><option value="Izin">Izin</option><option value="Sakit">Sakit</option><option value="Roker Off">Roker Off</option></select>
+      <div class="flex space-x-2 mb-3"><div class="w-1/2"><label class="text-[10px] text-slate-500">Mulai</label><input type="date" id="pengajuan-mulai" class="w-full p-2 border rounded text-sm"></div><div class="w-1/2"><label class="text-[10px] text-slate-500">Akhir</label><input type="date" id="pengajuan-akhir" class="w-full p-2 border rounded text-sm"></div></div>
+      <textarea id="pengajuan-alasan" placeholder="Alasan Lengkap..." class="w-full p-2 border rounded-lg mb-3 text-sm h-20"></textarea>
+      <label class="text-[10px] text-slate-500">Lampiran (Maks 2MB)</label><input type="file" id="pengajuan-foto" accept="image/*" class="w-full p-2 border rounded mb-4 text-sm bg-slate-50">
+      <button onclick="kirimPengajuan()" class="btn-primary mb-6">Kirim</button>
+      <h3 class="font-bold text-sm mb-2 border-t pt-4">Status Pengajuan</h3><div id="riwayat-pengajuan" class="space-y-2 max-h-40 overflow-y-auto"></div>
     </div>
 
-    <!-- MENU 4: LAPOR KERJA -->
     <div id="menu-lapor" class="glass hidden">
-      <h2 class="font-bold text-lg mb-3">Laporan Harian</h2>
-      
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="font-bold text-lg">Laporan Harian</h2>
+        <input type="date" id="lapor-tanggal" class="p-1 border rounded text-xs font-bold bg-slate-50">
+      </div>
       <div class="space-y-3 mb-4">
-        <div>
-          <label class="text-xs font-bold">Inisiatif Hari Ini</label>
-          <textarea id="lapor-inisiatif" class="w-full p-2 border rounded text-sm outline-none" rows="2" placeholder="Apa inisiatif Anda hari ini?"></textarea>
-        </div>
-        <div>
-          <label class="text-xs font-bold">Kendala Hari Ini</label>
-          <textarea id="lapor-kendala" class="w-full p-2 border rounded text-sm outline-none" rows="2" placeholder="Kendala yang dihadapi..."></textarea>
-        </div>
-        <div>
-          <label class="text-xs font-bold">Planning Kerja Besok</label>
-          <textarea id="lapor-planning" class="w-full p-2 border rounded text-sm outline-none" rows="2" placeholder="Rencana kerja untuk shift selanjutnya..."></textarea>
-        </div>
+        <div><label class="text-xs font-bold">Inisiatif Hari Ini</label><textarea id="lapor-inisiatif" class="w-full p-2 border rounded text-sm" rows="2"></textarea></div>
+        <div><label class="text-xs font-bold">Kendala Hari Ini</label><textarea id="lapor-kendala" class="w-full p-2 border rounded text-sm" rows="2"></textarea></div>
+        <div><label class="text-xs font-bold">Planning Besok</label><textarea id="lapor-planning" class="w-full p-2 border rounded text-sm" rows="2"></textarea></div>
       </div>
-
-      <div class="border-t border-slate-200 pt-3 mb-4">
-        <p class="text-xs font-bold mb-2">Form Evaluasi Divisi (<span id="lapor-divisi-label"></span>)</p>
-        <div id="dynamic-fields-container" class="space-y-3"></div>
-      </div>
-
-      <button onclick="kirimLaporan()" class="btn-primary">Kirim Laporan Harian</button>
+      <div class="border-t pt-3 mb-4"><p class="text-xs font-bold mb-2">Form Evaluasi (<span id="lapor-divisi-label"></span>)</p><div id="dynamic-fields-container" class="space-y-3"></div></div>
+      <button onclick="kirimLaporan()" class="btn-primary">Kirim Laporan</button>
     </div>
   </div>
 
@@ -172,269 +103,129 @@
     const REPO_NAME = 'db_pastryfity'; // <--- Sesuai dengan nama repo private Anda
     // =====================================================================       
 
-    let activeUser = null;
-    let DB_REQUESTS = [];
-    let DB_REPORTS = [];
-    let DB_SCHEMA = {};
-    let DB_ABSENSI = [];
-    let currentGps = null;
-    let lampiranBase64 = "";
-
-    const showLoading = (t) => { document.getElementById('loading-text').innerText=t; document.getElementById('loading-overlay').style.display='flex'; };
+ const showLoading = (t) => { document.getElementById('loading-text').innerText=t; document.getElementById('loading-overlay').style.display='flex'; };
     const hideLoading = () => { document.getElementById('loading-overlay').style.display='none'; };
 
-    // Validasi Lampiran Foto
+    document.getElementById('lapor-tanggal').valueAsDate = new Date();
+
     document.getElementById('pengajuan-foto').addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if(!file) return;
-      if(file.size > 2 * 1024 * 1024) {
-        alert("Ukuran foto terlalu besar! Maksimal 2MB.");
-        this.value = ''; lampiranBase64 = ""; return;
-      }
-      const reader = new FileReader();
-      reader.onload = function(event) { lampiranBase64 = event.target.result; };
-      reader.readAsDataURL(file);
+      const f = e.target.files[0]; if(!f) return;
+      if(f.size > 2000000) { alert("Maksimal 2MB"); this.value=''; return; }
+      const r = new FileReader(); r.onload = (e) => lampiranBase64 = e.target.result; r.readAsDataURL(f);
     });
 
-    // --- API FUNGSI ---
     async function fetchFromGitHub(fileName) {
-      const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/${fileName}.json`, { 
-        headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }, cache: 'no-store' 
-      });
-      if(!res.ok) {
-        if(res.status === 404) {
-          if(fileName === 'kpi-schema' || fileName === 'pengumuman') return { data: {}, sha: null };
-          return { data: [], sha: null };
-        }
-        throw new Error(`Gagal akses ${fileName}`);
-      }
-      const data = await res.json();
-      return { data: JSON.parse(decodeURIComponent(escape(atob(data.content)))), sha: data.sha };
+      const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/${fileName}.json`, { headers: {'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json'}, cache: 'no-store' });
+      if(!res.ok) return { data: (fileName==='kpi-schema'||fileName==='pengumuman'?{}:[]), sha: null };
+      const d = await res.json(); return { data: JSON.parse(decodeURIComponent(escape(atob(d.content)))), sha: d.sha };
+    }
+    async function pushToGitHub(fileName, dataObj, msg) {
+      const curr = await fetchFromGitHub(fileName);
+      const body = { message: msg, content: btoa(unescape(encodeURIComponent(JSON.stringify(dataObj, null, 2)))) };
+      if(curr.sha) body.sha = curr.sha;
+      await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/${fileName}.json`, { method: 'PUT', headers: {'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json'}, body: JSON.stringify(body) });
     }
 
-    async function pushToGitHub(fileName, dataObj, commitMsg) {
-      const current = await fetchFromGitHub(fileName);
-      const updatedContent = btoa(unescape(encodeURIComponent(JSON.stringify(dataObj, null, 2))));
-      const bodyData = { message: commitMsg, content: updatedContent };
-      if(current.sha) bodyData.sha = current.sha;
-      await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/${fileName}.json`, {
-        method: 'PUT', headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(bodyData)
-      });
-    }
-
-    // --- LOGIN & RENDER ---
     async function prosesLogin() {
-      const pinInput = document.getElementById('login-pin').value;
-      if(pinInput.length < 4) return alert("Masukkan PIN dengan benar!");
-      showLoading("Masuk ke sistem...");
+      const pin = document.getElementById('login-pin').value; if(pin.length<4) return alert("PIN Tidak Valid");
+      showLoading("Masuk...");
       try {
-        const [u, r, req, s, abs, peng] = await Promise.all([
-          fetchFromGitHub('users'), fetchFromGitHub('reports'), fetchFromGitHub('requests'), 
-          fetchFromGitHub('kpi-schema'), fetchFromGitHub('absensi'), fetchFromGitHub('pengumuman')
-        ]);
-        const found = u.data.find(user => user.pin === pinInput);
-        
+        const [u, r, req, s, abs, peng] = await Promise.all([fetchFromGitHub('users'), fetchFromGitHub('reports'), fetchFromGitHub('requests'), fetchFromGitHub('kpi-schema'), fetchFromGitHub('absensi'), fetchFromGitHub('pengumuman')]);
+        const found = u.data.find(x => x.pin === pin);
         if(found) {
-          activeUser = found;
-          DB_REPORTS = r.data;
-          DB_REQUESTS = req.data;
-          DB_SCHEMA = s.data;
-          DB_ABSENSI = abs.data || [];
-          
+          activeUser = found; DB.reports = r.data; DB.requests = req.data; DB.schema = s.data; DB.absensi = abs.data;
           document.getElementById('user-info').innerText = `${found.name} (${found.division})`;
           document.getElementById('lapor-divisi-label').innerText = found.division;
+          document.getElementById('broadcast-pengumuman').innerText = peng.data.teks || "Tidak ada pengumuman.";
           
-          // Render Pengumuman dari Manager
-          document.getElementById('broadcast-pengumuman').innerText = peng.data.teks || "Tidak ada pengumuman terbaru.";
-          
-          muatPlanningHariIni();
-          renderRiwayatPengajuan();
-          renderDynamicFields();
-
-          document.getElementById('login-screen').classList.add('hidden');
-          document.getElementById('dashboard-screen').classList.remove('hidden');
-        } else {
-          alert("PIN salah atau tidak ditemukan.");
-        }
-      } catch (err) { alert("Gagal koneksi server."); }
+          let myReps = DB.reports.filter(x => x.nama === found.name);
+          if(myReps.length>0) {
+            let lastRep = myReps[myReps.length-1];
+            document.getElementById('planning-hari-ini').innerText = lastRep.planning || "-";
+            document.getElementById('feedback-manager').innerText = lastRep.catatan_manager || "Tidak ada catatan.";
+          }
+          renderRiwayatPengajuan(); renderDynamicFields();
+          document.getElementById('login-screen').classList.add('hidden'); document.getElementById('dashboard-screen').classList.remove('hidden');
+        } else alert("PIN Salah!");
+      } catch(e) { alert("Gagal koneksi."); }
       hideLoading();
     }
 
-    function muatPlanningHariIni() {
-      const myReports = DB_REPORTS.filter(r => r.nama === activeUser.name);
-      if(myReports.length > 0) {
-        const lastReport = myReports[myReports.length - 1];
-        document.getElementById('planning-hari-ini').innerText = lastReport.planning || "Tidak ada planning tercatat.";
-      } else {
-        document.getElementById('planning-hari-ini').innerText = "Belum ada riwayat laporan shift.";
-      }
-    }
-
-    function logout() { location.reload(); }
-
-    function switchMenu(targetId, element) {
+    function switchMenu(targetId, el) {
       ['menu-beranda', 'menu-presensi', 'menu-pengajuan', 'menu-lapor'].forEach(id => document.getElementById(id).classList.add('hidden'));
       document.getElementById(targetId).classList.remove('hidden');
-      document.querySelectorAll('.nav-item').forEach(el => { el.classList.remove('nav-active'); el.classList.add('nav-inactive'); });
-      element.classList.add('nav-active'); element.classList.remove('nav-inactive');
+      document.querySelectorAll('.nav-item').forEach(x => { x.classList.remove('nav-active'); x.classList.add('nav-inactive'); });
+      el.classList.add('nav-active'); el.classList.remove('nav-inactive');
     }
 
-    // --- PRESENSI (SYNC KE MANAGER) ---
     async function startCameraAndGPS() {
       showLoading("Menyiapkan GPS & Kamera...");
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-        const video = document.getElementById('camera-stream');
-        video.srcObject = stream;
-        video.classList.remove('hidden');
-
+        const video = document.getElementById('camera-stream'); video.srcObject = stream; video.classList.remove('hidden');
         navigator.geolocation.getCurrentPosition(
-          (position) => {
-            currentGps = `${position.coords.latitude.toFixed(5)},${position.coords.longitude.toFixed(5)}`;
-            document.getElementById('gps-status').innerText = `📍 Lokasi Terlacak: ${currentGps}`;
-            document.getElementById('gps-status').classList.replace('text-red-500', 'text-green-600');
-            document.getElementById('btn-prepare-absen').classList.add('hidden');
-            document.getElementById('absen-actions').classList.remove('hidden');
+          (pos) => {
+            currentGps = `${pos.coords.latitude},${pos.coords.longitude}`;
+            mapLink = `https://maps.google.com/?q=${currentGps}`;
+            document.getElementById('gps-status').innerHTML = `📍 <a href="${mapLink}" target="_blank" class="underline text-blue-600">Lokasi Terlacak</a>`;
+            document.getElementById('btn-prepare-absen').classList.add('hidden'); document.getElementById('absen-actions').classList.remove('hidden');
             hideLoading();
-          },
-          (error) => { alert("GPS wajib diaktifkan!"); hideLoading(); }
+          }, (err) => { alert("Wajib GPS!"); hideLoading(); }
         );
-      } catch (err) { alert("Akses Kamera ditolak!"); hideLoading(); }
+      } catch(e) { alert("Wajib Kamera!"); hideLoading(); }
     }
 
     async function prosesAbsen(tipe) {
-      if(!currentGps) return alert("Tunggu hingga lokasi GPS terlacak.");
-      
-      const video = document.getElementById('camera-stream');
-      const canvas = document.getElementById('camera-canvas');
-      canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-      canvas.getContext('2d').drawImage(video, 0, 0); // Simulasi Capture Foto
-      
-      showLoading(`Mengirim Data ${tipe}...`);
-      const dateNow = new Date();
-      const timeStr = dateNow.toLocaleTimeString('id-ID');
-      const dateStr = dateNow.toLocaleDateString('id-ID');
+      const v = document.getElementById('camera-stream'); const c = document.getElementById('camera-canvas');
+      c.width = v.videoWidth; c.height = v.videoHeight; c.getContext('2d').drawImage(v,0,0);
+      let imgData = c.toDataURL('image/jpeg', 0.5); // Kompresi foto
+      showLoading(`Mengirim Data...`);
+      const tgl = new Date().toLocaleDateString('id-ID'); const jam = new Date().toLocaleTimeString('id-ID');
       
       try {
-        const newAbsen = {
-          id: "ABS-" + Date.now(),
-          nama: activeUser.name,
-          divisi: activeUser.division,
-          tipe: tipe,
-          tanggal: dateStr,
-          jam: timeStr,
-          lokasi: currentGps
-        };
-        
-        // Push Absensi ke GitHub agar terbaca oleh Manager
-        DB_ABSENSI.push(newAbsen);
-        await pushToGitHub('absensi', DB_ABSENSI, `${activeUser.name} ${tipe}`);
-        
-        document.getElementById('absen-info').innerHTML = `✅ Berhasil <b>${tipe}</b><br>Jam: ${timeStr}<br>Lokasi: ${currentGps}`;
-        document.getElementById('absen-info').classList.remove('hidden');
-        
-        video.srcObject.getTracks().forEach(track => track.stop());
-        video.classList.add('hidden');
-        document.getElementById('absen-actions').classList.add('hidden');
-        document.getElementById('btn-prepare-absen').classList.remove('hidden');
-        document.getElementById('btn-prepare-absen').innerText = "Ambil Foto Ulang";
-      } catch(e) {
-        alert("Gagal mengirim absensi ke server.");
-      }
+        DB.absensi.push({ id: "ABS-"+Date.now(), nama: activeUser.name, divisi: activeUser.division, tipe: tipe, tanggal: tgl, jam: jam, lokasi: mapLink, foto: imgData });
+        await pushToGitHub('absensi', DB.absensi, `${activeUser.name} ${tipe}`);
+        document.getElementById('absen-info').innerHTML = `✅ ${tipe} Berhasil (Jam: ${jam})`; document.getElementById('absen-info').classList.remove('hidden');
+        v.srcObject.getTracks().forEach(t => t.stop()); v.classList.add('hidden');
+        document.getElementById('absen-actions').classList.add('hidden'); document.getElementById('btn-prepare-absen').classList.remove('hidden'); document.getElementById('btn-prepare-absen').innerText="Ambil Ulang";
+      } catch(e) { alert("Gagal absen."); }
       hideLoading();
     }
 
-    // --- PENGAJUAN ---
     async function kirimPengajuan() {
-      const alasan = document.getElementById('pengajuan-alasan').value;
-      if(!alasan) return alert("Alasan wajib diisi!");
-      showLoading("Mengirim Pengajuan...");
+      const a = document.getElementById('pengajuan-alasan').value; if(!a) return alert("Isi alasan!");
+      showLoading("Kirim...");
       try {
-        const newReq = {
-          id: "REQ-" + Date.now(),
-          nama: activeUser.name,
-          divisi: activeUser.division,
-          jenis: document.getElementById('pengajuan-jenis').value,
-          tgl_mulai: document.getElementById('pengajuan-mulai').value || '-',
-          tgl_selesai: document.getElementById('pengajuan-akhir').value || '-',
-          alasan: alasan,
-          lampiran: lampiranBase64,
-          status: "Pending",
-          catatan_manager: ""
-        };
-        DB_REQUESTS.push(newReq);
-        await pushToGitHub('requests', DB_REQUESTS, `Pengajuan ${activeUser.name}`);
-        alert("Berhasil terkirim!");
-        document.getElementById('pengajuan-alasan').value = '';
-        document.getElementById('pengajuan-foto').value = '';
-        lampiranBase64 = "";
-        renderRiwayatPengajuan();
-      } catch(e) { alert("Gagal mengirim."); }
+        DB.requests.push({ id: "REQ-"+Date.now(), nama: activeUser.name, divisi: activeUser.division, jenis: document.getElementById('pengajuan-jenis').value, tgl_mulai: document.getElementById('pengajuan-mulai').value, tgl_selesai: document.getElementById('pengajuan-akhir').value, alasan: a, lampiran: lampiranBase64, status: "Pending", catatan_manager: "" });
+        await pushToGitHub('requests', DB.requests, `Pengajuan ${activeUser.name}`);
+        alert("Sukses!"); document.getElementById('pengajuan-alasan').value=''; lampiranBase64=''; renderRiwayatPengajuan();
+      } catch(e) { alert("Gagal."); }
       hideLoading();
     }
-
     function renderRiwayatPengajuan() {
-      const container = document.getElementById('riwayat-pengajuan');
-      container.innerHTML = '';
-      const myReqs = DB_REQUESTS.filter(r => r.nama === activeUser.name).reverse();
-      
-      if(myReqs.length === 0) { container.innerHTML = '<p class="text-xs text-slate-500">Belum ada riwayat pengajuan.</p>'; return; }
-      myReqs.forEach(req => {
-        let color = req.status === 'Approved' ? 'text-green-600' : (req.status === 'Pending' ? 'text-yellow-600' : 'text-red-600');
-        container.innerHTML += `
-          <div class="border p-2 rounded text-xs bg-slate-50">
-            <b>${req.jenis}</b> (${req.tgl_mulai})<br>
-            Status: <span class="${color} font-bold">${req.status}</span><br>
-            <span class="text-slate-500">Note: ${req.catatan_manager || '-'}</span>
-          </div>`;
-      });
+      const c = document.getElementById('riwayat-pengajuan'); c.innerHTML='';
+      DB.requests.filter(x=>x.nama===activeUser.name).reverse().forEach(r => c.innerHTML+=`<div class="border p-2 rounded text-xs bg-slate-50"><b>${r.jenis}</b> (${r.tgl_mulai})<br>Status: <span class="font-bold ${r.status==='Approved'?'text-green-600':'text-red-600'}">${r.status}</span><br><span class="text-slate-500">Note: ${r.catatan_manager||'-'}</span></div>`);
     }
 
-    // --- LAPOR KERJA ---
     function renderDynamicFields() {
-      const c = document.getElementById('dynamic-fields-container'); c.innerHTML = '';
-      const fields = DB_SCHEMA[activeUser.division] || [];
-      if(fields.length === 0) { c.innerHTML = '<p class="text-xs text-slate-500">Tidak ada parameter khusus.</p>'; return; }
-      
-      fields.forEach(f => {
-        if(f.type === 'checkbox') {
-          c.innerHTML += `<div class="flex items-center space-x-2 text-sm"><input type="checkbox" id="${f.name}" class="dynamic-input" data-label="${f.label}"><label>${f.label}</label></div>`;
-        } else {
-          c.innerHTML += `<div class="text-sm"><label class="block mb-1">${f.label}</label><input type="${f.type}" id="${f.name}" class="dynamic-input w-full p-2 border rounded outline-none" data-label="${f.label}"></div>`;
-        }
+      const c = document.getElementById('dynamic-fields-container'); c.innerHTML='';
+      (DB.schema[activeUser.division]||[]).forEach(f => {
+        if(!f.label) return;
+        if(f.type==='checkbox') c.innerHTML+=`<div class="flex items-center space-x-2 text-sm"><input type="checkbox" class="dyn-in" data-l="${f.label}"><label>${f.label}</label></div>`;
+        else c.innerHTML+=`<div class="text-sm"><label class="block mb-1">${f.label}</label><input type="${f.type}" class="dyn-in w-full p-2 border rounded" data-l="${f.label}"></div>`;
       });
     }
 
     async function kirimLaporan() {
-      if(!document.getElementById('lapor-inisiatif').value || !document.getElementById('lapor-kendala').value || !document.getElementById('lapor-planning').value) {
-        return alert("Inisiatif, Kendala, dan Planning wajib diisi!");
-      }
-      showLoading("Menyimpan Laporan...");
+      const t = document.getElementById('lapor-tanggal').value; const i = document.getElementById('lapor-inisiatif').value; const k = document.getElementById('lapor-kendala').value; const p = document.getElementById('lapor-planning').value;
+      if(!t||!i||!k||!p) return alert("Lengkapi data!");
+      showLoading("Simpan Laporan...");
       try {
-        let dynData = {};
-        document.querySelectorAll('.dynamic-input').forEach(el => {
-          dynData[el.getAttribute('data-label')] = el.type === 'checkbox' ? (el.checked ? 'Ya' : 'Tidak') : el.value;
-        });
-
-        const newRep = {
-          id: "REP-" + Date.now(),
-          nama: activeUser.name,
-          divisi: activeUser.division,
-          tanggal: new Date().toLocaleDateString('id-ID'),
-          inisiatif: document.getElementById('lapor-inisiatif').value,
-          kendala: document.getElementById('lapor-kendala').value,
-          planning: document.getElementById('lapor-planning').value,
-          data_dinamis: dynData
-        };
-        
-        DB_REPORTS.push(newRep);
-        await pushToGitHub('reports', DB_REPORTS, `Laporan ${activeUser.name}`);
-        alert("Laporan berhasil dikirim!");
-        ['lapor-inisiatif', 'lapor-kendala', 'lapor-planning'].forEach(id => document.getElementById(id).value = '');
-        document.querySelectorAll('.dynamic-input').forEach(el => { if(el.type === 'checkbox') el.checked = false; else el.value = ''; });
-        muatPlanningHariIni();
-      } catch(e) { alert("Gagal mengirim laporan."); }
+        let dyn = {}; document.querySelectorAll('.dyn-in').forEach(e => dyn[e.getAttribute('data-l')] = e.type==='checkbox'?(e.checked?'Ya':'Tidak'):e.value);
+        // Hapus array bobot di database laporan karyawan agar tidak bentrok dengan manager
+        DB.reports.push({ id: "REP-"+Date.now(), nama: activeUser.name, divisi: activeUser.division, tanggal: t, inisiatif: i, kendala: k, planning: p, data_dinamis: dyn, skor: 0, catatan_manager: "" });
+        await pushToGitHub('reports', DB.reports, `Laporan ${activeUser.name}`); alert("Terkirim!");
+      } catch(e) { alert("Gagal."); }
       hideLoading();
     }
   </script>
