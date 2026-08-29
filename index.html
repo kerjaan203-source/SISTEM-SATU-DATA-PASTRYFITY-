@@ -103,7 +103,14 @@
     const REPO_NAME = 'db_pastryfity'; // <--- Sesuai dengan nama repo private Anda
     // =====================================================================       
 
- const showLoading = (t) => { document.getElementById('loading-text').innerText=t; document.getElementById('loading-overlay').style.display='flex'; };
+// =====================================================================
+    // 🛑 👆👆👆 BAGIAN KONFIGURASI GITHUB API (ISI TOKEN DI SINI) 👆👆👆 🛑
+    // =====================================================================
+
+    let activeUser = null; let DB = { requests: [], reports: [], schema: {}, absensi: [] };
+    let currentGps = null; let mapLink = null; let lampiranBase64 = "";
+
+    const showLoading = (t) => { document.getElementById('loading-text').innerText=t; document.getElementById('loading-overlay').style.display='flex'; };
     const hideLoading = () => { document.getElementById('loading-overlay').style.display='none'; };
 
     document.getElementById('lapor-tanggal').valueAsDate = new Date();
@@ -222,7 +229,6 @@
       showLoading("Simpan Laporan...");
       try {
         let dyn = {}; document.querySelectorAll('.dyn-in').forEach(e => dyn[e.getAttribute('data-l')] = e.type==='checkbox'?(e.checked?'Ya':'Tidak'):e.value);
-        // Hapus array bobot di database laporan karyawan agar tidak bentrok dengan manager
         DB.reports.push({ id: "REP-"+Date.now(), nama: activeUser.name, divisi: activeUser.division, tanggal: t, inisiatif: i, kendala: k, planning: p, data_dinamis: dyn, skor: 0, catatan_manager: "" });
         await pushToGitHub('reports', DB.reports, `Laporan ${activeUser.name}`); alert("Terkirim!");
       } catch(e) { alert("Gagal."); }
