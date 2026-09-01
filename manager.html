@@ -185,21 +185,23 @@
     function prosesLogin() { if(document.getElementById('manager-pin').value===MASTER_PIN) { document.getElementById('login-screen').classList.add('hidden'); document.getElementById('dashboard-screen').classList.remove('hidden'); loadAllData(); } else alert("PIN Salah!"); }
     function switchMenu(t, el) { ['menu-hr','menu-approval','menu-form','menu-absensi','menu-laporan','menu-kpi-bulanan'].forEach(id=>document.getElementById(id).classList.add('hidden')); document.getElementById(t).classList.remove('hidden'); document.querySelectorAll('.nav-btn').forEach(b=>b.className='nav-btn inactive-nav'); el.className='nav-btn active-nav whitespace-nowrap'; }
 
-    async function loadAllData() {
-      showLoading("Narik Data...");
-      try {
-        const [u, s, req, rep, abs, p, k, set] = await Promise.all(['users','kpi-schema','requests','reports','absensi','pengumuman','kpi_settings','settings'].map(fetchGitHub));
-        DB.users=u.data; DB.schema=s.data; DB.requests=req.data; DB.reports=rep.data; DB.absensi=abs.data; DB.kpi_settings=k.data;
-        DB.pengumuman = p.data.teks ? p.data : {teks:""}; 
-        DB.settings = set.data.waktu_buka_absen ? set.data : {waktu_buka_absen:"07:00", waktu_tutup_absen:"18:00"};
-        
-        document.getElementById('input-pengumuman').value = DB.pengumuman.teks;
-        document.getElementById('set-jam-buka').value = DB.settings.waktu_buka_absen;
-        document.getElementById('set-jam-tutup').value = DB.settings.waktu_tutup_absen;
-        syncUI();
-      } catch(e) { alert("Gagal koneksi. Pastikan Token valid."); }
-      hideLoading();
-    }
+   async function loadAllData() {
+  showLoading("Narik Data...");
+  try {
+    // ⬇️ LETAKKAN KODE TERSEBUT DI SINI ⬇️
+    const [u, s, req, rep, abs, p, k, set] = await Promise.all(['users','kpi-schema','requests','reports','absensi','pengumuman','kpi_settings','settings'].map(fetchGitHub));
+    
+    DB.users=u.data; DB.schema=s.data; DB.requests=req.data; DB.reports=rep.data; DB.absensi=abs.data; DB.kpi_settings=k.data;
+    DB.pengumuman = p.data.teks ? p.data : {teks:""}; 
+    DB.settings = set.data.waktu_buka_absen ? set.data : {waktu_buka_absen:"07:00", waktu_tutup_absen:"18:00"};
+    
+    document.getElementById('input-pengumuman').value = DB.pengumuman.teks;
+    document.getElementById('set-jam-buka').value = DB.settings.waktu_buka_absen;
+    document.getElementById('set-jam-tutup').value = DB.settings.waktu_tutup_absen;
+    syncUI();
+  } catch(e) { alert("Gagal koneksi. Pastikan Token valid."); }
+  hideLoading();
+}
 
     function syncUI() {
       let opts = '<option value="Semua">Semua Karyawan</option>'; let optsKpi = '<option value="">Pilih Karyawan</option>';
