@@ -9,8 +9,11 @@ jobs:
   evaluate-and-reset:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout Database Repository
         uses: actions/checkout@v4
+        with:
+          repository: kerjaan203-source/db_pastryfity
+          token: ${{ secrets.GH_TOKEN }}
 
       - name: Run Python Evaluation Logic
         run: |
@@ -22,8 +25,8 @@ jobs:
                   users = json.load(f)
               changes = False
               for user in users:
-                  if user['role'] == 'employee' and user['status'] == 'ACTIVE':
-                      if user['grade_d_count'] >= 2:
+                  if user.get('role') == 'employee' and user.get('status') == 'ACTIVE':
+                      if user.get('grade_d_count', 0) >= 2:
                           user['status'] = 'INACTIVE_AUTO_RESIGNED'
                           changes = True
               if changes:
