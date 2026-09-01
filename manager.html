@@ -21,7 +21,7 @@
 <body>
   <div id="loading-overlay" class="fixed inset-0 bg-white/90 z-50 flex flex-col justify-center items-center" style="display:none;"><div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#D4A373] mb-4"></div><h2 class="text-xl font-bold text-[#5C3A21]" id="loading-text">Loading...</h2></div>
 
-  <!-- LOGIN SCREEN DENGAN LOGO.JPG PERSEGI -->
+  <!-- LOGIN SCREEN -->
   <div id="login-screen" class="max-w-sm mx-auto mt-16 glass text-center space-y-6">
     <img src="logo.jpeg" class="w-32 h-32 object-cover mx-auto rounded-xl shadow-sm border border-[#D4A373]" onerror="this.style.display='none'">
     <h1 class="text-2xl font-bold text-[#5C3A21]">Portal Manajemen</h1>
@@ -45,11 +45,28 @@
       <div class="nav-btn inactive-nav" onclick="switchMenu('menu-kpi-bulanan', this)">Rekap KPI Bulanan</div>
     </div>
 
-    <!-- 1. HR -->
+    <!-- 1. HR & SETTINGS -->
     <div id="menu-hr" class="glass grid grid-cols-1 lg:grid-cols-3 gap-6 block">
       <div class="lg:col-span-2 space-y-4">
-        <div class="border p-4 rounded-xl bg-[#FAF8F5]"><h3 class="font-bold text-[#5C3A21] mb-2">Broadcast Pengumuman</h3><textarea id="input-pengumuman" class="w-full p-2 border rounded text-sm mb-2" rows="2"></textarea><button onclick="simpanPengumuman()" class="bg-[#5C3A21] text-white px-4 py-1 rounded text-xs font-bold">Update</button></div>
-        <div class="overflow-x-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- PENGUMUMAN -->
+            <div class="border p-4 rounded-xl bg-[#FAF8F5]">
+                <h3 class="font-bold text-[#5C3A21] mb-2">Broadcast Pengumuman</h3>
+                <textarea id="input-pengumuman" class="w-full p-2 border rounded text-sm mb-2" rows="2"></textarea>
+                <button onclick="simpanPengumuman()" class="bg-[#5C3A21] text-white px-4 py-1 rounded text-xs font-bold">Update</button>
+            </div>
+            <!-- PENGATURAN JAM ABSEN -->
+            <div class="border p-4 rounded-xl bg-blue-50">
+                <h3 class="font-bold text-blue-900 mb-2">Pengaturan Waktu Absensi</h3>
+                <div class="flex space-x-2 mb-2">
+                    <div class="w-1/2"><label class="text-[10px] font-bold">Buka Absen</label><input type="time" id="set-jam-buka" class="w-full p-1 border rounded text-sm bg-white"></div>
+                    <div class="w-1/2"><label class="text-[10px] font-bold">Tutup Absen</label><input type="time" id="set-jam-tutup" class="w-full p-1 border rounded text-sm bg-white"></div>
+                </div>
+                <button onclick="simpanPengaturanWaktu()" class="bg-blue-600 text-white px-4 py-1 rounded text-xs font-bold">Simpan Waktu</button>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto mt-4">
           <div class="flex justify-between items-center mb-2"><h2 class="font-bold">Database Karyawan</h2><div><button onclick="exportKaryawanCSV()" class="bg-green-600 text-white px-2 py-1 text-xs rounded mr-1">Excel/CSV</button><button onclick="cetakPDFUmum('tabel-hr-cetak','Data_Karyawan')" class="bg-red-600 text-white px-2 py-1 text-xs rounded">PDF</button></div></div>
           <div id="tabel-hr-cetak" class="bg-white p-2">
             <h2 class="hidden text-center font-bold text-lg mb-4 kop-surat">DATABASE KARYAWAN PASTRYFITY</h2>
@@ -69,15 +86,21 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="divisi-cards-container"></div>
     </div>
 
-    <!-- 4. ABSENSI -->
+    <!-- 4. ABSENSI (Berbasis Tanggal Harian) -->
     <div id="menu-absensi" class="glass hidden">
       <div class="flex justify-between items-center mb-4">
         <h2 class="font-bold">Log Absensi Karyawan</h2>
-        <div class="flex space-x-2"><input type="month" id="filter-abs-bln" onchange="renderAbsensi()" class="p-1 border rounded text-sm"><select id="filter-abs-nama" onchange="renderAbsensi()" class="p-1 border rounded text-sm"></select><button onclick="cetakPDFUmum('tabel-absensi-cetak','Log_Absensi')" class="bg-red-600 text-white px-3 py-1 rounded text-xs font-bold">PDF</button></div>
+        <div class="flex space-x-2">
+            <input type="date" id="filter-abs-tgl" onchange="renderAbsensi()" class="p-1 border rounded text-sm">
+            <select id="filter-abs-nama" onchange="renderAbsensi()" class="p-1 border rounded text-sm"></select>
+            <button onclick="exportAbsensiCSV()" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-bold">CSV</button>
+            <button onclick="cetakPDFUmum('tabel-absensi-cetak','Log_Absensi_Harian')" class="bg-red-600 text-white px-3 py-1 rounded text-xs font-bold">PDF</button>
+        </div>
       </div>
       <div class="overflow-x-auto bg-white p-2" id="tabel-absensi-cetak">
-        <h2 class="hidden text-center font-bold text-lg mb-4 kop-surat">LOG ABSENSI KARYAWAN</h2>
-        <table class="w-full text-left text-sm"><thead><tr><th class="p-2 border">Tgl</th><th class="p-2 border">Nama (Posisi)</th><th class="p-2 border text-green-300">Masuk</th><th class="p-2 border text-yellow-300">Istirahat</th><th class="p-2 border text-red-300">Keluar</th><th class="p-2 border aksi-col">Lampiran</th><th class="p-2 text-center border aksi-col">Aksi</th></tr></thead><tbody id="absensi-table-body"></tbody></table>
+        <h2 class="hidden text-center font-bold text-lg mb-4 kop-surat">LOG ABSENSI HARIAN KARYAWAN</h2>
+        <p class="hidden text-center mb-4 kop-surat" id="label-tgl-cetak-absensi"></p>
+        <table class="w-full text-left text-sm"><thead><tr><th class="p-2 border">Nama (Posisi)</th><th class="p-2 border text-green-300">Masuk</th><th class="p-2 border text-yellow-300">Istirahat</th><th class="p-2 border text-red-300">Keluar</th><th class="p-2 border aksi-col w-32">Lampiran</th><th class="p-2 text-center border aksi-col">Aksi</th></tr></thead><tbody id="absensi-table-body"></tbody></table>
       </div>
     </div>
 
@@ -105,49 +128,54 @@
   </div>
   
   <script>
-   // =====================================================================
+    // =====================================================================
     // ⚙️ KONFIGURASI GITHUB API
     // =====================================================================
-    const TOKEN_PART_1 = ' github_pat_11CLESV4Q0sjstF1brtWvk_'; 
+    const TOKEN_PART_1 = 'github_pat_11CLESV4Q0sjstF1brtWvk_'; 
     const TOKEN_PART_2 = '0qoyPbSkhT1nAUqdiaSgYEV60h3t2M69Ob77a2nHX566DTFVEPVH8zJQTw8';
     const GITHUB_TOKEN = TOKEN_PART_1 + TOKEN_PART_2; 
     
     const REPO_OWNER = 'kerjaan203-source';         
-    const REPO_NAME = 'db_pastryfity'; // <--- Sesuai dengan nama repo private Anda
+    const REPO_NAME = 'db_pastryfity'; 
     // =====================================================================       
 
-// Keamanan Sederhana
     const MASTER_PIN = "999888"; 
-    // =====================================================================
 
-// =====================================================================
-    // 🛑 👆👆👆 BAGIAN KONFIGURASI GITHUB API (ISI TOKEN DI SINI) 👆👆👆 🛑
-    // =====================================================================
-
- let DB = { users: [], schema: {}, requests: [], reports: [], absensi: [], pengumuman: {}, kpi_settings: {} };
+    let DB = { users: [], schema: {}, requests: [], reports: [], absensi: [], pengumuman: {}, kpi_settings: {}, settings: {} };
 
     const showLoading = (t) => { document.getElementById('loading-text').innerText=t; document.getElementById('loading-overlay').style.display='flex'; };
     const hideLoading = () => { document.getElementById('loading-overlay').style.display='none'; };
-    const currMonth = new Date().toISOString().slice(0,7); 
-    ['filter-abs-bln','filter-lap-bln','filter-kpi-bln'].forEach(id=>document.getElementById(id).value = currMonth);
+    
+    // Set default tanggal hari ini
+    const today = new Date();
+    document.getElementById('filter-abs-tgl').valueAsDate = today;
+    const currMonth = today.toISOString().slice(0,7); 
+    ['filter-lap-bln','filter-kpi-bln'].forEach(id=>document.getElementById(id).value = currMonth);
 
-    // Fungsi perbaikan format tanggal agar bisa membaca data lama (misal 8 bukan 08)
+    // Fungsi pencocokan tanggal (Format sistem toLocaleDateString id-ID bervariasi, kita cocokan secara dinamis)
     const matchMonth = (tglStr, yyyy_mm) => {
       if(!yyyy_mm) return true;
       let [y, m] = yyyy_mm.split('-');
-      let [dt, dm, dy] = tglStr.split('/');
+      let parts = tglStr.split('/');
+      let dt = parts[0], dm = parts[1], dy = parts[2];
       return parseInt(dm) === parseInt(m) && dy === y;
+    };
+    const matchDate = (tglStr, yyyy_mm_dd) => {
+      if(!yyyy_mm_dd) return true;
+      let [y, m, d] = yyyy_mm_dd.split('-');
+      let parts = tglStr.split('/');
+      return parseInt(parts[0]) === parseInt(d) && parseInt(parts[1]) === parseInt(m) && parts[2] === y;
     };
 
     async function fetchGitHub(file) {
       const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/${file}.json`, { headers: {'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json'}, cache: 'no-store' });
-      if(!res.ok) return { data: (file==='schema'||file==='kpi_settings'?{}:[]), sha: null };
+      if(!res.ok) return { data: (file==='schema'||file==='kpi_settings'||file==='settings'?{}:[]), sha: null };
       const d = await res.json(); return { data: JSON.parse(decodeURIComponent(escape(atob(d.content)))), sha: d.sha };
     }
     async function pushGitHub(file, obj) {
       showLoading(`Simpan ${file}...`);
       const curr = await fetchGitHub(file);
-      const body = { message: `Update`, content: btoa(unescape(encodeURIComponent(JSON.stringify(obj, null, 2)))) };
+      const body = { message: `Update Manager`, content: btoa(unescape(encodeURIComponent(JSON.stringify(obj, null, 2)))) };
       if(curr.sha) body.sha = curr.sha;
       await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data/${file}.json`, { method: 'PUT', headers: {'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json'}, body: JSON.stringify(body) });
       hideLoading();
@@ -159,16 +187,21 @@
     async function loadAllData() {
       showLoading("Narik Data...");
       try {
-        const [u, s, req, rep, abs, p, k] = await Promise.all(['users','kpi-schema','requests','reports','absensi','pengumuman','kpi_settings'].map(fetchGitHub));
-        DB.users=u.data; DB.schema=s.data; DB.requests=req.data; DB.reports=rep.data; DB.absensi=abs.data; DB.pengumuman=p.data.teks?p.data:{teks:""}; DB.kpi_settings=k.data;
+        const [u, s, req, rep, abs, p, k, set] = await Promise.all(['users','kpi-schema','requests','reports','absensi','pengumuman','kpi_settings','settings'].map(fetchGitHub));
+        DB.users=u.data; DB.schema=s.data; DB.requests=req.data; DB.reports=rep.data; DB.absensi=abs.data; DB.kpi_settings=k.data;
+        DB.pengumuman = p.data.teks ? p.data : {teks:""}; 
+        DB.settings = set.data.waktu_buka_absen ? set.data : {waktu_buka_absen:"07:00", waktu_tutup_absen:"18:00"};
+        
         document.getElementById('input-pengumuman').value = DB.pengumuman.teks;
+        document.getElementById('set-jam-buka').value = DB.settings.waktu_buka_absen;
+        document.getElementById('set-jam-tutup').value = DB.settings.waktu_tutup_absen;
         syncUI();
-      } catch(e) { alert("Gagal koneksi"); }
+      } catch(e) { alert("Gagal koneksi. Pastikan Token valid."); }
       hideLoading();
     }
 
     function syncUI() {
-      let opts = '<option value="Semua">Semua</option>'; let optsKpi = '<option value="">Pilih Karyawan</option>';
+      let opts = '<option value="Semua">Semua Karyawan</option>'; let optsKpi = '<option value="">Pilih Karyawan</option>';
       DB.users.forEach(u=>{ if(u.role==='employee'){ opts+=`<option value="${u.name}">${u.name}</option>`; optsKpi+=`<option value="${u.name}">${u.name}</option>`; } });
       ['filter-abs-nama','filter-lap-nama'].forEach(id=>document.getElementById(id).innerHTML=opts); document.getElementById('filter-kpi-nama').innerHTML=optsKpi;
       
@@ -176,7 +209,6 @@
       renderUserTable(); renderJobdesk(); renderApproval(); renderAbsensi(); renderLaporan();
     }
 
-    // --- FUNGSI PDF UMUM ---
     function cetakPDFUmum(elId, namaFile) {
       document.querySelectorAll(`#${elId} .aksi-col`).forEach(e => e.classList.add('hidden')); 
       document.querySelectorAll(`#${elId} .kop-surat`).forEach(e => e.classList.remove('hidden'));
@@ -186,11 +218,19 @@
       });
     }
 
-    // 1. HR
+    // 1. HR & SETTINGS
     async function simpanPengumuman() { DB.pengumuman.teks = document.getElementById('input-pengumuman').value; await pushGitHub('pengumuman', DB.pengumuman); }
+    async function simpanPengaturanWaktu() {
+        DB.settings.waktu_buka_absen = document.getElementById('set-jam-buka').value;
+        DB.settings.waktu_tutup_absen = document.getElementById('set-jam-tutup').value;
+        await pushGitHub('settings', DB.settings);
+        alert("Aturan jam absensi berhasil diperbarui!");
+    }
+
     function renderUserTable() {
       const tb = document.getElementById('user-table-body'); tb.innerHTML='';
       DB.users.forEach((u,i) => {
+        if(u.role !== 'employee') return;
         let wa = u.whatsapp?`<a href="https://wa.me/${u.whatsapp.replace(/^0+/,'62')}" target="_blank" class="text-green-600 border px-2 py-1 rounded text-xs">WA</a>`:'';
         tb.innerHTML+=`<tr class="border-b"><td class="p-2 border">${u.name}</td><td class="p-2 border">${u.division}</td><td class="p-2 border">${u.join_date||'-'}</td><td class="p-2 border">${u.pin}</td><td class="p-2 border space-x-1 aksi-col">${wa}<button onclick="editUser(${i})" class="text-blue-600 border px-2 py-1 rounded text-xs">Edit</button><button onclick="hapusUser(${i})" class="text-red-600 border px-2 py-1 rounded text-xs">Hapus</button></td></tr>`;
       });
@@ -198,7 +238,7 @@
     function editUser(i) { const u=DB.users[i]; document.getElementById('edit-index').value=i; document.getElementById('edit-nama').value=u.name; document.getElementById('edit-posisi').value=u.division; document.getElementById('edit-join').value=u.join_date||''; document.getElementById('edit-wa').value=u.whatsapp||''; document.getElementById('edit-pin').value=u.pin; }
     async function saveUser() { const idx = document.getElementById('edit-index').value; const data={ id:idx===""?"U"+Date.now():DB.users[idx].id, name:document.getElementById('edit-nama').value, division:document.getElementById('edit-posisi').value, join_date:document.getElementById('edit-join').value, whatsapp:document.getElementById('edit-wa').value, pin:document.getElementById('edit-pin').value, role:'employee' }; if(idx==="") DB.users.push(data); else DB.users[idx]=data; await pushGitHub('users', DB.users); syncUI(); }
     async function hapusUser(i) { if(confirm("Hapus?")){ DB.users.splice(i,1); await pushGitHub('users', DB.users); syncUI(); } }
-    function exportKaryawanCSV() { let csv = "data:text/csv;charset=utf-8,Nama,Divisi,Tgl Masuk,Tgl Lahir,WhatsApp,PIN\n"; DB.users.forEach(u => csv += `"${u.name}","${u.division}","${u.join_date||''}","${u.dob||''}","${u.whatsapp||''}","${u.pin}"\n`); const link = document.createElement("a"); link.href = encodeURI(csv); link.download = "Data_Karyawan.csv"; document.body.appendChild(link); link.click(); document.body.removeChild(link); }
+    function exportKaryawanCSV() { let csv = "data:text/csv;charset=utf-8,Nama,Divisi,Tgl Masuk,WhatsApp,PIN\n"; DB.users.forEach(u => { if(u.role==='employee') csv += `"${u.name}","${u.division}","${u.join_date||''}","${u.whatsapp||''}","${u.pin}"\n`}); const link = document.createElement("a"); link.href = encodeURI(csv); link.download = "Data_Karyawan.csv"; document.body.appendChild(link); link.click(); document.body.removeChild(link); }
 
     // 2. APPROVAL
     function renderApproval() {
@@ -235,45 +275,69 @@
       html2pdf().set({filename: `SOP_${div}.pdf`}).from(el).save().then(()=>el.classList.add('hidden'));
     }
 
-    // 4. ABSENSI (Perbaikan filter bulan format lama/baru)
+    // 4. ABSENSI (Berbasis Tanggal)
     function renderAbsensi() {
-      const b = document.getElementById('filter-abs-bln').value; const nm = document.getElementById('filter-abs-nama').value;
+      const inputDate = document.getElementById('filter-abs-tgl').value; 
+      const nm = document.getElementById('filter-abs-nama').value;
       const tb = document.getElementById('absensi-table-body'); tb.innerHTML='';
+      
+      document.getElementById('label-tgl-cetak-absensi').innerText = `Tanggal: ${inputDate}`;
+
       let grp = {};
       DB.absensi.forEach(a => {
         if(nm!=='Semua' && a.nama!==nm) return;
-        if(!matchMonth(a.tanggal, b)) return; // <-- PERBAIKAN LOGIKA TANGGAL DI SINI
+        if(!matchDate(a.tanggal, inputDate)) return; // Validasi per tanggal (harian)
         
         let k = `${a.tanggal}_${a.nama}`;
-        if(!grp[k]) grp[k]={id:a.id, nama:a.nama, pos:a.divisi, tgl:a.tanggal, in:'-', ist:'-', out:'-', gmap:[], img:[]};
-        if(a.tipe==='Masuk') grp[k].in=a.jam; else if(a.tipe==='Istirahat') grp[k].ist=a.jam; else if(a.tipe==='Keluar') grp[k].out=a.jam;
-        if(a.lokasi) grp[k].gmap.push(`<a href="${a.lokasi}" target="_blank" class="text-blue-500 underline">GMap ${a.tipe}</a>`);
-        if(a.foto) grp[k].img.push(`<a href="${a.foto}" target="_blank" class="text-blue-500 underline">Foto ${a.tipe}</a>`);
+        if(!grp[k]) grp[k]={id:a.id, nama:a.nama, pos:a.divisi, tgl:a.tanggal, in:'-', ist:'-', out:'-', map_in:'', map_out:'', img_in:'', img_out:''};
+        
+        if(a.tipe==='Masuk') { grp[k].in=a.jam; grp[k].map_in=a.lokasi; grp[k].img_in=a.foto; }
+        else if(a.tipe==='Istirahat') { grp[k].ist=a.jam; }
+        else if(a.tipe==='Keluar') { grp[k].out=a.jam; grp[k].map_out=a.lokasi; grp[k].img_out=a.foto; }
       });
+
       Object.values(grp).reverse().forEach(g => {
-        tb.innerHTML+=`<tr class="border-b"><td class="p-2 border">${g.tgl}</td><td class="p-2 border"><b>${g.nama}</b><br><span class="text-[10px]">${g.pos}</span></td><td class="p-2 border text-green-600">${g.in}</td><td class="p-2 border text-yellow-600">${g.ist}</td><td class="p-2 border text-red-600">${g.out}</td><td class="p-2 border text-[10px] aksi-col">${g.gmap.join('<br>')}<br>${g.img.join('<br>')}</td><td class="p-2 border space-x-1 aksi-col"><button onclick="editAbsenPrompt('${g.tgl}','${g.nama}')" class="text-blue-600 border px-2 py-1 rounded text-xs">Edit</button><button onclick="hapusAbsenGrup('${g.tgl}','${g.nama}')" class="text-red-600 border px-2 py-1 rounded text-xs">Hapus</button></td></tr>`;
+        let mapsHtml = (g.map_in?`<a href="${g.map_in}" target="_blank" class="text-blue-500 block mb-1">📍 Map Masuk</a>`:'') + (g.map_out?`<a href="${g.map_out}" target="_blank" class="text-blue-500 block">📍 Map Keluar</a>`:'');
+        let imgHtml = (g.img_in?`<a href="${g.img_in}" download="In_${g.nama}.jpg" class="text-green-600 block mb-1">📷 Foto Masuk</a>`:'') + (g.img_out?`<a href="${g.img_out}" download="Out_${g.nama}.jpg" class="text-red-600 block">📷 Foto Keluar</a>`:'');
+        
+        tb.innerHTML+=`<tr class="border-b"><td class="p-2 border"><b>${g.nama}</b><br><span class="text-[10px]">${g.pos}</span></td><td class="p-2 border text-green-600">${g.in}</td><td class="p-2 border text-yellow-600">${g.ist}</td><td class="p-2 border text-red-600">${g.out}</td><td class="p-2 border text-[10px] aksi-col"><div class="flex space-x-2"><div>${mapsHtml}</div><div>${imgHtml}</div></div></td><td class="p-2 border text-center aksi-col"><button onclick="hapusAbsenGrup('${g.tgl}','${g.nama}')" class="text-red-600 border px-2 py-1 rounded text-xs">Hapus Data</button></td></tr>`;
       });
-    }
-    async function hapusAbsenGrup(tgl, nama) { if(confirm("Hapus absen hari ini?")){ DB.absensi = DB.absensi.filter(a => !(a.tanggal===tgl && a.nama===nama)); await pushGitHub('absensi', DB.absensi); renderAbsensi(); } }
-    async function editAbsenPrompt(tgl, nama) {
-      let m = prompt("Set Jam Masuk (HH.MM.SS) atau kosongkan:"); let i = prompt("Set Jam Istirahat (HH.MM.SS) atau kosongkan:"); let k = prompt("Set Jam Keluar (HH.MM.SS) atau kosongkan:");
-      if(m!==null || i!==null || k!==null) {
-        DB.absensi = DB.absensi.filter(a => !(a.tanggal===tgl && a.nama===nama));
-        const u = DB.users.find(x=>x.name===nama); const p = u?u.division:'';
-        if(m) DB.absensi.push({id:"ABS-"+Date.now()+"M", nama:nama, divisi:p, tipe:'Masuk', tanggal:tgl, jam:m});
-        if(i) DB.absensi.push({id:"ABS-"+Date.now()+"I", nama:nama, divisi:p, tipe:'Istirahat', tanggal:tgl, jam:i});
-        if(k) DB.absensi.push({id:"ABS-"+Date.now()+"K", nama:nama, divisi:p, tipe:'Keluar', tanggal:tgl, jam:k});
-        await pushGitHub('absensi', DB.absensi); renderAbsensi();
-      }
     }
 
-    // 5. LAPORAN SHIFT (Perbaikan filter bulan)
+    async function hapusAbsenGrup(tgl, nama) { if(confirm("Hapus absen hari ini?")){ DB.absensi = DB.absensi.filter(a => !(a.tanggal===tgl && a.nama===nama)); await pushGitHub('absensi', DB.absensi); renderAbsensi(); } }
+    
+    function exportAbsensiCSV() { 
+        const inputDate = document.getElementById('filter-abs-tgl').value;
+        const nm = document.getElementById('filter-abs-nama').value;
+        let csv = "data:text/csv;charset=utf-8,Tanggal,Nama,Jam Masuk,Jam Istirahat,Jam Keluar,Lokasi Maps Masuk,Lokasi Maps Keluar\n"; 
+        
+        let grp = {};
+        DB.absensi.forEach(a => {
+            if(nm!=='Semua' && a.nama!==nm) return;
+            if(!matchDate(a.tanggal, inputDate)) return;
+            let k = `${a.tanggal}_${a.nama}`;
+            if(!grp[k]) grp[k]={nama:a.nama, tgl:a.tanggal, in:'-', ist:'-', out:'-', map_in:'-', map_out:'-'};
+            if(a.tipe==='Masuk') { grp[k].in=a.jam; grp[k].map_in=a.lokasi; }
+            if(a.tipe==='Istirahat') { grp[k].ist=a.jam; }
+            if(a.tipe==='Keluar') { grp[k].out=a.jam; grp[k].map_out=a.lokasi; }
+        });
+
+        Object.values(grp).forEach(g => {
+            csv += `"${g.tgl}","${g.nama}","${g.in}","${g.ist}","${g.out}","${g.map_in}","${g.map_out}"\n`;
+        });
+
+        const link = document.createElement("a"); link.href = encodeURI(csv); 
+        link.download = `Log_Absensi_${inputDate}.csv`; 
+        document.body.appendChild(link); link.click(); document.body.removeChild(link); 
+    }
+
+    // 5. LAPORAN SHIFT
     function renderLaporan() {
       const b = document.getElementById('filter-lap-bln').value; const nm = document.getElementById('filter-lap-nama').value;
       const c = document.getElementById('laporan-container'); c.innerHTML='';
       let rps = DB.reports.slice().reverse();
       if(nm!=='Semua') rps=rps.filter(x=>x.nama===nm);
-      rps = rps.filter(x => matchMonth(x.tanggal, b)); // <-- PERBAIKAN LOGIKA TANGGAL
+      rps = rps.filter(x => matchMonth(x.tanggal, b)); 
       
       rps.forEach(r => {
         let dyn=''; for(let k in r.data_dinamis) dyn+=`<tr class="border-b"><td>${k}</td><td class="font-bold text-right">${r.data_dinamis[k]}</td></tr>`;
@@ -289,7 +353,7 @@
       html2pdf().set({filename: `Laporan_${r.nama}_${r.tanggal.replace(/\//g,'-')}.pdf`}).from(el).save().then(()=>el.classList.add('hidden'));
     }
 
-    // 6. KPI BULANAN (Perbaikan filter bulan)
+    // 6. KPI BULANAN
     function renderKPI() {
       const b = document.getElementById('filter-kpi-bln').value; const nm = document.getElementById('filter-kpi-nama').value;
       if(!b || !nm) return; const u = DB.users.find(x=>x.name===nm); if(!u) return;
@@ -329,5 +393,7 @@
       await pushGitHub('kpi_settings', DB.kpi_settings); renderKPI();
     }
   </script>
+  <!-- Container untuk cetak PDF tersembunyi -->
+  <div id="print-container" class="hidden absolute top-0 left-0 w-[800px] bg-white p-8 text-black z-[-1]"></div>
 </body>
 </html>
